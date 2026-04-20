@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kabinet - Knowledge Base</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo" id="companyLogo">
+                    <i class="fas fa-cube"></i>
+                    <span>Kabinet</span>
+                </div>
+                <div class="header-actions" id="headerActions">
+                    <button class="btn btn-outline" onclick="showLoginModal('admin')">
+                        <i class="fas fa-user-shield"></i> Login Admin
+                    </button>
+                    <button class="btn btn-primary" onclick="showLoginModal('user')">
+                        <i class="fas fa-user"></i> Login User
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Landing Page (Before Login) -->
+            <section class="landing-page" id="landingPage">
+                <div class="landing-content">
+                    <div class="landing-logo">
+                        <i class="fas fa-cube"></i>
+                        <h1>Kabinet</h1>
+                    </div>
+                    <p class="landing-tagline">Kamus Besar ICONNET</p>
+                    <div class="landing-login">
+                        <button class="btn btn-lg btn-outline" onclick="showLoginModal('admin')">
+                            <i class="fas fa-user-shield"></i> Login Admin
+                        </button>
+                        <button class="btn btn-lg btn-primary" onclick="showLoginModal('user')">
+                            <i class="fas fa-user"></i> Login User
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Search Section (After Login) -->
+            <section class="search-section" id="searchSection" style="display: none;">
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="KABINET SEARCH" oninput="handleSearch()">
+                        <button class="search-clear" onclick="clearSearch()" id="searchClear">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="filter-pills" id="filterPills">
+                    <button class="pill active" data-filter="all" onclick="filterByCategory('all')">Semua</button>
+                    <button class="pill" data-filter="INFO" onclick="filterByCategory('INFO')">INFO</button>
+                    <button class="pill" data-filter="KATEGORI" onclick="filterByCategory('KATEGORI')">KATEGORI</button>
+                    <button class="pill" data-filter="PROMO" onclick="filterByCategory('PROMO')">PROMO</button>
+                </div>
+            </section>
+
+            <!-- Content Cards -->
+            <section class="cards-section" id="cardsSection" style="display: none;">
+                <div class="cards-container" id="cardsContainer"></div>
+                <div class="pagination" id="pagination"></div>
+            </section>
+
+            <!-- Admin Panel -->
+            <section class="admin-panel" id="adminPanel" style="display: none;">
+                <div class="admin-tabs">
+                    <button class="tab-btn active" data-tab="konten" onclick="switchAdminTab('konten')">Konten</button>
+                    <button class="tab-btn" data-tab="harga" onclick="switchAdminTab('harga')">Harga Layanan</button>
+                    <button class="tab-btn" data-tab="kritik" onclick="switchAdminTab('kritik')">Kritik & Saran</button>
+                    <button class="tab-btn" data-tab="settings" onclick="switchAdminTab('settings')">Pengaturan</button>
+                </div>
+                
+                <!-- Konten Tab -->
+                <div class="tab-content" id="tab-konten">
+                    <div class="admin-header">
+                        <h2>Kelola Konten</h2>
+                        <button class="btn btn-primary" onclick="showContentForm()">
+                            <i class="fas fa-plus"></i> Tambah Konten
+                        </button>
+                    </div>
+                    <div class="klasifikasi-manager">
+                        <h3>Klasifikasi</h3>
+                        <div class="klasifikasi-list" id="klasifikasiList"></div>
+                        <div class="klasifikasi-add">
+                            <input type="text" id="newKlasifikasi" placeholder="Nama klasifikasi baru">
+                            <button class="btn btn-sm" onclick="addKlasifikasi()">Tambah</button>
+                        </div>
+                    </div>
+                    <div class="content-list" id="contentList"></div>
+                </div>
+
+                <!-- Harga Tab -->
+                <div class="tab-content" id="tab-harga" style="display: none;">
+                    <div class="admin-header">
+                        <h2>Harga Layanan</h2>
+                        <div class="harga-actions">
+                            <button class="btn btn-outline" onclick="downloadTemplate()">
+                                <i class="fas fa-download"></i> Download Template
+                            </button>
+                            <label class="btn btn-outline">
+                                <i class="fas fa-upload"></i> Upload Excel
+                                <input type="file" accept=".xlsx,.xls" onchange="uploadExcel(event)" hidden>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="harga-filters">
+                        <select id="hargaBulan" onchange="filterHarga()">
+                            <option value="">Semua Bulan</option>
+                            <option value="JAN">JAN</option>
+                            <option value="FEB">FEB</option>
+                            <option value="MAR">MAR</option>
+                            <option value="APR">APR</option>
+                            <option value="MEI">MEI</option>
+                            <option value="JUN">JUN</option>
+                            <option value="JUL">JUL</option>
+                            <option value="AGS">AGS</option>
+                            <option value="SEP">SEP</option>
+                            <option value="OKT">OKT</option>
+                            <option value="NOV">NOV</option>
+                            <option value="DES">DES</option>
+                        </select>
+                        <select id="hargaRegional" onchange="filterHarga()">
+                            <option value="">Semua Regional</option>
+                            <option value="Jawa & Bali">Jawa & Bali</option>
+                            <option value="Sumatera & Kalimantan">Sumatera & Kalimantan</option>
+                        </select>
+                        <select id="hargaJenis" onchange="filterHarga()">
+                            <option value="">Semua Jenis</option>
+                            <option value="Baru">Baru</option>
+                            <option value="Existing">Existing</option>
+                        </select>
+                        <select id="hargaPaket" onchange="filterHarga()">
+                            <option value="">Semua Paket</option>
+                            <option value="Reguler">Reguler</option>
+                            <option value="HEBAT 3">HEBAT 3</option>
+                            <option value="HEBAT 6">HEBAT 6</option>
+                            <option value="HEBAT 12">HEBAT 12</option>
+                            <option value="HEBAT 24">HEBAT 24</option>
+                        </select>
+                    </div>
+                    <div class="harga-form" id="hargaForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Bulan</label>
+                                <select id="hargaBulanInput">
+                                    <option value="JAN">JAN</option>
+                                    <option value="FEB">FEB</option>
+                                    <option value="MAR">MAR</option>
+                                    <option value="APR">APR</option>
+                                    <option value="MEI">MEI</option>
+                                    <option value="JUN">JUN</option>
+                                    <option value="JUL">JUL</option>
+                                    <option value="AGS">AGS</option>
+                                    <option value="SEP">SEP</option>
+                                    <option value="OKT">OKT</option>
+                                    <option value="NOV">NOV</option>
+                                    <option value="DES">DES</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Regional</label>
+                                <select id="hargaRegionalInput">
+                                    <option value="Jawa & Bali">Jawa & Bali</option>
+                                    <option value="Sumatera & Kalimantan">Sumatera & Kalimantan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Jenis Pelanggan</label>
+                                <select id="hargaJenisInput">
+                                    <option value="Baru">Baru</option>
+                                    <option value="Existing">Existing</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Paket</label>
+                                <select id="hargaPaketInput">
+                                    <option value="Reguler">Reguler</option>
+                                    <option value="HEBAT 3">HEBAT 3</option>
+                                    <option value="HEBAT 6">HEBAT 6</option>
+                                    <option value="HEBAT 12">HEBAT 12</option>
+                                    <option value="HEBAT 24">HEBAT 24</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Biaya Pasang</label>
+                                <input type="number" id="hargaBiayaPasang" placeholder="Rp">
+                            </div>
+                            <div class="form-group">
+                                <label>Harga Paket</label>
+                                <input type="number" id="hargaPaket" placeholder="Rp">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveHarga()">Simpan</button>
+                    </div>
+                    <div class="harga-table" id="hargaTable"></div>
+                </div>
+
+                <!-- Kritik Tab -->
+                <div class="tab-content" id="tab-kritik" style="display: none;">
+                    <div class="admin-header">
+                        <h2>Kritik & Saran</h2>
+                    </div>
+                    <div class="kritik-list" id="kritikList"></div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-content" id="tab-settings" style="display: none;">
+                    <div class="admin-header">
+                        <h2>Pengaturan</h2>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Nama Perusahaan</label>
+                            <input type="text" id="companyName" placeholder="Nama Perusahaan" onchange="updateSettings()">
+                        </div>
+                        <div class="form-group">
+                            <label>Logo URL</label>
+                            <input type="text" id="companyLogoUrl" placeholder="URL Logo" onchange="updateSettings()">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Panel -->
+            <section class="user-panel" id="userPanel" style="display: none;">
+                <div class="user-tabs">
+                    <button class="tab-btn active" data-tab="konten" onclick="switchUserTab('konten')">Konten</button>
+                    <button class="tab-btn" data-tab="kritik" onclick="switchUserTab('kritik')">Kritik & Saran</button>
+                </div>
+                <div class="tab-content" id="user-konten">
+                    <div class="content-list" id="userContentList"></div>
+                </div>
+                <div class="tab-content" id="user-kritik" style="display: none;">
+                    <div class="kritik-form">
+                        <h3>Kirim Kritik & Saran</h3>
+                        <div class="form-group">
+                            <label>Nama (Opsional)</label>
+                            <input type="text" id="kritikNama" placeholder="Nama Anda">
+                        </div>
+                        <div class="form-group">
+                            <label>Kritik/Saran *</label>
+                            <textarea id="kritikIsi" rows="5" placeholder="Tulis kritik atau saran Anda..." required></textarea>
+                        </div>
+                        <button class="btn btn-primary" onclick="submitKritik()">
+                            <i class="fas fa-paper-plane"></i> Kirim
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Floating Kritik Button -->
+        <button class="floating-btn" id="floatingBtn" onclick="showKritikModal()" title="Kritik & Saran">
+            <i class="fas fa-comment-dots"></i>
+        </button>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3 id="loginTitle">Login</h3>
+                <button class="modal-close" onclick="closeModal('loginModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="password-input">
+                        <input type="password" id="loginPassword" placeholder="Masukkan password">
+                        <button class="toggle-password" onclick="togglePassword('loginPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <p class="error-message" id="loginError" style="display: none;">Password salah!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('loginModal')">Batal</button>
+                <button class="btn btn-primary" onclick="handleLogin()">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kritik Modal -->
+    <div class="modal" id="kritikModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>Kritik & Saran</h3>
+                <button class="modal-close" onclick="closeModal('kritikModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nama (Opsional)</label>
+                    <input type="text" id="kritikNamaModal" placeholder="Nama Anda">
+                </div>
+                <div class="form-group">
+                    <label>Kritik/Saran *</label>
+                    <textarea id="kritikIsiModal" rows="5" placeholder="Tulis kritik atau saran Anda..." required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('kritikModal')">Batal</button>
+                <button class="btn btn-primary" onclick="submitKritikModal()">Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Form Modal -->
+    <div class="modal" id="contentModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="contentModalTitle">Tambah Konten</h3>
+                <button class="modal-close" onclick="closeModal('contentModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Judul *</label>
+                    <input type="text" id="contentJudul" placeholder="Judul konten" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tanggal</label>
+                        <input type="date" id="contentTanggal">
+                    </div>
+                    <div class="form-group">
+                        <label>Klasifikasi *</label>
+                        <select id="contentKlasifikasi"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Subject *</label>
+                    <div class="subject-toolbar">
+                        <button type="button" onclick="formatSubject('bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                        <button type="button" onclick="formatSubject('italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                        <button type="button" onclick="formatSubject('underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                    </div>
+                    <div class="rich-text-editor subject-editor" id="contentSubjectEditor" contenteditable="true" placeholder="Deskripsi singkat (max 200 kata)" oninput="updateSubjectCount()"></div>
+                    <small class="char-count"><span id="subjectCount">0</span>/200 kata</small>
+                </div>
+                <div class="form-group">
+                    <label>Content (Rich Text)</label>
+                    <div class="rich-text-toolbar">
+                        <button type="button" onclick="formatDoc('justifyLeft')" title="Rata Kiri"><i class="fas fa-align-left"></i></button>
+                        <button type="button" onclick="formatDoc('justifyCenter')" title="Rata Tengah"><i class="fas fa-align-center"></i></button>
+                        <button type="button" onclick="formatDoc('justifyRight')" title="Rata Kanan"><i class="fas fa-align-right"></i></button>
+                        <button type="button" onclick="formatDoc('justifyFull')" title="Rata Kiri-Kanan"><i class="fas fa-align-justify"></i></button>
+                        <span class="toolbar-separator"></span>
+                        <button type="button" onclick="formatDoc('bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                        <button type="button" onclick="formatDoc('italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                        <button type="button" onclick="formatDoc('underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                        <span class="toolbar-separator"></span>
+                        <button type="button" onclick="formatDoc('insertUnorderedList')" title="Bullet"><i class="fas fa-list-ul"></i></button>
+                        <button type="button" onclick="formatDoc('insertOrderedList')" title="Numbering"><i class="fas fa-list-ol"></i></button>
+                        <span class="toolbar-separator"></span>
+                        <button type="button" onclick="showColorPicker()" title="Warna Teks"><i class="fas fa-font"></i></button>
+                        <input type="color" id="textColorPicker" style="display: none;" onchange="setTextColor(this.value)">
+                        <button type="button" onclick="insertHyperlink()" title="Hyperlink"><i class="fas fa-link"></i></button>
+                    </div>
+                    <div class="rich-text-editor" id="contentEditor" contenteditable="true" placeholder="Tulis konten..."></div>
+                </div>
+                <div class="form-group">
+                    <label>Link Eksternal</label>
+                    <div id="externalLinks">
+                        <div class="external-link-item">
+                            <input type="text" placeholder="Nama file" class="link-name">
+                            <input type="text" placeholder="URL (Drive, PPT, Excel, dll)" class="link-url">
+                            <button type="button" class="btn-remove" onclick="removeLinkField(this)"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline" onclick="addLinkField()">
+                        <i class="fas fa-plus"></i> Tambah Link
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('contentModal')">Batal</button>
+                <button class="btn btn-primary" onclick="saveContent()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Skeleton -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script src="app.js"></script>
+</body>
+</html>
