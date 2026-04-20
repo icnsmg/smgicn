@@ -182,12 +182,13 @@ function renderKontenView() {
 function renderHeaderLinks() {
     const c = document.getElementById('headerLinkPills');
     if (!c) return;
+    const isAdmin = currentUser === 'admin' || localStorage.getItem('kabinetUser') === 'admin';
     let h = '<button class="pill-label">LINK</button>';
     (DB.headerLinks || []).forEach(l => {
         h += `<a href="${l.url}" target="_blank" class="pill">${l.name}</a>`;
     });
-    if (currentUser === 'admin') {
-        h += `<button class="pill" onclick="showManageHeaderLinksModal()" style="border-style:dashed; color:var(--primary); background:rgba(37,99,235,0.05)" title="Kelola Link"><i class="fas fa-plus"></i></button>`;
+    if (isAdmin) {
+        h += `<button class="pill" onclick="showManageHeaderLinksModal()" style="border:1.5px dashed var(--primary); color:var(--primary); background:rgba(37,99,235,0.05); padding:0 1rem;" title="Kelola Link Header"><i class="fas fa-plus"></i></button>`;
     }
     c.innerHTML = h;
 }
