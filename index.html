@@ -84,9 +84,15 @@
                         <button class="snb-btn snb-exit" onclick="exitSearchNav()" title="Tutup"><i class="fas fa-times"></i></button>
                     </div>
                 </div>
+                <!-- External Header Links -->
+                <div class="filter-pills" id="headerLinkPills">
+                    <button class="pill-label">LINK</button>
+                    <!-- Admin will add links here -->
+                </div>
                 <!-- Filter Pills -->
                 <div class="filter-pills" id="filterPills">
-                    <button class="pill active" data-filter="all" onclick="filterByCategory('all')">Semua</button>
+                    <button class="pill-label">KLASIFIKASI</button>
+                    <button class="pill active" data-filter="all" onclick="filterByCategory('all')">SEMUA</button>
                 </div>
                 <!-- Result count bar -->
                 <div class="result-bar" id="resultBar" style="display:none">
@@ -389,6 +395,26 @@
         </div>
         <div class="modal-body">
             <div class="content-list" id="contentList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Manage Header Links Modal -->
+<div class="modal" id="headerLinksModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Kelola Link Header</h3>
+            <button class="modal-close" onclick="closeModal('headerLinksModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div id="manageHeaderLinksList"></div>
+            <button class="btn btn-sm btn-outline" onclick="addHeaderLinkField()" style="margin-top:1rem">
+                <i class="fas fa-plus"></i> Tambah Link Baru
+            </button>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('headerLinksModal')">Batal</button>
+            <button class="btn btn-primary" onclick="saveHeaderLinks()">Simpan Perubahan</button>
         </div>
     </div>
 </div>

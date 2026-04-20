@@ -1,7 +1,7 @@
 // ===== KABINET APP =====
 const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'contact1234' };
 
-const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'KATEGORI', 'PROMO'], konten: [], harga: [], kritik: [] };
+const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'KATEGORI', 'PROMO'], headerLinks: [], konten: [], harga: [], kritik: [] };
 
 const firebaseConfig = {
     apiKey: "AIzaSyD-C0pQl8Zd6baTg28RijkYncQdvBW_ewE",
@@ -49,6 +49,7 @@ function initData() {
             DB.harga = DB.harga || [];
             DB.kritik = DB.kritik || [];
             DB.klasifikasi = DB.klasifikasi || ['INFO', 'KATEGORI', 'PROMO'];
+            DB.headerLinks = DB.headerLinks || [];
         } else {
             DB.konten = [
                 { id: 1, judul: 'Cara Memesan Layanan', tanggal: '2026-04-15', klasifikasi: 'INFO', subject: 'Panduan lengkap cara memesan layanan kami melalui platform online.', content: '<p>Ikuti langkah-langkah berikut:</p><ul><li>Kunjungi website resmi</li><li>Pilih layanan</li><li>Isi formulir</li><li>Konfirmasi pembayaran</li></ul>', links: [{ name: 'Panduan Lengkap', url: '#' }] },
@@ -170,11 +171,61 @@ function refreshCurrentTab() { switchTab(currentTab); }
 
 // ===== KONTEN VIEW =====
 function renderKontenView() {
+    renderHeaderLinks();
     renderFilterPills();
     const bar = document.getElementById('adminKontenBar');
     if (bar) bar.style.display = currentUser === 'admin' ? 'flex' : 'none';
     if (currentUser === 'admin') renderKlasifikasi();
     renderCards();
+}
+
+function renderHeaderLinks() {
+    const c = document.getElementById('headerLinkPills');
+    if (!c) return;
+    let h = '<button class="pill-label">LINK</button>';
+    (DB.headerLinks || []).forEach(l => {
+        h += `<a href="${l.url}" target="_blank" class="pill">${l.name}</a>`;
+    });
+    if (currentUser === 'admin') {
+        h += `<button class="pill" onclick="showManageHeaderLinksModal()" style="border-style:dashed; color:var(--primary); background:rgba(37,99,235,0.05)" title="Kelola Link"><i class="fas fa-plus"></i></button>`;
+    }
+    c.innerHTML = h;
+}
+
+function showManageHeaderLinksModal() {
+    const list = document.getElementById('manageHeaderLinksList');
+    list.innerHTML = (DB.headerLinks.length ? DB.headerLinks : [{ name: '', url: '' }]).map((l, i) => `
+        <div class="external-link-item" style="margin-bottom:0.5rem">
+            <input type="text" placeholder="Nama Link" class="h-link-name" value="${l.name}" style="flex:1">
+            <input type="text" placeholder="URL" class="h-link-url" value="${l.url}" style="flex:2">
+            <button class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+        </div>
+    `).join('');
+    document.getElementById('headerLinksModal').classList.add('active');
+}
+
+function addHeaderLinkField() {
+    const d = document.createElement('div');
+    d.className = 'external-link-item';
+    d.style.marginBottom = '0.5rem';
+    d.innerHTML = `<input type="text" placeholder="Nama Link" class="h-link-name" style="flex:1">
+                   <input type="text" placeholder="URL" class="h-link-url" style="flex:2">
+                   <button class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>`;
+    document.getElementById('manageHeaderLinksList').appendChild(d);
+}
+
+function saveHeaderLinks() {
+    const newLinks = [];
+    document.querySelectorAll('#manageHeaderLinksList .external-link-item').forEach(item => {
+        const name = item.querySelector('.h-link-name').value.trim();
+        const url = item.querySelector('.h-link-url').value.trim();
+        if (name && url) newLinks.push({ name, url });
+    });
+    DB.headerLinks = newLinks;
+    saveData();
+    renderHeaderLinks();
+    closeModal('headerLinksModal');
+    showToast('Link header berhasil diperbarui!', 'success');
 }
 
 // ===== SEARCH =====
