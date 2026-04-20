@@ -27,13 +27,14 @@
             </nav>
             <div class="header-search" id="headerSearch" style="display:none">
                 <div class="search-box">
-                    <i class="fas fa-search"></i>
                     <input type="text" id="searchInput" placeholder="Cari..."
                            oninput="debouncedSearch()"
                            onkeydown="onSearchKeyDown(event)">
                     <button class="search-clear" onclick="clearSearch()" id="searchClear">
                         <i class="fas fa-times"></i>
                     </button>
+                    <div class="search-divider"></div>
+                    <i class="fas fa-search search-icon-right"></i>
                 </div>
             </div>
             <div class="header-actions" id="headerActions">
