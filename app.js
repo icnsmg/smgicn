@@ -343,7 +343,12 @@ function renderCard(k) {
     const linksHtml = (k.links && k.links.length)
         ? `<div class="card-links-inline" onclick="event.stopPropagation()">${k.links.map(l => `<a href="${l.url}" class="card-btn" target="_blank" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> ${l.name}</a>`).join('')}</div>` : '';
 
-    const statusBadge = (k.status === 'Tidak Berlaku') ? `<span class="card-status invalid" style="padding:.2rem .65rem;font-size:.7rem;font-weight:600;text-transform:uppercase;border-radius:var(--radius-full);background:var(--error);color:#fff">TIDAK BERLAKU</span>` : '';
+    let statusBadge = '';
+    if (k.status === 'Tidak Berlaku') {
+        statusBadge = `<span class="card-status invalid" style="padding:.2rem .65rem;font-size:.7rem;font-weight:700;text-transform:uppercase;border-radius:var(--radius-full);background:var(--error);color:#fff">TIDAK BERLAKU</span>`;
+    } else {
+        statusBadge = `<span class="card-status valid" style="padding:.2rem .65rem;font-size:.7rem;font-weight:700;text-transform:uppercase;border-radius:var(--radius-full);background:var(--primary);color:#fff">BERLAKU</span>`;
+    }
 
     return `<div class="content-card ${k.status === 'Tidak Berlaku' ? 'inactive-card' : ''}" onclick="toggleCard(${k.id})">
     <div class="card-header">
