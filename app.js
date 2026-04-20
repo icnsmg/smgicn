@@ -355,6 +355,7 @@ function renderCard(k) {
 }
 
 function toggleCard(id) {
+    if (window.getSelection().toString().length > 0) return;
     if (expandedCards.has(id)) expandedCards.delete(id); else expandedCards.add(id);
     renderCards();
     if (searchNavActive) setTimeout(() => {
