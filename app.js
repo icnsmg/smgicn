@@ -1,4 +1,4 @@
-﻿// ===== KABINET APP =====
+// ===== KABINET APP =====
 const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'contact1234' };
 
 const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'KATEGORI', 'PROMO'], konten: [], harga: [], kritik: [] };
@@ -183,7 +183,14 @@ const debouncedSearch = debounce(() => {
 }, 280);
 
 function onSearchKeyDown(e) {
-    if (e.key === 'Enter') { e.preventDefault(); enterSearchNav(); }
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        if (searchNavActive) {
+            nextMatch();
+        } else {
+            enterSearchNav();
+        }
+    }
 }
 
 function clearSearch() {
@@ -322,13 +329,14 @@ function renderCard(k) {
     const showMore = k.content && stripHtml(k.content).trim().length > 0;
     let subjectDisplay = searchQuery ? highlightWords(subjectHtml, searchQuery) : subjectHtml;
     let contentDisplay = searchQuery ? highlightWords(k.content || '', searchQuery) : (k.content || '');
+    let judulDisplay = searchQuery ? highlightWords(k.judul || '', searchQuery) : (k.judul || '');
 
     const linksHtml = (k.links && k.links.length)
         ? `<div class="card-links-inline" onclick="event.stopPropagation()">${k.links.map(l => `<a href="${l.url}" class="card-btn" target="_blank" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> ${l.name}</a>`).join('')}</div>` : '';
 
     return `<div class="content-card" onclick="toggleCard(${k.id})">
     <div class="card-header">
-      <h3 class="card-title">${k.judul}</h3>
+      <h3 class="card-title">${judulDisplay}</h3>
       <div class="card-meta">
         <span class="card-klasifikasi">${k.klasifikasi}</span>
         <span class="card-date">${formatDate(k.tanggal)}</span>
