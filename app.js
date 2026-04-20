@@ -343,10 +343,13 @@ function renderCard(k) {
     const linksHtml = (k.links && k.links.length)
         ? `<div class="card-links-inline" onclick="event.stopPropagation()">${k.links.map(l => `<a href="${l.url}" class="card-btn" target="_blank" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> ${l.name}</a>`).join('')}</div>` : '';
 
-    return `<div class="content-card" onclick="toggleCard(${k.id})">
+    const statusBadge = (k.status === 'Tidak Berlaku') ? `<span class="card-status invalid" style="padding:.2rem .65rem;font-size:.7rem;font-weight:600;text-transform:uppercase;border-radius:var(--radius-full);background:var(--error);color:#fff">TIDAK BERLAKU</span>` : '';
+
+    return `<div class="content-card ${k.status === 'Tidak Berlaku' ? 'inactive-card' : ''}" onclick="toggleCard(${k.id})">
     <div class="card-header">
       <h3 class="card-title">${judulDisplay}</h3>
       <div class="card-meta">
+        ${statusBadge}
         <span class="card-klasifikasi">${k.klasifikasi}</span>
         <span class="card-date">${formatDate(k.tanggal)}</span>
       </div>
@@ -424,12 +427,14 @@ function showContentForm(id = null) {
         document.getElementById('contentJudul').value = k.judul;
         document.getElementById('contentTanggal').value = k.tanggal;
         document.getElementById('contentKlasifikasi').value = k.klasifikasi;
+        document.getElementById('contentStatus').value = k.status || 'Berlaku';
         document.getElementById('contentSubjectEditor').innerHTML = k.subject || '';
         document.getElementById('contentEditor').innerHTML = k.content || '';
         renderExternalLinks(k.links || []);
     } else {
         document.getElementById('contentJudul').value = '';
         document.getElementById('contentTanggal').value = new Date().toISOString().split('T')[0];
+        document.getElementById('contentStatus').value = 'Berlaku';
         document.getElementById('contentSubjectEditor').innerHTML = '';
         document.getElementById('contentEditor').innerHTML = '';
         renderExternalLinks([]);
@@ -460,6 +465,7 @@ function saveContent() {
     const judul = document.getElementById('contentJudul').value.trim();
     const tanggal = document.getElementById('contentTanggal').value;
     const klasifikasi = document.getElementById('contentKlasifikasi').value;
+    const status = document.getElementById('contentStatus').value;
     const subjectEl = document.getElementById('contentSubjectEditor');
     const subject = subjectEl.innerHTML.trim();
     const subjectText = subjectEl.textContent.trim();
@@ -472,9 +478,9 @@ function saveContent() {
     });
     if (editingContentId) {
         const idx = DB.konten.findIndex(k => k.id === editingContentId);
-        DB.konten[idx] = { id: editingContentId, judul, tanggal, klasifikasi, subject, content, links };
+        DB.konten[idx] = { id: editingContentId, judul, tanggal, klasifikasi, status, subject, content, links };
     } else {
-        DB.konten.push({ id: Date.now(), judul, tanggal, klasifikasi, subject, content, links });
+        DB.konten.push({ id: Date.now(), judul, tanggal, klasifikasi, status, subject, content, links });
     }
     saveData(); closeModal('contentModal'); renderKontenView(); showToast('Konten berhasil disimpan!', 'success');
 }
