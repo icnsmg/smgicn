@@ -1,1009 +1,773 @@
-// Kabinet - Knowledge Base Application
-const DEFAULT_PASSWORDS = {
-    admin: 'smg1234',
-    user: 'contact1234'
-};
+﻿// ===== KABINET APP =====
+const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'contact1234' };
 
-const DB = {
-    companyName: 'Kabinet',
-    companyLogo: '',
-    klasifikasi: ['INFO', 'KATEGORI', 'PROMO'],
-    konten: [],
-    harga: [],
-    kritik: []
-};
+const DB = { companyName:'Kabinet', companyLogo:'', klasifikasi:['INFO','KATEGORI','PROMO'], konten:[], harga:[], kritik:[] };
 
-// Konfigurasi Firebase dari User
 const firebaseConfig = {
-  apiKey: "AIzaSyD-C0pQl8Zd6baTg28RijkYncQdvBW_ewE",
-  authDomain: "kabinetsmg.firebaseapp.com",
-  projectId: "kabinetsmg",
-  storageBucket: "kabinetsmg.firebasestorage.app",
-  messagingSenderId: "372702391149",
-  appId: "1:372702391149:web:ed6a9bca4070cf84110864",
-  measurementId: "G-H4TLG98W2M",
-  // Karena loading muter terus, kemungkinan besar database Anda ada di US Central (default).
-  // Mari kita gunakan format default:
-  databaseURL: "https://kabinetsmg-default-rtdb.firebaseio.com"
+  apiKey:"AIzaSyD-C0pQl8Zd6baTg28RijkYncQdvBW_ewE",
+  authDomain:"kabinetsmg.firebaseapp.com",
+  projectId:"kabinetsmg",
+  storageBucket:"kabinetsmg.firebasestorage.app",
+  messagingSenderId:"372702391149",
+  appId:"1:372702391149:web:ed6a9bca4070cf84110864",
+  measurementId:"G-H4TLG98W2M",
+  databaseURL:"https://kabinetsmg-default-rtdb.firebaseio.com"
 };
 
-// Inisialisasi Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-function initData() {
-    // Tampilkan loading saat pertama kali load data dari Firebase
-    document.getElementById('loadingOverlay').style.display = 'flex';
-
-    const dbRef = database.ref('kabinetDB');
-    
-    // Dengarkan perubahan data secara real-time
-    dbRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        
-        if (data) {
-            // Update local DB object
-            Object.assign(DB, data);
-            
-            // Pastikan array selalu ada meskipun kosong (Firebase biasanya menghilangkan array kosong)
-            DB.konten = DB.konten || [];
-            DB.harga = DB.harga || [];
-            DB.kritik = DB.kritik || [];
-            DB.klasifikasi = DB.klasifikasi || ['INFO', 'KATEGORI', 'PROMO'];
-            
-            // Render ulang tampilan jika sedang login
-            if (currentUser === 'admin') {
-                renderContentList();
-                renderKlasifikasi();
-                renderHargaTable();
-                renderKritikList();
-            } else if (currentUser === 'user') {
-                renderCards();
-                renderFilterPills();
-                renderUserContentList();
-            }
-        } else {
-            // Jika database kosong, masukkan data default
-            DB.konten = [
-                {
-                    id: 1,
-                    judul: 'Cara Memesan Layanan',
-                    tanggal: '2026-04-15',
-                    klasifikasi: 'INFO',
-                    subject: 'Panduan lengkap cara memesan layanan kami melalui platform online.',
-                    content: '<p>Untuk memesan layanan kami, Anda dapat mengikuti langkah-langkah berikut:</p><ul><li>Kunjungi website resmi kami</li><li>Pilih layanan yang diinginkan</li><li>Isi formulir pemesanan</li><li>Konfirmasi pembayaran</li></ul><p>Tim kami akan menghubungi Anda dalam 24 jam untuk proses lebih lanjut.</p>',
-                    links: [{ name: 'Panduan Lengkap', url: '#' }]
-                },
-                {
-                    id: 2,
-                    judul: 'Paket Layanan HEBAT',
-                    tanggal: '2026-04-14',
-                    klasifikasi: 'PROMO',
-                    subject: 'Dapatkan paket layanan HEBAT dengan harga spesial untuk bulan ini.',
-                    content: '<p>Paket HEBAT adalah solusi terbaik untuk kebutuhan internet Anda dengan berbagai keunggulan:</p><ol><li>Kecepatan tinggi hingga 100 Mbps</li><li>Unlimited quota</li><li>Gratis installasi</li><li>Priority support 24/7</li></ol><p>Ayo segera pilih paket yang paling sesuai dengan kebutuhan Anda!</p>',
-                    links: [{ name: 'Daftar Sekarang', url: '#' }]
-                },
-                {
-                    id: 3,
-                    judul: 'Area Layanan Kami',
-                    tanggal: '2026-04-13',
-                    klasifikasi: 'KATEGORI',
-                    subject: 'Kami melayani area Jawa, Bali, Sumatera, dan Kalimantan.',
-                    content: '<p>Saat ini layanan kami tersedia di wilayah:</p><ul><li><strong>Jawa & Bali:</strong> Jakarta, Bogor, Depok, Tangerang, Bekasi, Surabaya, Bandung, Yogyakarta, Bali</li><li><strong>Sumatera:</strong> Medan, Palembang, Lampung, Padang</li><li><strong>Kalimantan:</strong> Banjarmasin, Samarinda, Balikpapan</li></ul><p>Kami terus memperluas jaringan untuk melayani Anda di kota-kota lain.</p>',
-                    links: []
-                }
-            ];
-            DB.harga = [
-                { bulan: 'APR', regional: 'Jawa & Bali', jenis: 'Baru', paket: 'Reguler', biaya: 250000, harga: 350000 },
-                { bulan: 'APR', regional: 'Jawa & Bali', jenis: 'Existing', paket: 'Reguler', biaya: 0, harga: 350000 },
-                { bulan: 'APR', regional: 'Jawa & Bali', jenis: 'Baru', paket: 'HEBAT 3', biaya: 200000, harga: 450000 },
-                { bulan: 'APR', regional: 'Jawa & Bali', jenis: 'Baru', paket: 'HEBAT 6', biaya: 150000, harga: 850000 },
-                { bulan: 'APR', regional: 'Sumatera & Kalimantan', jenis: 'Baru', paket: 'Reguler', biaya: 300000, harga: 400000 },
-                { bulan: 'APR', regional: 'Sumatera & Kalimantan', jenis: 'Existing', paket: 'Reguler', biaya: 0, harga: 400000 }
-            ];
-            saveData();
-        }
-        
-        loadSettings();
-        document.getElementById('loadingOverlay').style.display = 'none';
-        
-        // Memeriksa jika config masih YOUR_API_KEY
-        if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-            setTimeout(() => {
-                showToast('PERINGATAN: Konfigurasi Firebase belum diisi! Data tidak akan tersimpan secara online.', 'error');
-            }, 1000);
-        }
-    });
-}
-
-function saveData() {
-    // Simpan ke Firebase Realtime Database
-    if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
-        database.ref('kabinetDB').set(DB)
-            .catch(error => {
-                console.error("Error saving data:", error);
-                showToast('Gagal menyimpan data ke server.', 'error');
-            });
-    } else {
-        console.warn("Firebase tidak terkonfigurasi. Simpan dibatalkan.");
-    }
-}
-
-function loadSettings() {
-    if (DB.companyName) {
-        document.querySelector('.logo span').textContent = DB.companyName;
-        document.getElementById('companyName').value = DB.companyName;
-    }
-}
-
+// ===== STATE =====
 let currentUser = null;
+let currentTab = 'konten';
 let currentFilter = 'all';
 let searchQuery = '';
 let currentPage = 1;
-const itemsPerPage = 7;
+const ITEMS_PER_PAGE = 7;
 let editingContentId = null;
 let expandedCards = new Set();
-
-document.addEventListener('DOMContentLoaded', function() {
-    initData();
-    checkLoginStatus();
-});
-
+let searchMatches = [];
+let searchActiveIndex = -1;
+let searchNavActive = false;
+let hargaSortCol = null;
+let hargaSortDir = 1;
 let loginType = 'admin';
 
+// ===== DEBOUNCE =====
+function debounce(fn, ms) {
+  let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+}
+
+// ===== FIREBASE =====
+function initData() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+  database.ref('kabinetDB').on('value', snap => {
+    const data = snap.val();
+    if (data) {
+      Object.assign(DB, data);
+      DB.konten = DB.konten || [];
+      DB.harga = DB.harga || [];
+      DB.kritik = DB.kritik || [];
+      DB.klasifikasi = DB.klasifikasi || ['INFO','KATEGORI','PROMO'];
+    } else {
+      DB.konten = [
+        { id:1, judul:'Cara Memesan Layanan', tanggal:'2026-04-15', klasifikasi:'INFO', subject:'Panduan lengkap cara memesan layanan kami melalui platform online.', content:'<p>Ikuti langkah-langkah berikut:</p><ul><li>Kunjungi website resmi</li><li>Pilih layanan</li><li>Isi formulir</li><li>Konfirmasi pembayaran</li></ul>', links:[{name:'Panduan Lengkap',url:'#'}] },
+        { id:2, judul:'Paket Layanan HEBAT', tanggal:'2026-04-14', klasifikasi:'PROMO', subject:'Dapatkan paket HEBAT dengan harga spesial bulan ini.', content:'<p>Keunggulan paket HEBAT:</p><ol><li>100 Mbps</li><li>Unlimited quota</li><li>Gratis instalasi</li></ol>', links:[{name:'Daftar Sekarang',url:'#'}] },
+        { id:3, judul:'Area Layanan', tanggal:'2026-04-13', klasifikasi:'KATEGORI', subject:'Kami melayani Jawa, Bali, Sumatera, dan Kalimantan.', content:'<p>Tersedia di: Jawa & Bali, Sumatera, Kalimantan.</p>', links:[] }
+      ];
+      DB.harga = [
+        {bulan:'APR',regional:'Jawa & Bali',jenis:'Baru',paket:'Reguler',biaya:250000,harga:350000},
+        {bulan:'APR',regional:'Jawa & Bali',jenis:'Existing',paket:'Reguler',biaya:0,harga:350000}
+      ];
+      saveData();
+    }
+    loadSettings();
+    document.getElementById('loadingOverlay').style.display = 'none';
+    if (currentUser) refreshCurrentTab();
+  });
+}
+
+function saveData() {
+  if (firebaseConfig.apiKey !== 'YOUR_API_KEY')
+    database.ref('kabinetDB').set(DB).catch(() => showToast('Gagal menyimpan data','error'));
+}
+
+function loadSettings() {
+  if (DB.companyName) {
+    document.querySelector('.logo span').textContent = DB.companyName;
+    const el = document.getElementById('companyName');
+    if (el) el.value = DB.companyName;
+  }
+}
+
+// ===== AUTH =====
+document.addEventListener('DOMContentLoaded', () => { initData(); checkLoginStatus(); });
+
 function showLoginModal(type) {
-    loginType = type;
-    document.getElementById('loginTitle').textContent = type === 'admin' ? 'Login Admin' : 'Login User';
-    document.getElementById('loginModal').classList.add('active');
-    document.getElementById('loginPassword').value = '';
-    document.getElementById('loginError').style.display = 'none';
+  loginType = type;
+  document.getElementById('loginTitle').textContent = type==='admin' ? 'Login Admin' : 'Login User';
+  document.getElementById('loginModal').classList.add('active');
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').style.display = 'none';
 }
 
 function handleLogin() {
-    const password = document.getElementById('loginPassword').value;
-    const expected = DEFAULT_PASSWORDS[loginType];
-    console.log('Login type:', loginType);
-    console.log('Expected password:', expected);
-    console.log('Input password:', password);
-    
-    if (password === expected) {
-        currentUser = loginType;
-        localStorage.setItem('kabinetUser', loginType);
-        closeModal('loginModal');
-        showMainContent();
-        showToast('Berhasil login sebagai ' + (loginType === 'admin' ? 'Admin' : 'User'), 'success');
-    } else {
-        document.getElementById('loginError').style.display = 'block';
-    }
+  const pw = document.getElementById('loginPassword').value;
+  if (pw === DEFAULT_PASSWORDS[loginType]) {
+    currentUser = loginType;
+    localStorage.setItem('kabinetUser', loginType);
+    closeModal('loginModal');
+    showMainContent();
+    showToast('Berhasil login sebagai ' + (loginType==='admin'?'Admin':'User'), 'success');
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
 }
 
 function logout() {
-    currentUser = null;
-    localStorage.removeItem('kabinetUser');
-    showLandingPage();
-    showToast('Berhasil logout', 'info');
+  currentUser = null;
+  localStorage.removeItem('kabinetUser');
+  showLandingPage();
+  showToast('Berhasil logout', 'info');
 }
 
 function checkLoginStatus() {
-    const saved = localStorage.getItem('kabinetUser');
-    if (saved) {
-        currentUser = saved;
-        showMainContent();
-    } else {
-        showLandingPage();
-    }
+  const saved = localStorage.getItem('kabinetUser');
+  if (saved) { currentUser = saved; showMainContent(); }
+  else showLandingPage();
 }
 
 function showLandingPage() {
-    document.getElementById('landingPage').style.display = 'flex';
-    document.getElementById('searchSection').style.display = 'none';
-    document.getElementById('cardsSection').style.display = 'none';
-    document.getElementById('adminPanel').style.display = 'none';
-    document.getElementById('userPanel').style.display = 'none';
-    document.getElementById('floatingBtn').classList.add('hidden');
-    
-    const headerActions = document.getElementById('headerActions');
-    headerActions.innerHTML = `
-        <button class="btn btn-outline" onclick="showLoginModal('admin')">
-            <i class="fas fa-user-shield"></i> Login Admin
-        </button>
-        <button class="btn btn-primary" onclick="showLoginModal('user')">
-            <i class="fas fa-user"></i> Login User
-        </button>
-    `;
+  document.getElementById('landingPage').style.display = 'flex';
+  hideAllViews();
+  document.getElementById('mainNav').classList.remove('visible');
+  document.getElementById('floatingBtn').style.display = 'none';
+  document.getElementById('headerActions').innerHTML = `
+    <button class="btn btn-outline" onclick="showLoginModal('admin')"><i class="fas fa-user-shield"></i> Login Admin</button>
+    <button class="btn btn-primary" onclick="showLoginModal('user')"><i class="fas fa-user"></i> Login User</button>`;
+}
+
+function hideAllViews() {
+  ['viewKonten','viewHarga','viewKritik','viewSettings'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
 }
 
 function showMainContent() {
-    document.getElementById('landingPage').style.display = 'none';
-    document.getElementById('searchSection').style.display = 'block';
-    document.getElementById('cardsSection').style.display = 'block';
-    
-    const headerActions = document.getElementById('headerActions');
-    const floatingBtn = document.getElementById('floatingBtn');
-    
-    if (currentUser === 'admin') {
-        headerActions.innerHTML = `
-            <button class="btn btn-outline" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-        `;
-        document.getElementById('adminPanel').style.display = 'block';
-        document.getElementById('userPanel').style.display = 'none';
-        document.getElementById('cardsSection').style.display = 'none';
-        floatingBtn.classList.add('hidden');
-        renderContentList();
-        renderKlasifikasi();
-        renderHargaTable();
-        renderKritikList();
-    } else {
-        headerActions.innerHTML = `
-            <button class="btn btn-outline" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-        `;
-        document.getElementById('adminPanel').style.display = 'none';
-        document.getElementById('userPanel').style.display = 'block';
-        floatingBtn.classList.remove('hidden');
-        renderCards();
-        renderFilterPills();
-        renderUserContentList();
-    }
+  document.getElementById('landingPage').style.display = 'none';
+  document.getElementById('mainNav').classList.add('visible');
+  document.getElementById('floatingBtn').style.display = currentUser==='user' ? 'flex' : 'none';
+  const ha = document.getElementById('headerActions');
+  if (currentUser === 'admin') {
+    ha.innerHTML = `
+      <button class="btn btn-sm btn-outline" onclick="switchTab('settings')"><i class="fas fa-cog"></i></button>
+      <button class="btn btn-sm btn-outline" onclick="showAdminKontenModal()"><i class="fas fa-list"></i> Kelola</button>
+      <button class="btn btn-sm btn-outline" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>`;
+  } else {
+    ha.innerHTML = `<button class="btn btn-outline" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>`;
+  }
+  switchTab('konten');
 }
 
-function handleSearch() {
-    const input = document.getElementById('searchInput');
-    searchQuery = input.value.trim();
-    document.getElementById('searchClear').classList.toggle('visible', searchQuery.length > 0);
-    currentPage = 1;
-    renderCards();
+// ===== TAB NAVIGATION =====
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  hideAllViews();
+  const view = document.getElementById('view' + tab.charAt(0).toUpperCase() + tab.slice(1));
+  if (view) view.style.display = 'block';
+  if (tab==='konten') renderKontenView();
+  else if (tab==='harga') renderHargaView();
+  else if (tab==='kritik') renderKritikView();
+}
+
+function refreshCurrentTab() { switchTab(currentTab); }
+
+// ===== KONTEN VIEW =====
+function renderKontenView() {
+  renderFilterPills();
+  const bar = document.getElementById('adminKontenBar');
+  if (bar) bar.style.display = currentUser==='admin' ? 'flex' : 'none';
+  if (currentUser==='admin') renderKlasifikasi();
+  renderCards();
+}
+
+// ===== SEARCH =====
+const debouncedSearch = debounce(() => {
+  searchQuery = document.getElementById('searchInput').value.trim();
+  document.getElementById('searchClear').classList.toggle('visible', searchQuery.length > 0);
+  exitSearchNav();
+  currentPage = 1;
+  renderCards();
+}, 280);
+
+function onSearchKeyDown(e) {
+  if (e.key === 'Enter') { e.preventDefault(); enterSearchNav(); }
 }
 
 function clearSearch() {
-    document.getElementById('searchInput').value = '';
-    searchQuery = '';
-    document.getElementById('searchClear').classList.remove('visible');
-    currentPage = 1;
-    renderCards();
+  document.getElementById('searchInput').value = '';
+  searchQuery = '';
+  document.getElementById('searchClear').classList.remove('visible');
+  exitSearchNav();
+  currentPage = 1;
+  renderCards();
+}
+
+function enterSearchNav() {
+  searchMatches = [...document.querySelectorAll('#cardsContainer .highlight-text')];
+  if (!searchMatches.length) { showToast('Tidak ada hasil ditemukan','info'); return; }
+  searchNavActive = true;
+  searchActiveIndex = 0;
+  updateActiveHighlight();
+  showSearchNavBar();
+}
+
+function exitSearchNav() {
+  searchNavActive = false;
+  searchMatches = [];
+  searchActiveIndex = -1;
+  document.querySelectorAll('.highlight-active').forEach(el => {
+    el.classList.remove('highlight-active');
+  });
+  const nb = document.getElementById('searchNavBar');
+  if (nb) nb.style.display = 'none';
+}
+
+function nextMatch() {
+  if (!searchMatches.length) return;
+  searchActiveIndex = (searchActiveIndex + 1) % searchMatches.length;
+  updateActiveHighlight();
+}
+
+function prevMatch() {
+  if (!searchMatches.length) return;
+  searchActiveIndex = (searchActiveIndex - 1 + searchMatches.length) % searchMatches.length;
+  updateActiveHighlight();
+}
+
+function updateActiveHighlight() {
+  searchMatches.forEach((el, i) => el.classList.toggle('highlight-active', i === searchActiveIndex));
+  if (searchMatches[searchActiveIndex]) {
+    searchMatches[searchActiveIndex].scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+  document.getElementById('snbPos').textContent = `${searchActiveIndex+1} / ${searchMatches.length}`;
+}
+
+function showSearchNavBar() {
+  const nb = document.getElementById('searchNavBar');
+  nb.style.display = 'flex';
+  document.getElementById('snbCount').textContent = `${searchMatches.length} hasil ditemukan`;
+  document.getElementById('snbPos').textContent = `1 / ${searchMatches.length}`;
 }
 
 function fuzzyMatch(text, query) {
-    if (!query) return true;
-    const textLower = text.toLowerCase();
-    const queryLower = query.toLowerCase();
-    
-    if (textLower.includes(queryLower)) return true;
-    
-    let mismatches = 0;
-    for (let i = 0; i < queryLower.length && mismatches <= 1; i++) {
-        if (!textLower.includes(queryLower[i])) {
-            mismatches++;
-        }
-    }
-    return mismatches <= 1;
+  if (!query) return true;
+  const t = text.toLowerCase(), q = query.toLowerCase();
+  if (t.includes(q)) return true;
+  let mismatches = 0;
+  for (let i = 0; i < q.length && mismatches <= 1; i++) {
+    if (!t.includes(q[i])) mismatches++;
+  }
+  return mismatches <= 1;
 }
 
-function filterByCategory(category) {
-    currentFilter = category;
-    document.querySelectorAll('.filter-pills .pill').forEach(pill => {
-        pill.classList.toggle('active', pill.dataset.filter === category);
-    });
-    currentPage = 1;
-    renderCards();
+function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+function stripHtml(html) {
+  const d = document.createElement('div'); d.innerHTML = html;
+  return d.textContent || d.innerText || '';
+}
+
+function highlightWords(html, query) {
+  if (!query) return html;
+  const words = query.trim().split(/\s+/).filter(w => w.length > 0);
+  let result = html;
+  words.forEach(word => {
+    const rx = new RegExp(`(${escapeRegex(word)})`, 'gi');
+    result = result.replace(rx, '<span class="highlight-text">$1</span>');
+  });
+  return result;
+}
+
+// ===== FILTER =====
+function filterByCategory(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-pills .pill').forEach(p => p.classList.toggle('active', p.dataset.filter === cat));
+  currentPage = 1;
+  renderCards();
 }
 
 function renderFilterPills() {
-    const container = document.getElementById('filterPills');
-    const pills = ['all', ...DB.klasifikasi];
-    container.innerHTML = pills.map(cat => `
-        <button class="pill ${cat === 'all' || cat === currentFilter ? 'active' : ''}" 
-                data-filter="${cat}" 
-                onclick="filterByCategory('${cat}')">
-            ${cat === 'all' ? 'Semua' : cat}
-        </button>
-    `).join('');
+  const c = document.getElementById('filterPills');
+  if (!c) return;
+  const cats = ['all', ...DB.klasifikasi];
+  c.innerHTML = cats.map(cat => `<button class="pill ${cat===currentFilter||(!currentFilter&&cat==='all')?'active':''}" data-filter="${cat}" onclick="filterByCategory('${cat}')">${cat==='all'?'Semua':cat}</button>`).join('');
 }
 
+// ===== RENDER CARDS =====
 function renderCards() {
-    const container = document.getElementById('cardsContainer');
-    let filtered = DB.konten;
-    
-    if (currentFilter !== 'all') {
-        filtered = filtered.filter(k => k.klasifikasi === currentFilter);
-    }
-    
-    if (searchQuery) {
-        const queryWords = searchQuery.trim().split(/\s+/).filter(w => w.length > 0);
-        filtered = filtered.filter(k => {
-            const subjectText = stripHtml(k.subject || '');
-            const contentText = stripHtml(k.content || '');
-            return queryWords.some(word =>
-                fuzzyMatch(k.judul, word) ||
-                fuzzyMatch(subjectText, word) ||
-                fuzzyMatch(contentText, word)
-            );
-        });
-    }
-    
-    filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-    
-    const totalPages = Math.ceil(filtered.length / itemsPerPage);
-    const start = (currentPage - 1) * itemsPerPage;
-    const paginated = filtered.slice(start, start + itemsPerPage);
-    
-    if (paginated.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-folder-open"></i>
-                <p>Tidak ada konten yang ditemukan</p>
-            </div>
-        `;
-    } else {
-        container.innerHTML = paginated.map(k => renderCard(k)).join('');
-    }
-    
-    renderPagination(totalPages);
+  const c = document.getElementById('cardsContainer');
+  if (!c) return;
+  let items = [...DB.konten];
+  if (currentFilter !== 'all') items = items.filter(k => k.klasifikasi === currentFilter);
+  if (searchQuery) {
+    const words = searchQuery.trim().split(/\s+/).filter(w => w.length > 0);
+    items = items.filter(k => words.some(w =>
+      fuzzyMatch(k.judul, w) || fuzzyMatch(stripHtml(k.subject||''), w) || fuzzyMatch(stripHtml(k.content||''), w)
+    ));
+    const rb = document.getElementById('resultBar');
+    if (rb) { rb.style.display = 'block'; document.getElementById('resultBarText').textContent = `${items.length} konten ditemukan untuk "${searchQuery}"`; }
+  } else {
+    const rb = document.getElementById('resultBar'); if (rb) rb.style.display = 'none';
+  }
+  items.sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+  const total = Math.ceil(items.length / ITEMS_PER_PAGE);
+  if (currentPage > total) currentPage = 1;
+  const paged = items.slice((currentPage-1)*ITEMS_PER_PAGE, currentPage*ITEMS_PER_PAGE);
+  if (!paged.length) {
+    c.innerHTML = '<div class="empty-state"><i class="fas fa-folder-open"></i><p>Tidak ada konten ditemukan</p></div>';
+  } else {
+    c.innerHTML = paged.map(k => renderCard(k)).join('');
+  }
+  renderPagination(total);
 }
 
-function highlightWords(text, query) {
-    if (!query) return text;
-    // Strip HTML tags for plain text highlighting
-    const div = document.createElement('div');
-    div.innerHTML = text;
-    const plainText = div.textContent || div.innerText || '';
-    // Split query into individual words and highlight each
-    const words = query.trim().split(/\s+/).filter(w => w.length > 0);
-    let result = text;
-    words.forEach(word => {
-        const regex = new RegExp(`(${escapeRegex(word)})`, 'gi');
-        result = result.replace(regex, '<span class="highlight-text">$1</span>');
-    });
-    return result;
-}
+function renderCard(k) {
+  const expanded = expandedCards.has(k.id);
+  const subjectHtml = k.subject || '';
+  const subjectText = stripHtml(subjectHtml);
+  const wc = subjectText.split(/\s+/).filter(w=>w).length;
+  const showMore = k.content && stripHtml(k.content).trim().length > 0;
+  let subjectDisplay = searchQuery ? highlightWords(subjectHtml, searchQuery) : subjectHtml;
+  let contentDisplay = searchQuery ? highlightWords(k.content||'', searchQuery) : (k.content||'');
 
-function renderCard(konten) {
-    const expanded = expandedCards.has(konten.id);
-    const subjectHtml = konten.subject || '';
-    const subjectText = (() => { const d = document.createElement('div'); d.innerHTML = subjectHtml; return d.textContent || d.innerText || ''; })();
-    const wordCount = subjectText.split(/\s+/).filter(w => w).length;
-    const showMore = wordCount > 200;
-    
-    let subject = subjectHtml;
-    if (searchQuery) {
-        subject = highlightWords(subjectHtml, searchQuery);
-    }
-    
-    const linksHtml = konten.links && konten.links.length > 0 ? `
-        <div class="card-links-inline" onclick="event.stopPropagation()">
-            ${konten.links.map(link => `
-                <a href="${link.url}" class="card-btn" target="_blank" onclick="event.stopPropagation()">
-                    <i class="fas fa-external-link-alt"></i> ${link.name}
-                </a>
-            `).join('')}
-        </div>
-    ` : '';
-    
-    return `
-        <div class="content-card" onclick="toggleCard(${konten.id})">
-            <div class="card-header">
-                <h3 class="card-title">${konten.judul}</h3>
-                <div class="card-meta">
-                    <span class="card-klasifikasi">${konten.klasifikasi}</span>
-                    <span class="card-date">${formatDate(konten.tanggal)}</span>
-                </div>
-            </div>
-            <div class="card-subject">${subject}</div>
-            ${linksHtml}
-            <div class="card-expand ${expanded ? 'expanded' : ''}">
-                <div class="card-content">${konten.content}</div>
-            </div>
-            ${showMore ? `
-                <button class="card-btn card-btn-expand" onclick="event.stopPropagation(); toggleCard(${konten.id})">
-                    ${expanded ? 'Tutup' : 'Selengkapnya'} <i class="fas fa-chevron-${expanded ? 'up' : 'down'}"></i>
-                </button>
-            ` : ''}
-        </div>
-    `;
+  const linksHtml = (k.links && k.links.length)
+    ? `<div class="card-links-inline" onclick="event.stopPropagation()">${k.links.map(l=>`<a href="${l.url}" class="card-btn" target="_blank" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> ${l.name}</a>`).join('')}</div>` : '';
+
+  return `<div class="content-card" onclick="toggleCard(${k.id})">
+    <div class="card-header">
+      <h3 class="card-title">${k.judul}</h3>
+      <div class="card-meta">
+        <span class="card-klasifikasi">${k.klasifikasi}</span>
+        <span class="card-date">${formatDate(k.tanggal)}</span>
+      </div>
+    </div>
+    <div class="card-subject">${subjectDisplay}</div>
+    ${linksHtml}
+    ${showMore ? `
+    <div class="card-expand ${expanded?'expanded':''}">
+      <div class="card-content">${contentDisplay}</div>
+    </div>
+    <button class="card-btn card-btn-expand" onclick="event.stopPropagation();toggleCard(${k.id})">
+      ${expanded?'Tutup':'Selengkapnya'} <i class="fas fa-chevron-${expanded?'up':'down'}"></i>
+    </button>` : ''}
+  </div>`;
 }
 
 function toggleCard(id) {
-    if (expandedCards.has(id)) {
-        expandedCards.delete(id);
-    } else {
-        expandedCards.add(id);
-    }
-    renderCards();
+  if (expandedCards.has(id)) expandedCards.delete(id); else expandedCards.add(id);
+  renderCards();
+  if (searchNavActive) setTimeout(() => {
+    searchMatches = [...document.querySelectorAll('#cardsContainer .highlight-text')];
+    if (searchActiveIndex >= searchMatches.length) searchActiveIndex = 0;
+    updateActiveHighlight();
+  }, 450);
 }
 
-function stripHtml(html) {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
+function renderPagination(total) {
+  const c = document.getElementById('pagination');
+  if (!c || total <= 1) { if(c) c.innerHTML=''; return; }
+  let h = `<button class="pagination-btn" onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
+  for (let i=1; i<=total; i++) {
+    if (i===1||i===total||(i>=currentPage-2&&i<=currentPage+2)) h+=`<button class="pagination-btn ${i===currentPage?'active':''}" onclick="changePage(${i})">${i}</button>`;
+    else if (i===currentPage-3||i===currentPage+3) h+=`<span class="pagination-btn">...</span>`;
+  }
+  h += `<button class="pagination-btn" onclick="changePage(${currentPage+1})" ${currentPage===total?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
+  c.innerHTML = h;
 }
 
-function renderPagination(totalPages) {
-    const container = document.getElementById('pagination');
-    if (totalPages <= 1) {
-        container.innerHTML = '';
-        return;
-    }
-    
-    let html = '';
-    
-    html += `<button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-        <i class="fas fa-chevron-left"></i>
-    </button>`;
-    
-    for (let i = 1; i <= totalPages; i++) {
-        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
-            html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-        } else if (i === currentPage - 3 || i === currentPage + 3) {
-            html += `<span class="pagination-btn">...</span>`;
-        }
-    }
-    
-    html += `<button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-        <i class="fas fa-chevron-right"></i>
-    </button>`;
-    
-    container.innerHTML = html;
-}
+function changePage(p) { currentPage=p; renderCards(); window.scrollTo({top:0,behavior:'smooth'}); }
 
-function changePage(page) {
-    currentPage = page;
-    renderCards();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function switchAdminTab(tab) {
-    document.querySelectorAll('#adminPanel .tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tab);
-    });
-    document.querySelectorAll('#adminPanel .tab-content').forEach(content => {
-        content.style.display = 'none';
-    });
-    document.getElementById('tab-' + tab).style.display = 'block';
-    
-    if (tab === 'konten') {
-        renderContentList();
-        renderKlasifikasi();
-    } else if (tab === 'harga') {
-        renderHargaTable();
-    } else if (tab === 'kritik') {
-        renderKritikList();
-    }
-}
-
-function renderContentList() {
-    const container = document.getElementById('contentList');
-    const sorted = [...DB.konten].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-    
-    if (sorted.length === 0) {
-        container.innerHTML = '<div class="empty-state"><p>Belum ada konten</p></div>';
-        return;
-    }
-    
-    container.innerHTML = sorted.map(k => `
-        <div class="content-item">
-            <div class="content-item-info">
-                <div class="content-item-title">${k.judul}</div>
-                <div class="content-item-meta">
-                    <span>${k.klasifikasi}</span>
-                    <span>${formatDate(k.tanggal)}</span>
-                </div>
-            </div>
-            <div class="content-item-actions">
-                <button class="btn btn-sm btn-outline" onclick="editContent(${k.id})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-danger" onclick="deleteContent(${k.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
+// ===== ADMIN KONTEN =====
+function showAdminKontenModal() {
+  renderContentList();
+  document.getElementById('adminKontenModal').classList.add('active');
 }
 
 function renderKlasifikasi() {
-    const container = document.getElementById('klasifikasiList');
-    const select = document.getElementById('contentKlasifikasi');
-    
-    container.innerHTML = DB.klasifikasi.map(k => `
-        <span class="klasifikasi-tag">
-            ${k}
-            <button onclick="deleteKlasifikasi('${k}')"><i class="fas fa-times"></i></button>
-        </span>
-    `).join('');
-    
-    select.innerHTML = DB.klasifikasi.map(k => `<option value="${k}">${k}</option>`).join('');
-}
-
-function showContentForm(id = null) {
-    editingContentId = id;
-    document.getElementById('contentModalTitle').textContent = id ? 'Edit Konten' : 'Tambah Konten';
-    
-    if (id) {
-        const konten = DB.konten.find(k => k.id === id);
-        document.getElementById('contentJudul').value = konten.judul;
-        document.getElementById('contentTanggal').value = konten.tanggal;
-        document.getElementById('contentKlasifikasi').value = konten.klasifikasi;
-        document.getElementById('contentSubjectEditor').innerHTML = konten.subject || '';
-        document.getElementById('contentEditor').innerHTML = konten.content;
-        renderExternalLinks(konten.links || []);
-    } else {
-        document.getElementById('contentJudul').value = '';
-        document.getElementById('contentTanggal').value = new Date().toISOString().split('T')[0];
-        document.getElementById('contentSubjectEditor').innerHTML = '';
-        document.getElementById('contentEditor').innerHTML = '';
-        renderExternalLinks([]);
-    }
-    
-    document.getElementById('contentModal').classList.add('active');
-    updateSubjectCount();
-}
-
-function renderExternalLinks(links) {
-    const container = document.getElementById('externalLinks');
-    if (links.length === 0) {
-        container.innerHTML = `
-            <div class="external-link-item">
-                <input type="text" placeholder="Nama file" class="link-name">
-                <input type="text" placeholder="URL (Drive, PPT, Excel, dll)" class="link-url">
-                <button type="button" class="btn-remove" onclick="removeLinkField(this)"><i class="fas fa-times"></i></button>
-            </div>
-        `;
-    } else {
-        container.innerHTML = links.map(link => `
-            <div class="external-link-item">
-                <input type="text" placeholder="Nama file" class="link-name" value="${link.name}">
-                <input type="text" placeholder="URL (Drive, PPT, Excel, dll)" class="link-url" value="${link.url}">
-                <button type="button" class="btn-remove" onclick="removeLinkField(this)"><i class="fas fa-times"></i></button>
-            </div>
-        `).join('');
-    }
-}
-
-function addLinkField() {
-    const container = document.getElementById('externalLinks');
-    const div = document.createElement('div');
-    div.className = 'external-link-item';
-    div.innerHTML = `
-        <input type="text" placeholder="Nama file" class="link-name">
-        <input type="text" placeholder="URL (Drive, PPT, Excel, dll)" class="link-url">
-        <button type="button" class="btn-remove" onclick="removeLinkField(this)"><i class="fas fa-times"></i></button>
-    `;
-    container.appendChild(div);
-}
-
-function removeLinkField(btn) {
-    btn.parentElement.remove();
-}
-
-function saveContent() {
-    const judul = document.getElementById('contentJudul').value.trim();
-    const tanggal = document.getElementById('contentTanggal').value;
-    const klasifikasi = document.getElementById('contentKlasifikasi').value;
-    const subjectEl = document.getElementById('contentSubjectEditor');
-    const subject = subjectEl.innerHTML.trim();
-    const subjectText = subjectEl.textContent.trim();
-    const content = document.getElementById('contentEditor').innerHTML;
-    
-    if (!judul || !subjectText) {
-        showToast('Judul dan Subject wajib diisi!', 'error');
-        return;
-    }
-    
-    const links = [];
-    document.querySelectorAll('.external-link-item').forEach(item => {
-        const name = item.querySelector('.link-name').value.trim();
-        const url = item.querySelector('.link-url').value.trim();
-        if (name && url) {
-            links.push({ name, url });
-        }
-    });
-    
-    if (editingContentId) {
-        const idx = DB.konten.findIndex(k => k.id === editingContentId);
-        DB.konten[idx] = {
-            id: editingContentId,
-            judul,
-            tanggal,
-            klasifikasi,
-            subject,
-            content,
-            links
-        };
-    } else {
-        DB.konten.push({
-            id: Date.now(),
-            judul,
-            tanggal,
-            klasifikasi,
-            subject,
-            content,
-            links
-        });
-    }
-    
-    saveData();
-    closeModal('contentModal');
-    renderContentList();
-    renderCards();
-    renderFilterPills();
-    showToast('Konten berhasil disimpan!', 'success');
-}
-
-function editContent(id) {
-    showContentForm(id);
-}
-
-function deleteContent(id) {
-    if (confirm('Apakah Anda yakin ingin menghapus konten ini?')) {
-        DB.konten = DB.konten.filter(k => k.id !== id);
-        saveData();
-        renderContentList();
-        renderCards();
-        showToast('Konten berhasil dihapus!', 'success');
-    }
+  const c = document.getElementById('klasifikasiList');
+  const sel = document.getElementById('contentKlasifikasi');
+  if (c) c.innerHTML = DB.klasifikasi.map(k=>`<span class="klasifikasi-tag">${k}<button onclick="deleteKlasifikasi('${k}')"><i class="fas fa-times"></i></button></span>`).join('');
+  if (sel) sel.innerHTML = DB.klasifikasi.map(k=>`<option value="${k}">${k}</option>`).join('');
 }
 
 function addKlasifikasi() {
-    const input = document.getElementById('newKlasifikasi');
-    const name = input.value.trim().toUpperCase();
-    
-    if (name && !DB.klasifikasi.includes(name)) {
-        DB.klasifikasi.push(name);
-        saveData();
-        input.value = '';
-        renderKlasifikasi();
-        renderFilterPills();
-        showToast('Klasifikasi berhasil ditambahkan!', 'success');
-    }
+  const inp = document.getElementById('newKlasifikasi');
+  const name = inp.value.trim().toUpperCase();
+  if (name && !DB.klasifikasi.includes(name)) {
+    DB.klasifikasi.push(name); saveData(); inp.value=''; renderKlasifikasi(); renderFilterPills(); showToast('Klasifikasi ditambahkan','success');
+  }
 }
 
 function deleteKlasifikasi(name) {
-    if (confirm(`Hapus klasifikasi "${name}"?`)) {
-        DB.klasifikasi = DB.klasifikasi.filter(k => k !== name);
-        saveData();
-        renderKlasifikasi();
-        renderFilterPills();
-        showToast('Klasifikasi berhasil dihapus!', 'success');
-    }
+  if (confirm(`Hapus klasifikasi "${name}"?`)) {
+    DB.klasifikasi = DB.klasifikasi.filter(k=>k!==name); saveData(); renderKlasifikasi(); renderFilterPills(); showToast('Klasifikasi dihapus','success');
+  }
+}
+
+function showContentForm(id=null) {
+  editingContentId = id;
+  document.getElementById('contentModalTitle').textContent = id ? 'Edit Konten' : 'Tambah Konten';
+  renderKlasifikasi();
+  if (id) {
+    const k = DB.konten.find(x=>x.id===id);
+    document.getElementById('contentJudul').value = k.judul;
+    document.getElementById('contentTanggal').value = k.tanggal;
+    document.getElementById('contentKlasifikasi').value = k.klasifikasi;
+    document.getElementById('contentSubjectEditor').innerHTML = k.subject||'';
+    document.getElementById('contentEditor').innerHTML = k.content||'';
+    renderExternalLinks(k.links||[]);
+  } else {
+    document.getElementById('contentJudul').value='';
+    document.getElementById('contentTanggal').value=new Date().toISOString().split('T')[0];
+    document.getElementById('contentSubjectEditor').innerHTML='';
+    document.getElementById('contentEditor').innerHTML='';
+    renderExternalLinks([]);
+  }
+  document.getElementById('contentModal').classList.add('active');
+  updateSubjectCount();
+}
+
+function renderExternalLinks(links) {
+  const c = document.getElementById('externalLinks');
+  c.innerHTML = (links.length ? links : [{}]).map(l=>`
+    <div class="external-link-item">
+      <input type="text" placeholder="Nama file" class="link-name" value="${l.name||''}">
+      <input type="text" placeholder="URL" class="link-url" value="${l.url||''}">
+      <button type="button" class="btn-remove" onclick="removeLinkField(this)"><i class="fas fa-times"></i></button>
+    </div>`).join('');
+}
+
+function addLinkField() {
+  const c = document.getElementById('externalLinks'), d = document.createElement('div');
+  d.className='external-link-item';
+  d.innerHTML=`<input type="text" placeholder="Nama file" class="link-name"><input type="text" placeholder="URL" class="link-url"><button type="button" class="btn-remove" onclick="removeLinkField(this)"><i class="fas fa-times"></i></button>`;
+  c.appendChild(d);
+}
+function removeLinkField(btn) { btn.parentElement.remove(); }
+
+function saveContent() {
+  const judul = document.getElementById('contentJudul').value.trim();
+  const tanggal = document.getElementById('contentTanggal').value;
+  const klasifikasi = document.getElementById('contentKlasifikasi').value;
+  const subjectEl = document.getElementById('contentSubjectEditor');
+  const subject = subjectEl.innerHTML.trim();
+  const subjectText = subjectEl.textContent.trim();
+  const content = document.getElementById('contentEditor').innerHTML;
+  if (!judul || !subjectText) { showToast('Judul dan Subject wajib diisi!','error'); return; }
+  const links = [];
+  document.querySelectorAll('.external-link-item').forEach(item => {
+    const n=item.querySelector('.link-name').value.trim(), u=item.querySelector('.link-url').value.trim();
+    if(n&&u) links.push({name:n,url:u});
+  });
+  if (editingContentId) {
+    const idx=DB.konten.findIndex(k=>k.id===editingContentId);
+    DB.konten[idx]={id:editingContentId,judul,tanggal,klasifikasi,subject,content,links};
+  } else {
+    DB.konten.push({id:Date.now(),judul,tanggal,klasifikasi,subject,content,links});
+  }
+  saveData(); closeModal('contentModal'); renderKontenView(); showToast('Konten berhasil disimpan!','success');
+}
+
+function renderContentList() {
+  const c = document.getElementById('contentList');
+  if (!c) return;
+  const sorted = [...DB.konten].sort((a,b)=>new Date(b.tanggal)-new Date(a.tanggal));
+  if (!sorted.length) { c.innerHTML='<div class="empty-state"><p>Belum ada konten</p></div>'; return; }
+  c.innerHTML = sorted.map(k=>`
+    <div class="content-item">
+      <div class="content-item-info">
+        <div class="content-item-title">${k.judul}</div>
+        <div class="content-item-meta"><span>${k.klasifikasi}</span><span>${formatDate(k.tanggal)}</span></div>
+      </div>
+      <div class="content-item-actions">
+        <button class="btn btn-sm btn-outline" onclick="showContentForm(${k.id})"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-sm btn-danger" onclick="deleteContent(${k.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+function editContent(id) { closeModal('adminKontenModal'); showContentForm(id); }
+
+function deleteContent(id) {
+  if (confirm('Hapus konten ini?')) {
+    DB.konten=DB.konten.filter(k=>k.id!==id); saveData(); renderContentList(); renderCards(); showToast('Konten dihapus','success');
+  }
 }
 
 function updateSubjectCount() {
-    const subjectEl = document.getElementById('contentSubjectEditor');
-    if (!subjectEl) return;
-    const text = subjectEl.textContent || '';
-    const count = text.split(/\s+/).filter(w => w).length;
-    document.getElementById('subjectCount').textContent = count;
+  const el=document.getElementById('contentSubjectEditor'); if(!el) return;
+  document.getElementById('subjectCount').textContent=el.textContent.trim().split(/\s+/).filter(w=>w).length;
+}
+function formatSubject(cmd) { document.getElementById('contentSubjectEditor').focus(); document.execCommand(cmd,false,null); updateSubjectCount(); }
+function formatDoc(cmd) { document.execCommand(cmd,false,null); }
+function showColorPicker() { document.getElementById('textColorPicker').click(); }
+function setTextColor(c) { document.execCommand('foreColor',false,c); }
+function insertHyperlink() { const u=prompt('URL:'); if(u) document.execCommand('createLink',false,u); }
+
+// ===== HARGA VIEW =====
+function renderHargaView() {
+  const panel = document.getElementById('hargaInputPanel');
+  if (panel) panel.style.display = currentUser==='admin' ? 'block' : 'none';
+  renderHargaTable();
 }
 
-function formatSubject(command) {
-    document.getElementById('contentSubjectEditor').focus();
-    document.execCommand(command, false, null);
-    updateSubjectCount();
+function switchInputMethod(method) {
+  document.querySelectorAll('.method-btn').forEach(b => b.classList.toggle('active', b.dataset.method===method));
+  document.querySelectorAll('.method-content').forEach(c => c.style.display='none');
+  const el = document.getElementById('method-'+method);
+  if (el) el.style.display='block';
 }
 
-function formatDoc(command) {
-    document.execCommand(command, false, null);
-}
-
-function showColorPicker() {
-    document.getElementById('textColorPicker').click();
-}
-
-function setTextColor(color) {
-    document.execCommand('foreColor', false, color);
-}
-
-function insertHyperlink() {
-    const url = prompt('Masukkan URL:');
-    if (url) {
-        document.execCommand('createLink', false, url);
-    }
-}
-
-function renderHargaTable() {
-    const container = document.getElementById('hargaTable');
-    const bulan = document.getElementById('hargaBulan').value;
-    const regional = document.getElementById('hargaRegional').value;
-    const jenis = document.getElementById('hargaJenis').value;
-    const paket = document.getElementById('hargaPaket').value;
-    
-    let filtered = [...DB.harga];
-    
-    if (bulan) filtered = filtered.filter(h => h.bulan === bulan);
-    if (regional) filtered = filtered.filter(h => h.regional === regional);
-    if (jenis) filtered = filtered.filter(h => h.jenis === jenis);
-    if (paket) filtered = filtered.filter(h => h.paket === paket);
-    
-    if (filtered.length === 0) {
-        container.innerHTML = '<div class="empty-state"><p>Tidak ada data harga</p></div>';
-        return;
-    }
-    
-    container.innerHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Layanan</th>
-                    <th>Biaya Pasang</th>
-                    <th>Harga Paket</th>
-                    <th>PPN 11%</th>
-                    <th>Total</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${filtered.map((h, idx) => {
-                    const ppn = Math.round((parseInt(h.harga) || 0) * 0.11);
-                    const total = (parseInt(h.biaya) || 0) + parseInt(h.harga) + ppn;
-                    return `
-                        <tr>
-                            <td>${h.paket}<br><small>${h.regional} - ${h.jenis} - ${h.bulan}</small></td>
-                            <td>${formatRupiah(h.biaya)}</td>
-                            <td>${formatRupiah(h.harga)}</td>
-                            <td>${formatRupiah(ppn)}</td>
-                            <td><strong>${formatRupiah(total)}</strong></td>
-                            <td>
-                                <button class="btn btn-sm btn-danger" onclick="deleteHarga(${idx})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('')}
-            </tbody>
-        </table>
-    `;
-}
-
-function filterHarga() {
-    renderHargaTable();
+function calcHargaPreview() {
+  const biaya = parseInt(document.getElementById('hargaBiayaPasang').value)||0;
+  const harga = parseInt(document.getElementById('hargaPaketHarga').value)||0;
+  if (!biaya && !harga) { document.getElementById('hargaPreview').style.display='none'; return; }
+  const ppn = Math.round(harga*0.11);
+  const total = biaya + harga + ppn;
+  document.getElementById('hargaPreview').style.display='flex';
+  document.getElementById('previewPPN').textContent = formatRupiah(ppn);
+  document.getElementById('previewTotal').textContent = formatRupiah(total);
 }
 
 function saveHarga() {
-    const bulan = document.getElementById('hargaBulanInput').value;
-    const regional = document.getElementById('hargaRegionalInput').value;
-    const jenis = document.getElementById('hargaJenisInput').value;
-    const paket = document.getElementById('hargaPaketInput').value;
-    const biaya = parseInt(document.getElementById('hargaBiayaPasang').value) || 0;
-    const harga = parseInt(document.getElementById('hargaPaket').value) || 0;
-    
-    if (!harga) {
-        showToast('Harga wajib diisi!', 'error');
-        return;
+  const bulan = document.getElementById('hargaBulanInput').value;
+  const regional = document.getElementById('hargaRegionalInput').value;
+  const jenis = document.getElementById('hargaJenisInput').value;
+  const paket = document.getElementById('hargaPaketInput').value;
+  const biaya = parseInt(document.getElementById('hargaBiayaPasang').value)||0;
+  const harga = parseInt(document.getElementById('hargaPaketHarga').value)||0;
+  if (!harga) { showToast('Harga wajib diisi!','error'); return; }
+  DB.harga.push({bulan,regional,jenis,paket,biaya,harga});
+  saveData(); renderHargaTable();
+  document.getElementById('hargaBiayaPasang').value='';
+  document.getElementById('hargaPaketHarga').value='';
+  document.getElementById('hargaPreview').style.display='none';
+  showToast('Harga berhasil disimpan!','success');
+}
+
+function parsePastedData() {
+  const raw = document.getElementById('pasteExcelData').value.trim();
+  if (!raw) { showToast('Data kosong!','error'); return; }
+  const lines = raw.split('\n').filter(l=>l.trim());
+  let count = 0;
+  // Detect header row
+  const firstCols = lines[0].split('\t').map(c=>c.trim().toLowerCase());
+  const hasHeader = firstCols.some(c=>['bulan','regional','jenis','paket'].includes(c));
+  const dataLines = hasHeader ? lines.slice(1) : lines;
+  dataLines.forEach(line => {
+    const cols = line.split('\t').map(c=>c.trim());
+    if (cols.length >= 6) {
+      DB.harga.push({bulan:cols[0].toUpperCase(),regional:cols[1],jenis:cols[2],paket:cols[3],biaya:parseInt(cols[4])||0,harga:parseInt(cols[5])||0});
+      count++;
+    } else if (cols.length >= 5) {
+      DB.harga.push({bulan:cols[0].toUpperCase(),regional:cols[1],jenis:cols[2],paket:cols[3],biaya:0,harga:parseInt(cols[4])||0});
+      count++;
     }
-    
-    DB.harga.push({ bulan, regional, jenis, paket, biaya, harga });
-    saveData();
-    renderHargaTable();
-    
-    document.getElementById('hargaBiayaPasang').value = '';
-    document.getElementById('hargaPaket').value = '';
-    
-    showToast('Harga berhasil disimpan!', 'success');
+  });
+  if (count) { saveData(); renderHargaTable(); document.getElementById('pasteExcelData').value=''; showToast(`${count} data berhasil diimport!`,'success'); }
+  else showToast('Format data tidak valid. Pastikan kolom dipisah dengan Tab.','error');
+}
+
+function handleFileDrop(e) {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) processExcelFile(file);
+}
+
+function uploadExcel(e) {
+  const file = e.target.files[0];
+  if (file) processExcelFile(file);
+}
+
+function processExcelFile(file) {
+  if (!window.XLSX) { showToast('Library Excel belum dimuat','error'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+      let count = 0;
+      const headerRow = rows[0].map(c=>String(c).trim().toLowerCase());
+      const hasHeader = headerRow.some(c=>['bulan','regional','jenis','paket'].includes(c));
+      const dataRows = hasHeader ? rows.slice(1) : rows;
+      dataRows.forEach(row => {
+        if (row.length >= 5 && row.some(c=>c!=='')) {
+          DB.harga.push({
+            bulan: String(row[0]).toUpperCase().trim(),
+            regional: String(row[1]).trim(),
+            jenis: String(row[2]).trim(),
+            paket: String(row[3]).trim(),
+            biaya: parseInt(row[4])||0,
+            harga: parseInt(row[5])||0
+          });
+          count++;
+        }
+      });
+      if (count) { saveData(); renderHargaTable(); showToast(`${count} data berhasil diimport dari Excel!`,'success'); }
+      else showToast('Tidak ada data valid di file','error');
+    } catch(err) { showToast('Gagal membaca file: '+err.message,'error'); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function filterHarga() { renderHargaTable(); }
+
+function renderHargaTable() {
+  const c = document.getElementById('hargaTable');
+  if (!c) return;
+  const bulan = document.getElementById('hargaBulan').value;
+  const regional = document.getElementById('hargaRegional').value;
+  const jenis = document.getElementById('hargaJenis').value;
+  const paket = document.getElementById('hargaPaketFilter').value;
+  let items = [...DB.harga];
+  if (bulan) items = items.filter(h=>h.bulan===bulan);
+  if (regional) items = items.filter(h=>h.regional===regional);
+  if (jenis) items = items.filter(h=>h.jenis===jenis);
+  if (paket) items = items.filter(h=>h.paket===paket);
+  if (!items.length) { c.innerHTML='<div class="empty-state"><i class="fas fa-table"></i><p>Tidak ada data harga</p></div>'; return; }
+  c.innerHTML = `<table>
+    <thead><tr><th>Bulan</th><th>Regional</th><th>Jenis</th><th>Paket</th><th>Biaya Pasang</th><th>Harga Paket</th><th>PPN 11%</th><th>Total</th>${currentUser==='admin'?'<th>Aksi</th>':''}</tr></thead>
+    <tbody>${items.map((h,i)=>{
+      const ppn=Math.round((h.harga||0)*0.11);
+      const total=(h.biaya||0)+(h.harga||0)+ppn;
+      const realIdx=DB.harga.indexOf(h);
+      return `<tr>
+        <td>${h.bulan}</td><td>${h.regional}</td><td>${h.jenis}</td><td>${h.paket}</td>
+        <td>${formatRupiah(h.biaya)}</td><td>${formatRupiah(h.harga)}</td>
+        <td>${formatRupiah(ppn)}</td><td><strong>${formatRupiah(total)}</strong></td>
+        ${currentUser==='admin'?`<td><button class="btn btn-sm btn-danger" onclick="deleteHarga(${realIdx})"><i class="fas fa-trash"></i></button></td>`:''}
+      </tr>`;
+    }).join('')}</tbody></table>`;
 }
 
 function deleteHarga(idx) {
-    if (confirm('Hapus data ini?')) {
-        DB.harga.splice(idx, 1);
-        saveData();
-        renderHargaTable();
-        showToast('Data berhasil dihapus!', 'success');
-    }
+  if (confirm('Hapus data ini?')) {
+    DB.harga.splice(idx,1); saveData(); renderHargaTable(); showToast('Data dihapus','success');
+  }
 }
 
 function downloadTemplate() {
-    showToast('Template download - Fitur coming soon!', 'info');
+  if (!window.XLSX) { showToast('Library Excel belum dimuat','error'); return; }
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['Bulan','Regional','Jenis','Paket','Biaya Pasang','Harga Paket'],
+    ['APR','Jawa & Bali','Baru','Reguler',250000,350000],
+    ['APR','Sumatera & Kalimantan','Baru','HEBAT 3',200000,450000]
+  ]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Harga');
+  XLSX.writeFile(wb, 'template_harga.xlsx');
+  showToast('Template didownload!','success');
 }
 
-function uploadExcel(event) {
-    showToast('Upload Excel - Fitur coming soon!', 'info');
+// ===== KRITIK & SARAN =====
+function renderKritikView() {
+  const formCard = document.getElementById('kritikFormCard');
+  if (formCard) formCard.style.display = currentUser==='admin' ? 'none' : 'block';
+  renderKritikThreads();
 }
 
-function renderKritikList() {
-    const container = document.getElementById('kritikList');
-    const sorted = [...DB.kritik].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-    
-    if (sorted.length === 0) {
-        container.innerHTML = '<div class="empty-state"><p>Belum ada kritik/saran</p></div>';
-        return;
-    }
-    
-    container.innerHTML = sorted.map((k, idx) => `
-        <div class="kritik-item">
-            <div class="kritik-item-info">
-                <div class="kritik-item-header">
-                    <span class="kritik-item-nama">${k.nama || 'Anonim'}</span>
-                    <span class="kritik-item-tanggal">${formatDate(k.tanggal)}</span>
-                    <span class="kritik-item-status ${k.dibaca ? 'baca' : ''}">${k.dibaca ? 'Sudah dibaca' : 'Baru'}</span>
-                </div>
-                <div class="kritik-item-isi">${k.isi}</div>
-            </div>
-            <div class="kritik-item-actions">
-                <button class="btn btn-sm ${k.dibaca ? 'btn-outline' : 'btn-success'}" onclick="toggleBaca(${idx})">
-                    <i class="fas fa-${k.dibaca ? 'envelope' : 'envelope-open'}"></i>
-                </button>
-                <button class="btn btn-sm btn-danger" onclick="deleteKritik(${idx})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
+function submitKritikNew() {
+  const nama = document.getElementById('kritikNamaInput').value.trim();
+  const isi = document.getElementById('kritikIsiInput').value.trim();
+  if (!isi) { showToast('Kritik/Saran wajib diisi!','error'); return; }
+  DB.kritik.push({id:Date.now(), nama, isi, tanggal:new Date().toISOString(), dibaca:false, replies:[]});
+  saveData();
+  document.getElementById('kritikNamaInput').value='';
+  document.getElementById('kritikIsiInput').value='';
+  renderKritikThreads();
+  showToast('Terima kasih atas masukan Anda!','success');
+}
+
+function renderKritikThreads() {
+  const c = document.getElementById('kritikThreads');
+  if (!c) return;
+  const sorted = [...(DB.kritik||[])].sort((a,b)=>new Date(b.tanggal)-new Date(a.tanggal));
+  if (!sorted.length) { c.innerHTML='<div class="empty-state"><i class="fas fa-comments"></i><p>Belum ada kritik/saran</p></div>'; return; }
+  c.innerHTML = sorted.map((k, i) => {
+    const realIdx = DB.kritik.findIndex(x=>x.id===k.id);
+    const initials = (k.nama||'A').charAt(0).toUpperCase();
+    const replies = (k.replies||[]).map(r=>`
+      <div class="reply-card">
+        <div class="reply-header">
+          <div class="reply-avatar" style="background:var(--accent)">A</div>
+          <span class="reply-name">Admin</span>
+          <span class="reply-date">${formatDate(r.tanggal)}</span>
         </div>
-    `).join('');
+        <div class="reply-isi">${r.isi}</div>
+      </div>`).join('');
+    const replyForm = currentUser==='admin' ? `
+      <div class="admin-reply-form">
+        <textarea id="replyInput-${realIdx}" placeholder="Tulis balasan..." rows="2"></textarea>
+        <button class="btn btn-sm btn-primary" onclick="submitReply(${realIdx})"><i class="fas fa-reply"></i> Balas</button>
+      </div>` : '';
+    const adminActions = currentUser==='admin' ? `
+      <button class="btn btn-sm ${k.dibaca?'btn-outline':'btn-success'}" onclick="toggleBaca(${realIdx})">
+        <i class="fas fa-${k.dibaca?'envelope':'envelope-open'}"></i> ${k.dibaca?'Belum Dibaca':'Tandai Dibaca'}
+      </button>
+      <button class="btn btn-sm btn-danger" onclick="deleteKritik(${realIdx})"><i class="fas fa-trash"></i></button>` : '';
+    return `<div class="thread-card">
+      <div class="thread-header">
+        <div class="thread-avatar">${initials}</div>
+        <div class="thread-meta">
+          <div class="thread-name">${k.nama||'Anonim'}</div>
+          <div class="thread-date">${formatDate(k.tanggal)}</div>
+        </div>
+        <span class="thread-badge ${k.dibaca?'read':''}">${k.dibaca?'Dibaca':'Baru'}</span>
+      </div>
+      <div class="thread-isi">${k.isi}</div>
+      <div class="thread-actions">${adminActions}</div>
+      ${replies || replyForm ? `<div class="thread-replies">${replies}${replyForm}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function submitReply(idx) {
+  const el = document.getElementById('replyInput-'+idx);
+  const isi = el ? el.value.trim() : '';
+  if (!isi) { showToast('Balasan tidak boleh kosong','error'); return; }
+  if (!DB.kritik[idx].replies) DB.kritik[idx].replies = [];
+  DB.kritik[idx].replies.push({isi, tanggal:new Date().toISOString()});
+  DB.kritik[idx].dibaca = true;
+  saveData(); renderKritikThreads(); showToast('Balasan terkirim!','success');
 }
 
 function toggleBaca(idx) {
-    DB.kritik[idx].dibaca = !DB.kritik[idx].dibaca;
-    saveData();
-    renderKritikList();
+  DB.kritik[idx].dibaca = !DB.kritik[idx].dibaca;
+  saveData(); renderKritikThreads();
 }
 
 function deleteKritik(idx) {
-    if (confirm('Hapus pesan ini?')) {
-        DB.kritik.splice(idx, 1);
-        saveData();
-        renderKritikList();
-        showToast('Pesan berhasil dihapus!', 'success');
-    }
+  if (confirm('Hapus pesan ini?')) {
+    DB.kritik.splice(idx,1); saveData(); renderKritikThreads(); showToast('Pesan dihapus','success');
+  }
 }
 
-function showKritikModal() {
-    document.getElementById('kritikModal').classList.add('active');
-    document.getElementById('kritikNamaModal').value = '';
-    document.getElementById('kritikIsiModal').value = '';
-}
-
-function submitKritikModal() {
-    const nama = document.getElementById('kritikNamaModal').value.trim();
-    const isi = document.getElementById('kritikIsiModal').value.trim();
-    
-    if (!isi) {
-        showToast('Kritik/Saran wajib diisi!', 'error');
-        return;
-    }
-    
-    DB.kritik.push({
-        id: Date.now(),
-        nama,
-        isi,
-        tanggal: new Date().toISOString(),
-        dibaca: false
-    });
-    
-    saveData();
-    closeModal('kritikModal');
-    showToast('Terima kasih atas masukan Anda!', 'success');
-}
-
-function submitKritik() {
-    const nama = document.getElementById('kritikNama').value.trim();
-    const isi = document.getElementById('kritikIsi').value.trim();
-    
-    if (!isi) {
-        showToast('Kritik/Saran wajib diisi!', 'error');
-        return;
-    }
-    
-    DB.kritik.push({
-        id: Date.now(),
-        nama,
-        isi,
-        tanggal: new Date().toISOString(),
-        dibaca: false
-    });
-    
-    saveData();
-    document.getElementById('kritikNama').value = '';
-    document.getElementById('kritikIsi').value = '';
-    showToast('Terima kasih atas masukan Anda!', 'success');
-}
-
-function switchUserTab(tab) {
-    document.querySelectorAll('#userPanel .tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tab);
-    });
-    document.querySelectorAll('#userPanel .tab-content').forEach(content => {
-        content.style.display = 'none';
-    });
-    document.getElementById('user-' + tab).style.display = 'block';
-}
-
-function renderUserContentList() {
-    const container = document.getElementById('userContentList');
-    const sorted = [...DB.konten].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-    
-    if (sorted.length === 0) {
-        container.innerHTML = '<div class="empty-state"><p>Belum ada konten</p></div>';
-        return;
-    }
-    
-    container.innerHTML = sorted.map(k => `
-        <div class="content-item">
-            <div class="content-item-info">
-                <div class="content-item-title">${k.judul}</div>
-                <div class="content-item-meta">
-                    <span>${k.klasifikasi}</span>
-                    <span>${formatDate(k.tanggal)}</span>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
+// ===== SETTINGS =====
 function updateSettings() {
-    DB.companyName = document.getElementById('companyName').value.trim() || 'Kabinet';
-    DB.companyLogo = document.getElementById('companyLogoUrl').value.trim();
-    saveData();
-    loadSettings();
-    showToast('Pengaturan berhasil disimpan!', 'success');
+  DB.companyName = document.getElementById('companyName').value.trim()||'Kabinet';
+  DB.companyLogo = document.getElementById('companyLogoUrl').value.trim();
+  saveData(); loadSettings(); showToast('Pengaturan disimpan!','success');
 }
 
-function changeAdminPassword() {
-    showToast('Hubungi developer untuk mengubah password default!', 'info');
-}
-
-function changeUserPassword() {
-    showToast('Hubungi developer untuk mengubah password default!', 'info');
-}
-
-function closeModal(id) {
-    document.getElementById(id).classList.remove('active');
-}
+// ===== MODAL =====
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
 function togglePassword(inputId) {
-    const input = document.getElementById(inputId);
-    const btn = input.nextElementSibling;
-    if (input.type === 'password') {
-        input.type = 'text';
-        btn.innerHTML = '<i class="fas fa-eye-slash"></i>';
-    } else {
-        input.type = 'password';
-        btn.innerHTML = '<i class="fas fa-eye"></i>';
-    }
+  const el = document.getElementById(inputId);
+  el.type = el.type==='password' ? 'text' : 'password';
+  el.nextElementSibling.innerHTML = `<i class="fas fa-eye${el.type==='password'?'':'-slash'}"></i>`;
 }
 
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-        <span>${message}</span>
-    `;
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+document.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.classList.remove('active'); });
+document.addEventListener('keydown', e => { if (e.key==='Escape') document.querySelectorAll('.modal.active').forEach(m=>m.classList.remove('active')); });
+
+// ===== TOAST =====
+function showToast(msg, type='info') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':type==='error'?'exclamation-circle':'info-circle'}"></i><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3000);
 }
 
-function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+// ===== UTILS =====
+function formatDate(s) {
+  if (!s) return '';
+  return new Date(s).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
 }
-
-function formatRupiah(amount) {
-    if (!amount) return 'Rp 0';
-    return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
-}
-
-function escapeRegex(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal')) {
-        e.target.classList.remove('active');
-    }
-});
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active'));
-    }
-});
+function formatRupiah(n) { if(!n) return 'Rp 0'; return 'Rp '+parseInt(n).toLocaleString('id-ID'); }
