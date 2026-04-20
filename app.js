@@ -1,4 +1,4 @@
-﻿// ===== KABINET APP =====
+// ===== KABINET APP =====
 const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'contact1234' };
 
 const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'KATEGORI', 'PROMO'], konten: [], harga: [], kritik: [] };
@@ -322,7 +322,12 @@ function renderCards() {
 }
 
 function renderCard(k) {
-    const expanded = expandedCards.has(k.id);
+    let isAutoExpanded = false;
+    if (searchQuery) {
+        const words = searchQuery.trim().split(/\s+/).filter(w => w.length > 0);
+        isAutoExpanded = words.some(w => fuzzyMatch(stripHtml(k.content || ''), w));
+    }
+    const expanded = expandedCards.has(k.id) || isAutoExpanded;
     const subjectHtml = k.subject || '';
     const subjectText = stripHtml(subjectHtml);
     const wc = subjectText.split(/\s+/).filter(w => w).length;
