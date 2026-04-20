@@ -25,6 +25,17 @@
                 <button class="nav-btn" data-tab="harga" onclick="switchTab('harga')">Harga Layanan</button>
                 <button class="nav-btn" data-tab="kritik" onclick="switchTab('kritik')">Kritik &amp; Saran</button>
             </nav>
+            <div class="header-search" id="headerSearch" style="display:none">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Cari..."
+                           oninput="debouncedSearch()"
+                           onkeydown="onSearchKeyDown(event)">
+                    <button class="search-clear" onclick="clearSearch()" id="searchClear">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
             <div class="header-actions" id="headerActions">
                 <button class="btn btn-outline" onclick="showLoginModal('admin')">
                     <i class="fas fa-user-shield"></i> Login Admin
@@ -62,17 +73,6 @@
         <section id="viewKonten" style="display:none">
             <!-- Search -->
             <div class="search-section">
-                <div class="search-container">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Cari..."
-                               oninput="debouncedSearch()"
-                               onkeydown="onSearchKeyDown(event)">
-                        <button class="search-clear" onclick="clearSearch()" id="searchClear">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
                 <!-- Search Nav Bar (appears on Enter) -->
                 <div class="search-nav-bar" id="searchNavBar" style="display:none">
                     <span class="snb-count" id="snbCount">0 hasil</span>

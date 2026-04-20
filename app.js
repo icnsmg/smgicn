@@ -121,6 +121,8 @@ function showLandingPage() {
     document.getElementById('landingPage').style.display = 'flex';
     hideAllViews();
     document.getElementById('mainNav').classList.remove('visible');
+    const hs = document.getElementById('headerSearch');
+    if (hs) hs.style.display = 'none';
     document.getElementById('floatingBtn').style.display = 'none';
     document.getElementById('headerActions').innerHTML = `
     <button class="btn btn-outline" onclick="showLoginModal('admin')"><i class="fas fa-user-shield"></i> Login Admin</button>
@@ -155,6 +157,8 @@ function switchTab(tab) {
     currentTab = tab;
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     hideAllViews();
+    const hs = document.getElementById('headerSearch');
+    if (hs) hs.style.display = tab === 'konten' && currentUser ? 'flex' : 'none';
     const view = document.getElementById('view' + tab.charAt(0).toUpperCase() + tab.slice(1));
     if (view) view.style.display = 'block';
     if (tab === 'konten') renderKontenView();
