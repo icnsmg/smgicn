@@ -347,7 +347,7 @@ function renderCard(k) {
     if (k.status === 'Tidak Berlaku') {
         statusBadge = `<span class="card-status invalid" style="padding:.2rem .65rem;font-size:.7rem;font-weight:700;text-transform:uppercase;border-radius:var(--radius-full);background:var(--error);color:#fff">TIDAK BERLAKU</span>`;
     } else {
-        statusBadge = `<span class="card-status valid" style="padding:.2rem .65rem;font-size:.7rem;font-weight:700;text-transform:uppercase;border-radius:var(--radius-full);background:var(--primary);color:#fff">BERLAKU</span>`;
+        statusBadge = `<span class="card-status valid" style="padding:.2rem .65rem;font-size:.7rem;font-weight:700;text-transform:uppercase;border-radius:var(--radius-full);background:var(--success);color:#fff">BERLAKU</span>`;
     }
 
     return `<div class="content-card ${k.status === 'Tidak Berlaku' ? 'inactive-card' : ''}" onclick="toggleCard(${k.id})">
