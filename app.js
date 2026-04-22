@@ -1,4 +1,4 @@
-// ===== KABINET APP =====
+﻿// ===== KABINET APP =====
 const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'contact1234' };
 
 const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'KATEGORI', 'PROMO'], headerLinks: [], konten: [], harga: [], kritik: [] };
