@@ -346,7 +346,9 @@ function renderFilterPills() {
     const c = document.getElementById('filterPills');
     if (!c) return;
     const cats = ['all', ...DB.klasifikasi];
-    c.innerHTML = cats.map(cat => `<button class="pill ${cat === currentFilter || (!currentFilter && cat === 'all') ? 'active' : ''}" data-filter="${cat}" onclick="filterByCategory('${cat}')">${cat === 'all' ? 'Semua' : cat}</button>`).join('');
+    let h = '<button class="pill-label">KLASIFIKASI</button>';
+    h += cats.map(cat => `<button class="pill ${cat === currentFilter || (!currentFilter && cat === 'all') ? 'active' : ''}" data-filter="${cat}" onclick="filterByCategory('${cat}')">${cat === 'all' ? 'Semua' : cat}</button>`).join('');
+    c.innerHTML = h;
 }
 
 // ===== RENDER CARDS =====
