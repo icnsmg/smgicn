@@ -45,12 +45,14 @@ function initData() {
     database.ref('kabinetDB').on('value', snap => {
         const data = snap.val();
         if (data) {
-            Object.assign(DB, data);
-            DB.konten = DB.konten || [];
-            DB.harga = DB.harga || [];
-            DB.kritik = DB.kritik || [];
-            DB.klasifikasi = DB.klasifikasi || ['INFO', 'KATEGORI', 'PROMO'];
-            DB.headerLinks = DB.headerLinks || [];
+            // Explicit assignment to ensure data removed from Firebase is also cleared in the local DB object
+            DB.companyName = data.companyName || 'Kabinet';
+            DB.companyLogo = data.companyLogo || '';
+            DB.klasifikasi = data.klasifikasi || ['INFO', 'KATEGORI', 'PROMO'];
+            DB.headerLinks = data.headerLinks || [];
+            DB.konten = data.konten || [];
+            DB.harga = data.harga || [];
+            DB.kritik = data.kritik || [];
         } else {
             DB.konten = [
                 { id: 1, judul: 'Cara Memesan Layanan', tanggal: '2026-04-15', klasifikasi: 'INFO', subject: 'Panduan lengkap cara memesan layanan kami melalui platform online.', content: '<p>Ikuti langkah-langkah berikut:</p><ul><li>Kunjungi website resmi</li><li>Pilih layanan</li><li>Isi formulir</li><li>Konfirmasi pembayaran</li></ul>', links: [{ name: 'Panduan Lengkap', url: '#' }] },
