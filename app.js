@@ -416,6 +416,12 @@ function renderCards() {
     // Global Search: If search is active, we look through ALL items regardless of category filter
     // unless the user specifically wants to search within a category. 
     // Given the prompt "Global Search (Lintas Semua Halaman)", I will prioritize search matches.
+    // 1. First, filter by category if not "all"
+    if (currentFilter !== 'all') {
+        items = items.filter(k => k.klasifikasi === currentFilter);
+    }
+
+    // 2. Then, filter and score by search query if present
     if (searchQuery) {
         const words = searchQuery.trim().split(/\s+/).filter(w => w.length > 0);
         items = items.filter(k => words.every(w =>
@@ -436,9 +442,6 @@ function renderCards() {
             document.getElementById('resultBarText').textContent = `${items.length} konten ditemukan untuk "${searchQuery}"`;
         }
     } else {
-        if (currentFilter !== 'all') {
-            items = items.filter(k => k.klasifikasi === currentFilter);
-        }
         const rb = document.getElementById('resultBar');
         if (rb) rb.style.display = 'none';
         items.forEach(item => delete item._score);
