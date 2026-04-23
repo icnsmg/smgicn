@@ -1,4 +1,4 @@
-﻿// ===== KABINET APP =====
+// ===== KABINET APP =====
 const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'contact1234' };
 
 const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'KATEGORI', 'PROMO'], headerLinks: [], konten: [], harga: [], kritik: [] };
@@ -336,30 +336,34 @@ function calculateRelevance(item, query) {
     const judul = (item.judul || '').toLowerCase();
     const subject = stripHtml(item.subject || '').toLowerCase();
     const content = stripHtml(item.content || '').toLowerCase();
+    const klasifikasi = (item.klasifikasi || '').toLowerCase();
 
     let score = 0;
 
     // 1. Title matches (highest weight)
-    if (judul === q) score += 1000;
+    if (judul === q) score += 5000;
     else if (judul.includes(q)) {
-        score += 500;
-        if (judul.startsWith(q)) score += 200;
+        score += 2000;
+        if (judul.startsWith(q)) score += 500;
     }
 
     // 2. Subject matches
-    if (subject.includes(q)) score += 200;
+    if (subject.includes(q)) score += 500;
 
     // 3. Content matches
-    if (content.includes(q)) score += 100;
+    if (content.includes(q)) score += 200;
+    
+    // 4. Klasifikasi matches
+    if (klasifikasi.includes(q)) score += 100;
 
-    // 4. Word-based matching for multi-word queries
+    // 5. Word-based matching for multi-word queries
     const words = q.split(/\s+/).filter(w => w.length > 0);
     if (words.length > 1) {
         let matchedInTitle = 0;
         words.forEach(w => {
             if (judul.includes(w)) matchedInTitle++;
         });
-        score += (matchedInTitle / words.length) * 300;
+        score += (matchedInTitle / words.length) * 1000;
     }
 
     return score;
@@ -368,6 +372,7 @@ function calculateRelevance(item, query) {
 function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
 function stripHtml(html) {
+    if (!html) return '';
     const d = document.createElement('div'); d.innerHTML = html;
     return d.textContent || d.innerText || '';
 }
@@ -418,31 +423,36 @@ function renderCards() {
             fuzzyMatch(k.klasifikasi, w)
         ));
 
+        // Pre-calculate relevance scores for sorting
+        items.forEach(item => {
+            item._score = calculateRelevance(item, searchQuery);
+        });
+
         const rb = document.getElementById('resultBar');
         if (rb) {
             rb.style.display = 'block';
             document.getElementById('resultBarText').textContent = `${items.length} konten ditemukan untuk "${searchQuery}"`;
         }
     } else {
-        // If no search, use the category filter
         if (currentFilter !== 'all') {
             items = items.filter(k => k.klasifikasi === currentFilter);
         }
         const rb = document.getElementById('resultBar');
         if (rb) rb.style.display = 'none';
+        items.forEach(item => delete item._score);
     }
 
     items.sort((a, b) => {
+        // 1. If searching, prioritize relevance score above everything
+        if (searchQuery) {
+            if ((b._score || 0) !== (a._score || 0)) return (b._score || 0) - (a._score || 0);
+        }
+
+        // 2. Then pinned/expanded card
         if (a.id === topCardId) return -1;
         if (b.id === topCardId) return 1;
 
-        // If searching, prioritize relevance score
-        if (searchQuery) {
-            const scoreA = calculateRelevance(a, searchQuery);
-            const scoreB = calculateRelevance(b, searchQuery);
-            if (scoreB !== scoreA) return scoreB - scoreA;
-        }
-
+        // 3. Then by date
         return new Date(b.tanggal) - new Date(a.tanggal);
     });
     const total = Math.ceil(items.length / ITEMS_PER_PAGE);
