@@ -23,7 +23,7 @@ let currentTab = 'konten';
 let currentFilter = 'all';
 let searchQuery = '';
 let currentPage = 1;
-const ITEMS_PER_PAGE = 7;
+const ITEMS_PER_PAGE = 10;
 let editingContentId = null;
 let expandedCards = new Set();
 let searchMatches = [];
@@ -32,6 +32,7 @@ let searchNavActive = false;
 let hargaSortCol = null;
 let hargaSortDir = 1;
 let loginType = 'admin';
+let topCardId = null;
 
 // ===== DEBOUNCE =====
 function debounce(fn, ms) {
@@ -308,12 +309,60 @@ function showSearchNavBar() {
 function fuzzyMatch(text, query) {
     if (!query) return true;
     const t = text.toLowerCase(), q = query.toLowerCase();
+    // Substring match is high priority
     if (t.includes(q)) return true;
-    let mismatches = 0;
-    for (let i = 0; i < q.length && mismatches <= 1; i++) {
-        if (!t.includes(q[i])) mismatches++;
+
+    // Simple fuzzy: check if words are present
+    const words = q.split(/\s+/).filter(w => w.length > 0);
+    if (words.length > 1) {
+        return words.every(w => t.includes(w));
     }
-    return mismatches <= 1;
+
+    // Very basic typo tolerance (1 char difference for short words, 2 for long)
+    if (q.length > 3) {
+        let mismatches = 0;
+        for (let i = 0; i < q.length && mismatches <= 1; i++) {
+            if (!t.includes(q[i])) mismatches++;
+        }
+        return mismatches <= 1;
+    }
+
+    return false;
+}
+
+function calculateRelevance(item, query) {
+    if (!query) return 0;
+    const q = query.toLowerCase().trim();
+    const judul = (item.judul || '').toLowerCase();
+    const subject = stripHtml(item.subject || '').toLowerCase();
+    const content = stripHtml(item.content || '').toLowerCase();
+
+    let score = 0;
+
+    // 1. Title matches (highest weight)
+    if (judul === q) score += 1000;
+    else if (judul.includes(q)) {
+        score += 500;
+        if (judul.startsWith(q)) score += 200;
+    }
+
+    // 2. Subject matches
+    if (subject.includes(q)) score += 200;
+
+    // 3. Content matches
+    if (content.includes(q)) score += 100;
+
+    // 4. Word-based matching for multi-word queries
+    const words = q.split(/\s+/).filter(w => w.length > 0);
+    if (words.length > 1) {
+        let matchedInTitle = 0;
+        words.forEach(w => {
+            if (judul.includes(w)) matchedInTitle++;
+        });
+        score += (matchedInTitle / words.length) * 300;
+    }
+
+    return score;
 }
 
 function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
@@ -346,8 +395,7 @@ function renderFilterPills() {
     const c = document.getElementById('filterPills');
     if (!c) return;
     const cats = ['all', ...DB.klasifikasi];
-    let h = '<button class="pill-label">KLASIFIKASI</button>';
-    h += cats.map(cat => `<button class="pill ${cat === currentFilter || (!currentFilter && cat === 'all') ? 'active' : ''}" data-filter="${cat}" onclick="filterByCategory('${cat}')">${cat === 'all' ? 'Semua' : cat}</button>`).join('');
+    const h = cats.map(cat => `<button class="pill ${cat === currentFilter || (!currentFilter && cat === 'all') ? 'active' : ''}" data-filter="${cat}" onclick="filterByCategory('${cat}')">${cat === 'all' ? 'Semua' : cat}</button>`).join('');
     c.innerHTML = h;
 }
 
@@ -355,19 +403,48 @@ function renderFilterPills() {
 function renderCards() {
     const c = document.getElementById('cardsContainer');
     if (!c) return;
+
     let items = [...DB.konten];
-    if (currentFilter !== 'all') items = items.filter(k => k.klasifikasi === currentFilter);
+
+    // Global Search: If search is active, we look through ALL items regardless of category filter
+    // unless the user specifically wants to search within a category. 
+    // Given the prompt "Global Search (Lintas Semua Halaman)", I will prioritize search matches.
     if (searchQuery) {
         const words = searchQuery.trim().split(/\s+/).filter(w => w.length > 0);
-        items = items.filter(k => words.some(w =>
-            fuzzyMatch(k.judul, w) || fuzzyMatch(stripHtml(k.subject || ''), w) || fuzzyMatch(stripHtml(k.content || ''), w)
+        items = items.filter(k => words.every(w =>
+            fuzzyMatch(k.judul, w) ||
+            fuzzyMatch(stripHtml(k.subject || ''), w) ||
+            fuzzyMatch(stripHtml(k.content || ''), w) ||
+            fuzzyMatch(k.klasifikasi, w)
         ));
+
         const rb = document.getElementById('resultBar');
-        if (rb) { rb.style.display = 'block'; document.getElementById('resultBarText').textContent = `${items.length} konten ditemukan untuk "${searchQuery}"`; }
+        if (rb) {
+            rb.style.display = 'block';
+            document.getElementById('resultBarText').textContent = `${items.length} konten ditemukan untuk "${searchQuery}"`;
+        }
     } else {
-        const rb = document.getElementById('resultBar'); if (rb) rb.style.display = 'none';
+        // If no search, use the category filter
+        if (currentFilter !== 'all') {
+            items = items.filter(k => k.klasifikasi === currentFilter);
+        }
+        const rb = document.getElementById('resultBar');
+        if (rb) rb.style.display = 'none';
     }
-    items.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+    items.sort((a, b) => {
+        if (a.id === topCardId) return -1;
+        if (b.id === topCardId) return 1;
+
+        // If searching, prioritize relevance score
+        if (searchQuery) {
+            const scoreA = calculateRelevance(a, searchQuery);
+            const scoreB = calculateRelevance(b, searchQuery);
+            if (scoreB !== scoreA) return scoreB - scoreA;
+        }
+
+        return new Date(b.tanggal) - new Date(a.tanggal);
+    });
     const total = Math.ceil(items.length / ITEMS_PER_PAGE);
     if (currentPage > total) currentPage = 1;
     const paged = items.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -404,7 +481,9 @@ function renderCard(k) {
         statusBadge = `<span class="card-status valid" style="padding:.2rem .65rem;font-size:.7rem;font-weight:700;text-transform:uppercase;border-radius:var(--radius-full);background:var(--success);color:#fff">BERLAKU</span>`;
     }
 
-    return `<div class="content-card ${k.status === 'Tidak Berlaku' ? 'inactive-card' : ''}" onclick="toggleCard(${k.id})">
+    const isActive = k.id === topCardId;
+
+    return `<div class="content-card ${k.status === 'Tidak Berlaku' ? 'inactive-card' : ''} ${isActive ? 'active-glow' : ''}" id="card-${k.id}" onclick="toggleCard(${k.id})">
     <div class="card-header">
       <h3 class="card-title">${judulDisplay}</h3>
       <div class="card-meta">
@@ -427,8 +506,20 @@ function renderCard(k) {
 
 function toggleCard(id) {
     if (window.getSelection().toString().length > 0) return;
-    if (expandedCards.has(id)) expandedCards.delete(id); else expandedCards.add(id);
+    if (expandedCards.has(id)) {
+        expandedCards.delete(id);
+        if (topCardId === id) topCardId = null;
+    } else {
+        expandedCards.add(id);
+        topCardId = id;
+        currentPage = 1; // Always move to first page when clicked/selected
+    }
     renderCards();
+
+    if (topCardId === id) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     if (searchNavActive) setTimeout(() => {
         searchMatches = [...document.querySelectorAll('#cardsContainer .highlight-text')];
         if (searchActiveIndex >= searchMatches.length) searchActiveIndex = 0;

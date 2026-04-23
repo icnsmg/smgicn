@@ -95,10 +95,11 @@ body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-seri
 .filter-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem}
 .filter-divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border), transparent);
-    margin: 0.75rem auto;
+    background: linear-gradient(90deg, transparent, var(--text-muted), transparent);
+    margin: 1.25rem auto;
     width: 100%;
     max-width: 800px;
+    opacity: 0.5;
 }
 .pill{padding:.4rem 1.1rem;font-size:.8125rem;font-weight:600;border-radius:10px;border:1.5px solid var(--primary);background:var(--bg);color:var(--text);cursor:pointer;transition:var(--transition);font-family:inherit;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center}
 .pill:hover{background:var(--bg-soft);border-color:var(--primary-dark)}
@@ -130,16 +131,29 @@ body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-seri
 .card-date{font-size:.8rem;color:var(--text-light)}
 .card-subject{font-size:.9375rem;color:var(--text-light);margin-bottom:.5rem}
 .card-links-inline{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0}
-.card-expand{max-height:0;overflow:hidden;transition:max-height .4s ease-out,opacity .3s;opacity:0}
-.card-expand.expanded{max-height:3000px;opacity:1}
+.card-expand{max-height:0;overflow:hidden;opacity:0;transition:opacity .3s}
+.card-expand.expanded{max-height:none;opacity:1;overflow:visible}
 .card-content{padding-top:1rem;border-top:1px solid var(--border);font-size:.9375rem;line-height:1.7}
 .card-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;font-size:.8rem;font-weight:500;border-radius:var(--radius-full);border:1.5px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;transition:var(--transition);text-decoration:none;font-family:inherit}
 .card-btn:hover{border-color:var(--primary);color:var(--primary)}
 .card-btn-expand{margin-top:.75rem;background:var(--bg-alt);color:var(--primary);border-color:transparent}
 
 /* Search Highlight */
-.highlight-text{background:var(--highlight-color);border-radius:3px;padding:0 2px}
+.highlight-text{background:var(--highlight-color);border-radius:3px;padding:0 2px;color:#000}
 .highlight-active{background:var(--highlight-active-bg)!important;color:var(--highlight-active-color)!important;border-radius:3px;padding:0 2px;font-weight:700}
+
+/* Active Card Glow */
+.active-glow {
+    animation: glow-pulse 2s ease-in-out;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.3) !important;
+}
+
+@keyframes glow-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); transform: scale(1); }
+    50% { box-shadow: 0 0 20px 5px rgba(37, 99, 235, 0.2); transform: scale(1.01); }
+    100% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); transform: scale(1); }
+}
 
 /* ===== PAGINATION ===== */
 .pagination{display:flex;justify-content:center;gap:.5rem;margin-top:2rem;flex-wrap:wrap}
