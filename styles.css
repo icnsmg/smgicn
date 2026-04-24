@@ -330,7 +330,21 @@ body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-seri
 .gallery-caption{padding:1rem;font-size:.875rem;font-weight:500;text-align:center;background:var(--bg)}
 .gallery-admin-actions{position:absolute;top:.5rem;right:.5rem;display:flex;gap:.4rem}
 .link-card-admin{position:relative;display:inline-block}
-.link-delete-btn{position:absolute;-top:10px;-right:10px;width:20px;height:20px;background:var(--error);color:#fff;border-radius:50%;border:none;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2}
+.link-delete-btn{position:absolute;top:-8px;right:-8px;width:24px;height:24px;background:var(--error);color:#fff;border-radius:50%;border:none;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:var(--shadow-sm);transition:var(--transition)}
+.link-delete-btn:hover{transform:scale(1.1);background:#b91c1c}
+
+.lainnya-links-grid .btn-outline {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(37, 99, 235, 0.05);
+    font-weight: 600;
+}
+.lainnya-links-grid .btn-outline:hover {
+    background: var(--primary);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
 
 /* ===== SETTINGS ===== */
 .settings-card{max-width:500px;background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem}
