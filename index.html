@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=1.1.7">
+    <link rel="stylesheet" href="styles.css?v=1.1.8">
 </head>
 <body>
 <div class="app-container">
@@ -179,7 +179,7 @@
 
                     <!-- Paste -->
                     <div class="method-content" id="method-paste" style="display:none">
-                        <p class="method-hint">Copy baris dari Excel lalu paste di sini.<br>Format kolom: <code>Bulan | Regional | Jenis | Paket | Biaya Pasang | Harga Paket</code></p>
+                        <p class="method-hint">Copy baris dari Excel lalu paste di sini.<br>Format kolom: <code>Regional | Jenis | Paket | Speed | Biaya Pasang | Harga Paket</code></p>
                         <textarea id="pasteExcelData" rows="8" placeholder="Paste data Excel di sini..."></textarea>
                         <button class="btn btn-primary" onclick="parsePastedData()"><i class="fas fa-file-import"></i> Import Data</button>
                     </div>
@@ -450,6 +450,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <!-- SheetJS for Excel upload -->
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-<script src="app.js?v=1.1.3"></script>
+<script src="app.js?v=1.1.4"></script>
 </body>
 </html>

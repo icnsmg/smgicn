@@ -763,22 +763,42 @@ function parsePastedData() {
     if (!raw) { showToast('Data kosong!', 'error'); return; }
     const lines = raw.split('\n').filter(l => l.trim());
     let count = 0;
-    // Detect header row
-    const firstCols = lines[0].split('\t').map(c => c.trim().toLowerCase());
-    const hasHeader = firstCols.some(c => ['bulan', 'regional', 'jenis', 'paket'].includes(c));
-    const dataLines = hasHeader ? lines.slice(1) : lines;
-    dataLines.forEach(line => {
+    
+    lines.forEach(line => {
         const cols = line.split('\t').map(c => c.trim());
+        // Expected format: Regional | Jenis | Paket | Speed | Biaya | Harga
         if (cols.length >= 6) {
-            DB.harga.push({ bulan: cols[0].toUpperCase(), regional: cols[1], jenis: cols[2], paket: cols[3], biaya: parseInt(cols[4]) || 0, harga: parseInt(cols[5]) || 0 });
+            DB.harga.push({ 
+                regional: cols[0], 
+                jenis: cols[1], 
+                paket: cols[2], 
+                speed: cols[3], 
+                biaya: parseInt(cols[4].replace(/[^0-9]/g, '')) || 0, 
+                harga: parseInt(cols[5].replace(/[^0-9]/g, '')) || 0 
+            });
             count++;
         } else if (cols.length >= 5) {
-            DB.harga.push({ bulan: cols[0].toUpperCase(), regional: cols[1], jenis: cols[2], paket: cols[3], biaya: 0, harga: parseInt(cols[4]) || 0 });
+            // Fallback for 5 columns: Regional | Jenis | Paket | Biaya | Harga
+            DB.harga.push({ 
+                regional: cols[0], 
+                jenis: cols[1], 
+                paket: cols[2], 
+                speed: '35 Mbps',
+                biaya: parseInt(cols[3].replace(/[^0-9]/g, '')) || 0, 
+                harga: parseInt(cols[4].replace(/[^0-9]/g, '')) || 0 
+            });
             count++;
         }
     });
-    if (count) { saveData(); renderHargaTable(); document.getElementById('pasteExcelData').value = ''; showToast(`${count} data berhasil diimport!`, 'success'); }
-    else showToast('Format data tidak valid. Pastikan kolom dipisah dengan Tab.', 'error');
+    
+    if (count) { 
+        saveData(); 
+        renderHargaTable(); 
+        document.getElementById('pasteExcelData').value = ''; 
+        showToast(`${count} data berhasil diimport!`, 'success'); 
+    } else {
+        showToast('Format data tidak valid. Pastikan kolom dipisah dengan Tab dari Excel.', 'error');
+    }
 }
 
 function handleFileDrop(e) {

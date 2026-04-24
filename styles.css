@@ -247,8 +247,9 @@ body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-seri
     background: #D1D5DB;
 }
 .harga-pill.active {
-    background: #000000;
+    background: var(--primary);
     color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .harga-table table {
