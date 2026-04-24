@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=1.1.6">
+    <link rel="stylesheet" href="styles.css?v=1.1.7">
 </head>
 <body>
 <div class="app-container">
@@ -197,30 +197,23 @@
                     </div>
                 </div>
 
-                <!-- Filter bar -->
-                <div class="harga-filter-bar">
-                    <select id="hargaBulan" onchange="filterHarga()">
-                        <option value="">Semua Bulan</option>
-                        <option>JAN</option><option>FEB</option><option>MAR</option><option>APR</option>
-                        <option>MEI</option><option>JUN</option><option>JUL</option><option>AGS</option>
-                        <option>SEP</option><option>OKT</option><option>NOV</option><option>DES</option>
-                    </select>
-                    <select id="hargaRegional" onchange="filterHarga()">
-                        <option value="">Semua Regional</option>
-                        <option value="Jawa &amp; Bali">Jawa &amp; Bali</option>
-                        <option value="Sumatera &amp; Kalimantan">Sumatera &amp; Kalimantan</option>
-                    </select>
-                    <select id="hargaJenis" onchange="filterHarga()">
-                        <option value="">Semua Jenis</option>
-                        <option>Baru</option>
-                        <option>Existing</option>
-                    </select>
-                    <select id="hargaPaketFilter" onchange="filterHarga()">
-                        <option value="">Semua Paket</option>
-                        <option>Reguler</option><option>HEBAT 3</option>
-                        <option>HEBAT 6</option><option>HEBAT 12</option><option>HEBAT 24</option>
-                    </select>
-                    <button class="btn btn-sm btn-outline" onclick="downloadTemplate()"><i class="fas fa-download"></i> Template</button>
+                <!-- New Filter System -->
+                <div class="harga-filters-container">
+                    <div class="harga-filter-group">
+                        <label>REGIONAL</label>
+                        <div class="harga-pills" id="pillsRegional"></div>
+                    </div>
+                    <div class="harga-filter-group">
+                        <label>JENIS PELANGGAN</label>
+                        <div class="harga-pills" id="pillsJenis"></div>
+                    </div>
+                    <div class="harga-filter-group">
+                        <label>PAKET LAYANAN</label>
+                        <div class="harga-pills" id="pillsPaket"></div>
+                    </div>
+                    <div class="harga-filter-actions">
+                        <button class="btn btn-sm btn-outline" onclick="downloadTemplate()"><i class="fas fa-download"></i> Template</button>
+                    </div>
                 </div>
                 <div class="harga-table" id="hargaTable"></div>
             </div>
@@ -457,6 +450,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <!-- SheetJS for Excel upload -->
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-<script src="app.js?v=1.1.2"></script>
+<script src="app.js?v=1.1.3"></script>
 </body>
 </html>

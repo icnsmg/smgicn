@@ -204,6 +204,74 @@ body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-seri
 /* Result bar */
 .result-bar{text-align:center;font-size:.85rem;color:var(--text-light);margin-bottom:.75rem}
 
+/* Harga Layout Re-design */
+.harga-filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+}
+.harga-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.harga-filter-group label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: 0.05em;
+}
+.harga-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.harga-pill {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    background: #E5E7EB;
+    color: var(--text);
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+}
+.harga-pill:hover {
+    background: #D1D5DB;
+}
+.harga-pill.active {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.harga-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.harga-table th {
+    text-align: left;
+    padding: 1rem;
+    color: var(--text);
+    font-weight: 700;
+    border-bottom: 2px solid var(--border);
+}
+.harga-table td {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-light);
+}
+.harga-table td strong {
+    color: var(--text);
+}
+
 /* Admin konten bar */
 .admin-konten-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1rem 1.25rem;background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:1.5rem}
 .klasifikasi-manager{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;flex:1}

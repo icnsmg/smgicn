@@ -1,5 +1,5 @@
 // ===== KABINET APP (Modified: 2026-04-24) =====
-const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'contact1234' };
+const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'Contact1234' };
 
 const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'Kategori Tiket', 'PROMO'], headerLinks: [], konten: [], harga: [], kritik: [], lainnyaLinks: [], lainnyaImages: [] };
 
@@ -20,8 +20,13 @@ const database = firebase.database();
 // ===== STATE =====
 let currentUser = null;
 let currentTab = 'konten';
-let currentFilter = 'all';
 let searchQuery = '';
+let currentHargaFilters = {
+    regional: 'JAWA & BALI',
+    jenis: 'PELANGGAN BARU',
+    paket: 'REGULER'
+};
+let currentFilter = 'all';
 let currentPage = 1;
 const ITEMS_PER_PAGE = 10;
 let editingContentId = null;
@@ -167,7 +172,10 @@ function switchTab(tab) {
     const view = document.getElementById('view' + tab.charAt(0).toUpperCase() + tab.slice(1));
     if (view) view.style.display = 'block';
     if (tab === 'konten') renderKontenView();
-    else if (tab === 'harga') renderHargaView();
+    else if (tab === 'harga') {
+        renderHargaFilters();
+        renderHargaView();
+    }
     else if (tab === 'lainnya') renderLainnyaView();
     else if (tab === 'kritik') renderKritikView();
 }
@@ -818,6 +826,34 @@ function processExcelFile(file) {
 
 function filterHarga() { renderHargaTable(); }
 
+function renderHargaFilters() {
+    const regionals = ['JAWA & BALI', 'SUMATERA & KALIMANTAN', 'INDONESIA TIMUR', 'NUSA TENGGARA TIMUR', 'NATUNA'];
+    const types = ['PELANGGAN BARU', 'PELANGGAN EXISTING'];
+    const packages = ['REGULER', 'HEBAT-3', 'HEBAT-6', 'HEBAT-12', 'HEBAT-24', 'UPGRADE HARGA KHUSUS'];
+
+    const pReg = document.getElementById('pillsRegional');
+    const pJen = document.getElementById('pillsJenis');
+    const pPak = document.getElementById('pillsPaket');
+    
+    if (pReg) pReg.innerHTML = regionals.map(r => `
+        <button class="harga-pill ${currentHargaFilters.regional === r ? 'active' : ''}" onclick="setHargaFilter('regional', '${r}')">${r}</button>
+    `).join('');
+
+    if (pJen) pJen.innerHTML = types.map(t => `
+        <button class="harga-pill ${currentHargaFilters.jenis === t ? 'active' : ''}" onclick="setHargaFilter('jenis', '${t}')">${t}</button>
+    `).join('');
+
+    if (pPak) pPak.innerHTML = packages.map(p => `
+        <button class="harga-pill ${currentHargaFilters.paket === p ? 'active' : ''}" onclick="setHargaFilter('paket', '${p}')">${p}</button>
+    `).join('');
+}
+
+function setHargaFilter(key, val) {
+    currentHargaFilters[key] = val;
+    renderHargaFilters();
+    renderHargaTable();
+}
+
 // ===== LAINNYA VIEW =====
 function renderLainnyaView() {
     const isAdmin = currentUser === 'admin';
@@ -909,26 +945,52 @@ function deleteLainnyaImage(idx) {
 function renderHargaTable() {
     const c = document.getElementById('hargaTable');
     if (!c) return;
-    const bulan = document.getElementById('hargaBulan').value;
-    const regional = document.getElementById('hargaRegional').value;
-    const jenis = document.getElementById('hargaJenis').value;
-    const paket = document.getElementById('hargaPaketFilter').value;
-    let items = [...DB.harga];
-    if (bulan) items = items.filter(h => h.bulan === bulan);
-    if (regional) items = items.filter(h => h.regional === regional);
-    if (jenis) items = items.filter(h => h.jenis === jenis);
-    if (paket) items = items.filter(h => h.paket === paket);
-    if (!items.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-table"></i><p>Tidak ada data harga</p></div>'; return; }
+
+    let items = [...DB.harga].filter(h => {
+        const hRegional = (h.regional || '').toUpperCase();
+        const hJenis = (h.jenis || '').toUpperCase();
+        const hPaket = (h.paket || '').toUpperCase();
+        
+        // Match Regional
+        if (currentHargaFilters.regional && hRegional !== currentHargaFilters.regional) return false;
+        
+        // Match Jenis
+        const filterJenis = currentHargaFilters.jenis === 'PELANGGAN BARU' ? 'BARU' : 'EXISTING';
+        if (hJenis !== filterJenis) return false;
+        
+        // Match Paket
+        if (hPaket !== currentHargaFilters.paket) return false;
+        
+        return true;
+    });
+
+    if (!items.length) { 
+        c.innerHTML = '<div class="empty-state"><i class="fas fa-table"></i><p>Tidak ada data harga untuk kriteria ini</p></div>'; 
+        return; 
+    }
+    
     c.innerHTML = `<table>
-    <thead><tr><th>Bulan</th><th>Regional</th><th>Jenis</th><th>Paket</th><th>Biaya Pasang</th><th>Harga Paket</th><th>PPN 11%</th><th>Total</th>${currentUser === 'admin' ? '<th>Aksi</th>' : ''}</tr></thead>
+    <thead>
+        <tr>
+            <th>Layanan</th>
+            <th>Biaya Pasang</th>
+            <th>Harga Paket</th>
+            <th>PPN 11%</th>
+            <th>Total</th>
+            ${currentUser === 'admin' ? '<th>Aksi</th>' : ''}
+        </tr>
+    </thead>
     <tbody>${items.map((h, i) => {
         const ppn = Math.round((h.harga || 0) * 0.11);
         const total = (h.biaya || 0) + (h.harga || 0) + ppn;
         const realIdx = DB.harga.indexOf(h);
+        const speedText = h.speed ? ` - ${h.speed}` : ' - 35 Mbps';
         return `<tr>
-        <td>${h.bulan}</td><td>${h.regional}</td><td>${h.jenis}</td><td>${h.paket}</td>
-        <td>${formatRupiah(h.biaya)}</td><td>${formatRupiah(h.harga)}</td>
-        <td>${formatRupiah(ppn)}</td><td><strong>${formatRupiah(total)}</strong></td>
+        <td><strong>${h.paket}${speedText}</strong></td>
+        <td>${formatRupiah(h.biaya)}</td>
+        <td>${formatRupiah(h.harga)}</td>
+        <td>${formatRupiah(ppn)}</td>
+        <td><strong>${formatRupiah(total)}</strong></td>
         ${currentUser === 'admin' ? `<td><button class="btn btn-sm btn-danger" onclick="deleteHarga(${realIdx})"><i class="fas fa-trash"></i></button></td>` : ''}
       </tr>`;
     }).join('')}</tbody></table>`;
