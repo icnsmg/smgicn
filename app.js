@@ -279,18 +279,17 @@ function enterSearchNav() {
     searchNavActive = true;
     searchActiveIndex = 0;
     updateActiveHighlight();
-    showSearchNavBar();
+    const isn = document.getElementById('inlineSearchNav');
+    if (isn) isn.style.display = 'flex';
 }
 
 function exitSearchNav() {
     searchNavActive = false;
+    const isn = document.getElementById('inlineSearchNav');
+    if (isn) isn.style.display = 'none';
+    searchMatches.forEach(el => el.classList.remove('highlight-active'));
     searchMatches = [];
     searchActiveIndex = -1;
-    document.querySelectorAll('.highlight-active').forEach(el => {
-        el.classList.remove('highlight-active');
-    });
-    const nb = document.getElementById('searchNavBar');
-    if (nb) nb.style.display = 'none';
 }
 
 function nextMatch() {
@@ -310,7 +309,8 @@ function updateActiveHighlight() {
     if (searchMatches[searchActiveIndex]) {
         searchMatches[searchActiveIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-    document.getElementById('snbPos').textContent = `${searchActiveIndex + 1} / ${searchMatches.length}`;
+    const pos = document.getElementById('snbPos');
+    if (pos) pos.textContent = `${searchActiveIndex + 1} / ${searchMatches.length}`;
 }
 
 function showSearchNavBar() {
