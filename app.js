@@ -767,26 +767,34 @@ function parsePastedData() {
     lines.forEach(line => {
         const cols = line.split('\t').map(c => c.trim());
         // Expected format: Regional | Jenis | Paket | Speed | Biaya | Harga
-        if (cols.length >= 6) {
-            DB.harga.push({ 
-                regional: cols[0], 
-                jenis: cols[1], 
-                paket: cols[2], 
-                speed: cols[3], 
-                biaya: parseInt(cols[4].replace(/[^0-9]/g, '')) || 0, 
-                harga: parseInt(cols[5].replace(/[^0-9]/g, '')) || 0 
-            });
-            count++;
-        } else if (cols.length >= 5) {
-            // Fallback for 5 columns: Regional | Jenis | Paket | Biaya | Harga
-            DB.harga.push({ 
-                regional: cols[0], 
-                jenis: cols[1], 
-                paket: cols[2], 
-                speed: '35 Mbps',
-                biaya: parseInt(cols[3].replace(/[^0-9]/g, '')) || 0, 
-                harga: parseInt(cols[4].replace(/[^0-9]/g, '')) || 0 
-            });
+        if (cols.length >= 5) {
+            let reg = cols[0].toUpperCase();
+            let jen = cols[1].toUpperCase();
+            let pak = cols[2].toUpperCase();
+            
+            // Normalize "PELANGGAN BARU" -> "BARU"
+            if (jen.includes('BARU')) jen = 'BARU';
+            if (jen.includes('EXISTING')) jen = 'EXISTING';
+
+            if (cols.length >= 6) {
+                DB.harga.push({ 
+                    regional: reg, 
+                    jenis: jen, 
+                    paket: pak, 
+                    speed: cols[3], 
+                    biaya: parseInt(cols[4].replace(/[^0-9]/g, '')) || 0, 
+                    harga: parseInt(cols[5].replace(/[^0-9]/g, '')) || 0 
+                });
+            } else {
+                DB.harga.push({ 
+                    regional: reg, 
+                    jenis: jen, 
+                    paket: pak, 
+                    speed: '35 Mbps',
+                    biaya: parseInt(cols[3].replace(/[^0-9]/g, '')) || 0, 
+                    harga: parseInt(cols[4].replace(/[^0-9]/g, '')) || 0 
+                });
+            }
             count++;
         }
     });
@@ -967,19 +975,23 @@ function renderHargaTable() {
     if (!c) return;
 
     let items = [...DB.harga].filter(h => {
-        const hRegional = (h.regional || '').toUpperCase();
-        const hJenis = (h.jenis || '').toUpperCase();
-        const hPaket = (h.paket || '').toUpperCase();
+        const hRegional = (h.regional || '').toUpperCase().trim();
+        const hJenis = (h.jenis || '').toUpperCase().trim();
+        const hPaket = (h.paket || '').toUpperCase().trim();
+        
+        // Normalize Filter Strings
+        const fRegional = currentHargaFilters.regional.toUpperCase().trim();
+        const fPaket = currentHargaFilters.paket.toUpperCase().trim();
+        const fJenis = currentHargaFilters.jenis.includes('BARU') ? 'BARU' : 'EXISTING';
         
         // Match Regional
-        if (currentHargaFilters.regional && hRegional !== currentHargaFilters.regional) return false;
+        if (hRegional !== fRegional) return false;
         
         // Match Jenis
-        const filterJenis = currentHargaFilters.jenis === 'PELANGGAN BARU' ? 'BARU' : 'EXISTING';
-        if (hJenis !== filterJenis) return false;
+        if (hJenis !== fJenis) return false;
         
         // Match Paket
-        if (hPaket !== currentHargaFilters.paket) return false;
+        if (hPaket !== fPaket) return false;
         
         return true;
     });
