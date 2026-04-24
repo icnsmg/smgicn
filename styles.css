@@ -111,8 +111,8 @@ body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-seri
     max-width: 800px;
     margin: 0 auto 2rem;
     width: 100%;
-    position: sticky;
-    top: 5rem; /* Adjusted for header height */
+    position: sticky !important;
+    top: 4rem; /* Adjusted for header height */
     z-index: 10;
     background: var(--bg);
     padding: .5rem 0;
