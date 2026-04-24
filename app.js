@@ -1,4 +1,4 @@
-// ===== KABINET APP =====
+﻿// ===== KABINET APP =====
 const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'contact1234' };
 
 const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'KATEGORI', 'PROMO'], headerLinks: [], konten: [], harga: [], kritik: [] };
@@ -354,7 +354,7 @@ function calculateRelevance(item, query) {
 
     // 3. Content matches
     if (content.includes(q)) score += 200;
-    
+
     // 4. Klasifikasi matches
     if (klasifikasi.includes(q)) score += 100;
 
@@ -497,15 +497,26 @@ function renderCard(k) {
     }
 
     const isActive = k.id === topCardId;
+    const isAdmin = currentUser === 'admin';
+
+    const adminActions = isAdmin ? `
+      <div class="card-admin-actions" onclick="event.stopPropagation()">
+        <button class="btn-icon" onclick="showContentForm(${k.id})" title="Edit"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon btn-icon-danger" onclick="deleteContent(${k.id})" title="Hapus"><i class="fas fa-trash"></i></button>
+      </div>
+    ` : '';
 
     return `<div class="content-card ${k.status === 'Tidak Berlaku' ? 'inactive-card' : ''} ${isActive ? 'active-glow' : ''}" id="card-${k.id}" onclick="toggleCard(${k.id})">
     <div class="card-header">
-      <h3 class="card-title">${judulDisplay}</h3>
-      <div class="card-meta">
-        ${statusBadge}
-        <span class="card-klasifikasi">${k.klasifikasi}</span>
-        <span class="card-date">${formatDate(k.tanggal)}</span>
+      <div class="card-info">
+        <h3 class="card-title">${judulDisplay}</h3>
+        <div class="card-meta">
+          ${statusBadge}
+          <span class="card-klasifikasi">${k.klasifikasi}</span>
+          <span class="card-date">${formatDate(k.tanggal)}</span>
+        </div>
       </div>
+      ${adminActions}
     </div>
     <div class="card-subject">${subjectDisplay}</div>
     ${linksHtml}
