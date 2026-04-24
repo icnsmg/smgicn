@@ -130,8 +130,6 @@ function showLandingPage() {
     document.getElementById('landingPage').style.display = 'flex';
     hideAllViews();
     document.getElementById('mainNav').classList.remove('visible');
-    const hs = document.getElementById('headerSearch');
-    if (hs) hs.style.display = 'none';
     document.getElementById('floatingBtn').style.display = 'none';
     document.getElementById('headerActions').innerHTML = `
     <button class="btn btn-outline" onclick="showLoginModal('admin')"><i class="fas fa-user-shield"></i> Login Admin</button>
@@ -166,8 +164,6 @@ function switchTab(tab) {
     currentTab = tab;
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     hideAllViews();
-    const hs = document.getElementById('headerSearch');
-    if (hs) hs.style.display = tab === 'konten' && currentUser ? 'flex' : 'none';
     const view = document.getElementById('view' + tab.charAt(0).toUpperCase() + tab.slice(1));
     if (view) view.style.display = 'block';
     if (tab === 'konten') renderKontenView();
@@ -239,19 +235,15 @@ function saveHeaderLinks() {
 
 // ===== SEARCH =====
 const debouncedSearch = debounce(() => {
-    const s1 = document.getElementById('searchInput');
-    const s2 = document.getElementById('mainSearchInput');
-    const val = (s1 ? s1.value : (s2 ? s2.value : '')).trim();
+    const s = document.getElementById('mainSearchInput');
+    const val = (s ? s.value : '').trim();
     syncSearch(val);
 }, 280);
 
 function syncSearch(val) {
-    const s1 = document.getElementById('searchInput');
-    const s2 = document.getElementById('mainSearchInput');
-    if (s1) s1.value = val;
-    if (s2) s2.value = val;
+    const s = document.getElementById('mainSearchInput');
+    if (s) s.value = val;
     searchQuery = val.trim();
-    document.getElementById('searchClear').classList.toggle('visible', searchQuery.length > 0);
     const msc = document.getElementById('mainSearchClear');
     if (msc) msc.classList.toggle('visible', searchQuery.length > 0);
     exitSearchNav();
@@ -271,12 +263,9 @@ function onSearchKeyDown(e) {
 }
 
 function clearSearch() {
-    const s1 = document.getElementById('searchInput');
-    const s2 = document.getElementById('mainSearchInput');
-    if (s1) s1.value = '';
-    if (s2) s2.value = '';
+    const s = document.getElementById('mainSearchInput');
+    if (s) s.value = '';
     searchQuery = '';
-    document.getElementById('searchClear').classList.remove('visible');
     const msc = document.getElementById('mainSearchClear');
     if (msc) msc.classList.remove('visible');
     exitSearchNav();
