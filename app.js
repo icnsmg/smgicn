@@ -180,7 +180,6 @@ function refreshCurrentTab() { switchTab(currentTab); }
 
 // ===== KONTEN VIEW =====
 function renderKontenView() {
-    renderHeaderLinks();
     renderFilterPills();
     const bar = document.getElementById('adminKontenBar');
     if (bar) bar.style.display = currentUser === 'admin' ? 'flex' : 'none';
@@ -240,12 +239,25 @@ function saveHeaderLinks() {
 
 // ===== SEARCH =====
 const debouncedSearch = debounce(() => {
-    searchQuery = document.getElementById('searchInput').value.trim();
+    const s1 = document.getElementById('searchInput');
+    const s2 = document.getElementById('mainSearchInput');
+    const val = (s1 ? s1.value : (s2 ? s2.value : '')).trim();
+    syncSearch(val);
+}, 280);
+
+function syncSearch(val) {
+    const s1 = document.getElementById('searchInput');
+    const s2 = document.getElementById('mainSearchInput');
+    if (s1) s1.value = val;
+    if (s2) s2.value = val;
+    searchQuery = val.trim();
     document.getElementById('searchClear').classList.toggle('visible', searchQuery.length > 0);
+    const msc = document.getElementById('mainSearchClear');
+    if (msc) msc.classList.toggle('visible', searchQuery.length > 0);
     exitSearchNav();
     currentPage = 1;
     renderCards();
-}, 280);
+}
 
 function onSearchKeyDown(e) {
     if (e.key === 'Enter') {
@@ -259,9 +271,14 @@ function onSearchKeyDown(e) {
 }
 
 function clearSearch() {
-    document.getElementById('searchInput').value = '';
+    const s1 = document.getElementById('searchInput');
+    const s2 = document.getElementById('mainSearchInput');
+    if (s1) s1.value = '';
+    if (s2) s2.value = '';
     searchQuery = '';
     document.getElementById('searchClear').classList.remove('visible');
+    const msc = document.getElementById('mainSearchClear');
+    if (msc) msc.classList.remove('visible');
     exitSearchNav();
     currentPage = 1;
     renderCards();
