@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=1.0.7">
+    <link rel="stylesheet" href="styles.css?v=1.0.8">
 </head>
 <body>
 <div class="app-container">
@@ -23,6 +23,7 @@
             <nav class="main-nav" id="mainNav">
                 <button class="nav-btn active" data-tab="konten" onclick="switchTab('konten')">Konten</button>
                 <button class="nav-btn" data-tab="harga" onclick="switchTab('harga')">Harga Layanan</button>
+                <button class="nav-btn" data-tab="lainnya" onclick="switchTab('lainnya')">Lainnya</button>
                 <button class="nav-btn" data-tab="kritik" onclick="switchTab('kritik')">Kritik &amp; Saran</button>
             </nav>
             <div class="header-search" id="headerSearch" style="display:none">
@@ -233,6 +234,38 @@
             </div>
         </section>
 
+        <!-- ===== TAB: LAINNYA ===== -->
+        <section id="viewLainnya" style="display:none">
+            <div class="lainnya-layout">
+                <div class="admin-lainnya-bar" id="adminLainnyaBar" style="display:none">
+                    <div class="admin-lainnya-group">
+                        <h4><i class="fas fa-link"></i> Tambah Link Eksternal</h4>
+                        <div class="lainnya-input-row">
+                            <input type="text" id="lainnyaLinkName" placeholder="Nama Tombol">
+                            <input type="text" id="lainnyaLinkUrl" placeholder="URL Link">
+                            <button class="btn btn-primary" onclick="addLainnyaLink()"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="admin-lainnya-group">
+                        <h4><i class="fas fa-image"></i> Tambah Gambar/Foto</h4>
+                        <div class="lainnya-input-row">
+                            <input type="text" id="lainnyaImgUrl" placeholder="URL Gambar">
+                            <input type="text" id="lainnyaImgCaption" placeholder="Keterangan">
+                            <button class="btn btn-primary" onclick="addLainnyaImage()"><i class="fas fa-upload"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="lainnya-section">
+                    <h3><i class="fas fa-external-link-alt"></i> Link Cepat</h3>
+                    <div class="lainnya-links-grid" id="lainnyaLinksGrid"></div>
+                </div>
+                <div class="lainnya-section">
+                    <h3><i class="fas fa-images"></i> Galeri Foto</h3>
+                    <div class="lainnya-gallery" id="lainnyaGallery"></div>
+                </div>
+            </div>
+        </section>
+
         <!-- ===== TAB: KRITIK & SARAN ===== -->
         <section id="viewKritik" style="display:none">
             <div class="kritik-layout">
@@ -432,6 +465,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <!-- SheetJS for Excel upload -->
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-<script src="app.js?v=1.0.5"></script>
+<script src="app.js?v=1.0.6"></script>
 </body>
 </html>

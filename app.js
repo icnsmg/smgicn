@@ -1,7 +1,7 @@
 // ===== KABINET APP (Modified: 2026-04-24) =====
 const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'contact1234' };
 
-const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'Kategori Tiket', 'PROMO'], headerLinks: [], konten: [], harga: [], kritik: [] };
+const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'Kategori Tiket', 'PROMO'], headerLinks: [], konten: [], harga: [], kritik: [], lainnyaLinks: [], lainnyaImages: [] };
 
 const firebaseConfig = {
     apiKey: "AIzaSyD-C0pQl8Zd6baTg28RijkYncQdvBW_ewE",
@@ -56,6 +56,8 @@ function initData() {
             });
             DB.harga = data.harga || [];
             DB.kritik = data.kritik || [];
+            DB.lainnyaLinks = data.lainnyaLinks || [];
+            DB.lainnyaImages = data.lainnyaImages || [];
         } else {
             DB.konten = [
                 { id: 1, judul: 'Cara Memesan Layanan', tanggal: '2026-04-15', klasifikasi: 'INFO', subject: 'Panduan lengkap cara memesan layanan kami melalui platform online.', content: '<p>Ikuti langkah-langkah berikut:</p><ul><li>Kunjungi website resmi</li><li>Pilih layanan</li><li>Isi formulir</li><li>Konfirmasi pembayaran</li></ul>', links: [{ name: 'Panduan Lengkap', url: '#' }] },
@@ -170,6 +172,7 @@ function switchTab(tab) {
     if (view) view.style.display = 'block';
     if (tab === 'konten') renderKontenView();
     else if (tab === 'harga') renderHargaView();
+    else if (tab === 'lainnya') renderLainnyaView();
     else if (tab === 'kritik') renderKritikView();
 }
 
@@ -808,6 +811,94 @@ function processExcelFile(file) {
 }
 
 function filterHarga() { renderHargaTable(); }
+
+// ===== LAINNYA VIEW =====
+function renderLainnyaView() {
+    const isAdmin = currentUser === 'admin';
+    const bar = document.getElementById('adminLainnyaBar');
+    if (bar) bar.style.display = isAdmin ? 'grid' : 'none';
+
+    renderLainnyaLinks();
+    renderLainnyaGallery();
+}
+
+function renderLainnyaLinks() {
+    const c = document.getElementById('lainnyaLinksGrid');
+    if (!c) return;
+    const isAdmin = currentUser === 'admin';
+    c.innerHTML = (DB.lainnyaLinks || []).map((l, i) => `
+        <div class="link-card-admin">
+            <a href="${l.url}" target="_blank" class="btn btn-outline">
+                <i class="fas fa-external-link-alt"></i> ${l.name}
+            </a>
+            ${isAdmin ? `<button class="link-delete-btn" onclick="deleteLainnyaLink(${i})"><i class="fas fa-times"></i></button>` : ''}
+        </div>
+    `).join('');
+}
+
+function addLainnyaLink() {
+    const name = document.getElementById('lainnyaLinkName').value.trim();
+    const url = document.getElementById('lainnyaLinkUrl').value.trim();
+    if (!name || !url) { showToast('Nama dan URL wajib diisi!', 'error'); return; }
+    if (!DB.lainnyaLinks) DB.lainnyaLinks = [];
+    DB.lainnyaLinks.push({ name, url });
+    saveData();
+    document.getElementById('lainnyaLinkName').value = '';
+    document.getElementById('lainnyaLinkUrl').value = '';
+    renderLainnyaLinks();
+    showToast('Link ditambahkan', 'success');
+}
+
+function deleteLainnyaLink(idx) {
+    if (confirm('Hapus link ini?')) {
+        DB.lainnyaLinks.splice(idx, 1);
+        saveData();
+        renderLainnyaLinks();
+        showToast('Link dihapus', 'success');
+    }
+}
+
+function renderLainnyaGallery() {
+    const c = document.getElementById('lainnyaGallery');
+    if (!c) return;
+    const isAdmin = currentUser === 'admin';
+    if (!(DB.lainnyaImages || []).length) {
+        c.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>Belum ada foto</p></div>';
+        return;
+    }
+    c.innerHTML = DB.lainnyaImages.map((img, i) => `
+        <div class="gallery-item">
+            <img src="${img.url}" class="gallery-img" alt="${img.caption}" onerror="this.src='https://placehold.co/600x400?text=Image+Not+Found'">
+            ${img.caption ? `<div class="gallery-caption">${img.caption}</div>` : ''}
+            ${isAdmin ? `
+            <div class="gallery-admin-actions">
+                <button class="btn btn-sm btn-danger" onclick="deleteLainnyaImage(${i})"><i class="fas fa-trash"></i></button>
+            </div>` : ''}
+        </div>
+    `).join('');
+}
+
+function addLainnyaImage() {
+    const url = document.getElementById('lainnyaImgUrl').value.trim();
+    const caption = document.getElementById('lainnyaImgCaption').value.trim();
+    if (!url) { showToast('URL Gambar wajib diisi!', 'error'); return; }
+    if (!DB.lainnyaImages) DB.lainnyaImages = [];
+    DB.lainnyaImages.push({ url, caption });
+    saveData();
+    document.getElementById('lainnyaImgUrl').value = '';
+    document.getElementById('lainnyaImgCaption').value = '';
+    renderLainnyaGallery();
+    showToast('Gambar ditambahkan', 'success');
+}
+
+function deleteLainnyaImage(idx) {
+    if (confirm('Hapus gambar ini?')) {
+        DB.lainnyaImages.splice(idx, 1);
+        saveData();
+        renderLainnyaGallery();
+        showToast('Gambar dihapus', 'success');
+    }
+}
 
 function renderHargaTable() {
     const c = document.getElementById('hargaTable');
