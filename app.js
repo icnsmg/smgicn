@@ -735,7 +735,7 @@ function calcHargaPreview() {
     const biaya = parseInt(document.getElementById('hargaBiayaPasang').value) || 0;
     const harga = parseInt(document.getElementById('hargaPaketHarga').value) || 0;
     if (!biaya && !harga) { document.getElementById('hargaPreview').style.display = 'none'; return; }
-    const ppn = Math.round(harga * 0.11);
+    const ppn = Math.round((biaya + harga) * 0.11);
     const total = biaya + harga + ppn;
     document.getElementById('hargaPreview').style.display = 'flex';
     document.getElementById('previewPPN').textContent = formatRupiah(ppn);
@@ -1013,8 +1013,10 @@ function renderHargaTable() {
         </tr>
     </thead>
     <tbody>${items.map((h, i) => {
-        const ppn = Math.round((h.harga || 0) * 0.11);
-        const total = (h.biaya || 0) + (h.harga || 0) + ppn;
+        const biaya = h.biaya || 0;
+        const harga = h.harga || 0;
+        const ppn = Math.round((biaya + harga) * 0.11);
+        const total = biaya + harga + ppn;
         const realIdx = DB.harga.indexOf(h);
         const speedText = h.speed ? ` - ${h.speed}` : ' - 35 Mbps';
         return `<tr>
