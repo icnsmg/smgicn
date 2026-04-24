@@ -1,7 +1,7 @@
 // ===== KABINET APP (Modified: 2026-04-24) =====
 const DEFAULT_PASSWORDS = { admin: 'smg1234', user: 'contact1234' };
 
-const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'KATEGORI', 'PROMO'], headerLinks: [], konten: [], harga: [], kritik: [] };
+const DB = { companyName: 'Kabinet', companyLogo: '', klasifikasi: ['INFO', 'Kategori Tiket', 'PROMO'], headerLinks: [], konten: [], harga: [], kritik: [] };
 
 const firebaseConfig = {
     apiKey: "AIzaSyD-C0pQl8Zd6baTg28RijkYncQdvBW_ewE",
@@ -48,16 +48,19 @@ function initData() {
             // Explicit assignment to ensure data removed from Firebase is also cleared in the local DB object
             DB.companyName = data.companyName || 'Kabinet';
             DB.companyLogo = data.companyLogo || '';
-            DB.klasifikasi = data.klasifikasi || ['INFO', 'KATEGORI', 'PROMO'];
+            DB.klasifikasi = (data.klasifikasi || ['INFO', 'Kategori Tiket', 'PROMO']).map(k => k === 'KATEGORI' ? 'Kategori Tiket' : k);
             DB.headerLinks = data.headerLinks || [];
-            DB.konten = data.konten || [];
+            DB.konten = (data.konten || []).map(k => {
+                if (k.klasifikasi === 'KATEGORI') k.klasifikasi = 'Kategori Tiket';
+                return k;
+            });
             DB.harga = data.harga || [];
             DB.kritik = data.kritik || [];
         } else {
             DB.konten = [
                 { id: 1, judul: 'Cara Memesan Layanan', tanggal: '2026-04-15', klasifikasi: 'INFO', subject: 'Panduan lengkap cara memesan layanan kami melalui platform online.', content: '<p>Ikuti langkah-langkah berikut:</p><ul><li>Kunjungi website resmi</li><li>Pilih layanan</li><li>Isi formulir</li><li>Konfirmasi pembayaran</li></ul>', links: [{ name: 'Panduan Lengkap', url: '#' }] },
                 { id: 2, judul: 'Paket Layanan HEBAT', tanggal: '2026-04-14', klasifikasi: 'PROMO', subject: 'Dapatkan paket HEBAT dengan harga spesial bulan ini.', content: '<p>Keunggulan paket HEBAT:</p><ol><li>100 Mbps</li><li>Unlimited quota</li><li>Gratis instalasi</li></ol>', links: [{ name: 'Daftar Sekarang', url: '#' }] },
-                { id: 3, judul: 'Area Layanan', tanggal: '2026-04-13', klasifikasi: 'KATEGORI', subject: 'Kami melayani Jawa, Bali, Sumatera, dan Kalimantan.', content: '<p>Tersedia di: Jawa & Bali, Sumatera, Kalimantan.</p>', links: [] }
+                { id: 3, judul: 'Area Layanan', tanggal: '2026-04-13', klasifikasi: 'Kategori Tiket', subject: 'Kami melayani Jawa, Bali, Sumatera, dan Kalimantan.', content: '<p>Tersedia di: Jawa & Bali, Sumatera, Kalimantan.</p>', links: [] }
             ];
             DB.harga = [
                 { bulan: 'APR', regional: 'Jawa & Bali', jenis: 'Baru', paket: 'Reguler', biaya: 250000, harga: 350000 },
