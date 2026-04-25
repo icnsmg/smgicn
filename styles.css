@@ -384,36 +384,43 @@ body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-seri
 .admin-reply-form{margin-top:.75rem;display:flex;gap:.5rem}
 .admin-reply-form textarea{flex:1;padding:.5rem .75rem;font-size:.8125rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;resize:none;min-height:60px}
 
-/* ===== LAINNYA VIEW ===== */
-.lainnya-layout{display:flex;flex-direction:column;gap:2rem}
-.admin-lainnya-bar{background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
-.admin-lainnya-group h4{font-size:.9rem;margin-bottom:1rem;color:var(--text)}
-.lainnya-input-row{display:flex;gap:.5rem}
-.lainnya-input-row input{flex:1;padding:.5rem .75rem;font-size:.875rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit}
-.lainnya-section h3{font-size:1.1rem;font-weight:600;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;color:var(--primary)}
-.lainnya-links-grid{display:flex;flex-wrap:wrap;gap:1rem}
-.lainnya-gallery{display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:1.5rem}
-.gallery-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:var(--transition);position:relative}
+
+
+/* ===== LAMPIRAN VIEW ===== */
+.lampiran-layout{display:flex;flex-direction:column;gap:2rem}
+.admin-lampiran-bar{background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.admin-lampiran-group h4{font-size:.9rem;margin-bottom:1rem;color:var(--text)}
+.lampiran-input-row{display:flex;gap:.5rem}
+.lampiran-input-row input{flex:1;padding:.5rem .75rem;font-size:.875rem;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit}
+.lampiran-section h3{font-size:1.1rem;font-weight:600;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;color:var(--primary)}
+.lampiran-links-grid{display:flex;flex-wrap:wrap;gap:1rem}
+.lampiran-gallery{display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:1.5rem}
+.gallery-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:var(--transition);position:relative;cursor:pointer}
 .gallery-item:hover{box-shadow:var(--shadow-md);transform:translateY(-4px)}
 .gallery-img{width:100%;height:auto;max-height:500px;object-fit:contain;display:block;background:#f0f0f0}
 .gallery-caption{padding:1rem;font-size:.875rem;font-weight:500;text-align:center;background:var(--bg)}
 .gallery-admin-actions{position:absolute;top:.5rem;right:.5rem;display:flex;gap:.4rem}
 .link-card-admin{position:relative;display:inline-block}
-.link-delete-btn{position:absolute;top:-8px;right:-8px;width:24px;height:24px;background:var(--error);color:#fff;border-radius:50%;border:none;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:var(--shadow-sm);transition:var(--transition)}
-.link-delete-btn:hover{transform:scale(1.1);background:#b91c1c}
 
-.lainnya-links-grid .btn-outline {
+.lampiran-links-grid .btn-outline {
     border-color: var(--primary);
     color: var(--primary);
     background: rgba(37, 99, 235, 0.05);
     font-weight: 600;
 }
-.lainnya-links-grid .btn-outline:hover {
+.lampiran-links-grid .btn-outline:hover {
     background: var(--primary);
     color: #fff;
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
+
+/* ===== LIGHTBOX ===== */
+#lightboxModal{background:rgba(0,0,0,.9);cursor:zoom-out}
+.lightbox-content{position:relative;max-width:90%;max-height:90%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default}
+#lightboxImg{max-width:100%;max-height:85vh;border-radius:var(--radius);box-shadow:0 0 40px rgba(0,0,0,.5)}
+.lightbox-caption{color:#fff;margin-top:1.5rem;font-size:1.1rem;text-align:center;font-weight:500}
+.lightbox-close{position:absolute;top:-40px;right:0;color:#fff;font-size:1.5rem}
 
 /* ===== SETTINGS ===== */
 .settings-card{max-width:500px;background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem}

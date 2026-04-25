@@ -6,9 +6,12 @@
     <title>Kabinet - Knowledge Base</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://cdn.sheetjs.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=1.1.8">
+    <link rel="stylesheet" href="styles.css?v=1.2.0">
 </head>
 <body>
 <div class="app-container">
@@ -23,7 +26,7 @@
             <nav class="main-nav" id="mainNav">
                 <button class="nav-btn active" data-tab="konten" onclick="switchTab('konten')">Konten</button>
                 <button class="nav-btn" data-tab="harga" onclick="switchTab('harga')">Harga Layanan</button>
-                <button class="nav-btn" data-tab="lainnya" onclick="switchTab('lainnya')">Lainnya</button>
+                <button class="nav-btn" data-tab="lampiran" onclick="switchTab('lampiran')">Lampiran</button>
                 <button class="nav-btn" data-tab="kritik" onclick="switchTab('kritik')">Kritik &amp; Saran</button>
             </nav>
             <div class="header-actions" id="headerActions">
@@ -61,7 +64,6 @@
 
         <!-- ===== TAB: KONTEN ===== -->
         <section id="viewKonten" style="display:none">
-            <!-- Large Search Bar (Replaced External Links) -->
             <div class="main-search-section">
                 <div class="main-search-box">
                     <i class="fas fa-search main-search-icon"></i>
@@ -69,7 +71,6 @@
                            oninput="syncSearch(this.value)"
                            onkeydown="onSearchKeyDown(event)">
                     
-                    <!-- Inline Search Navigation -->
                     <div class="inline-search-nav" id="inlineSearchNav" style="display:none">
                         <span class="inline-snb-pos" id="snbPos">0 / 0</span>
                         <div class="inline-snb-controls">
@@ -84,16 +85,13 @@
                     </button>
                 </div>
             </div>
-                <!-- Filter Pills -->
-                <div class="filter-pills" id="filterPills">
-                    <button class="pill active" data-filter="all" onclick="filterByCategory('all')">SEMUA</button>
-                </div>
-                <!-- Result count bar -->
-                <div class="result-bar" id="resultBar" style="display:none">
-                    <i class="fas fa-filter"></i> <span id="resultBarText"></span>
-                </div>
+            <div class="filter-pills" id="filterPills">
+                <button class="pill active" data-filter="all" onclick="filterByCategory('all')">SEMUA</button>
+            </div>
+            <div class="result-bar" id="resultBar" style="display:none">
+                <i class="fas fa-filter"></i> <span id="resultBarText"></span>
+            </div>
 
-            <!-- Admin toolbar -->
             <div class="admin-konten-bar" id="adminKontenBar" style="display:none">
                 <div class="klasifikasi-manager">
                     <span class="klm-label">Klasifikasi:</span>
@@ -108,7 +106,6 @@
                 </button>
             </div>
 
-            <!-- Cards -->
             <div class="cards-container" id="cardsContainer"></div>
             <div class="pagination" id="pagination"></div>
         </section>
@@ -116,8 +113,6 @@
         <!-- ===== TAB: HARGA LAYANAN ===== -->
         <section id="viewHarga" style="display:none">
             <div class="harga-layout">
-
-                <!-- Admin input panel -->
                 <div class="harga-input-panel" id="hargaInputPanel" style="display:none">
                     <h3 class="panel-title"><i class="fas fa-plus-circle"></i> Input Data Harga</h3>
                     <div class="input-method-tabs">
@@ -126,7 +121,6 @@
                         <button class="method-btn" data-method="upload" onclick="switchInputMethod('upload')">Upload File</button>
                     </div>
 
-                    <!-- Manual -->
                     <div class="method-content" id="method-manual">
                         <div class="form-row">
                             <div class="form-group">
@@ -141,8 +135,8 @@
                             <div class="form-group">
                                 <label>Regional</label>
                                 <select id="hargaRegionalInput">
-                                    <option value="Jawa &amp; Bali">Jawa &amp; Bali</option>
-                                    <option value="Sumatera &amp; Kalimantan">Sumatera &amp; Kalimantan</option>
+                                    <option value="Jawa & Bali">Jawa & Bali</option>
+                                    <option value="Sumatera & Kalimantan">Sumatera & Kalimantan</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -177,18 +171,16 @@
                         <button class="btn btn-primary" onclick="saveHarga()"><i class="fas fa-save"></i> Simpan</button>
                     </div>
 
-                    <!-- Paste -->
                     <div class="method-content" id="method-paste" style="display:none">
                         <p class="method-hint">Copy baris dari Excel lalu paste di sini.<br>Format kolom: <code>Regional | Jenis | Paket | Speed | Biaya Pasang | Harga Paket</code></p>
                         <textarea id="pasteExcelData" rows="8" placeholder="Paste data Excel di sini..."></textarea>
                         <button class="btn btn-primary" onclick="parsePastedData()"><i class="fas fa-file-import"></i> Import Data</button>
                     </div>
 
-                    <!-- Upload -->
                     <div class="method-content" id="method-upload" style="display:none">
                         <div class="upload-area" id="uploadArea" ondragover="event.preventDefault()" ondrop="handleFileDrop(event)">
                             <i class="fas fa-file-excel upload-icon"></i>
-                            <p>Drag &amp; drop file Excel (.xlsx, .xls, .csv)</p>
+                            <p>Drag & drop file Excel (.xlsx, .xls, .csv)</p>
                             <label class="btn btn-outline" style="margin-top:0.75rem">
                                 <i class="fas fa-folder-open"></i> Pilih File
                                 <input type="file" accept=".xlsx,.xls,.csv" onchange="uploadExcel(event)" hidden>
@@ -197,7 +189,6 @@
                     </div>
                 </div>
 
-                <!-- New Filter System -->
                 <div class="harga-filters-container">
                     <div class="harga-filter-group">
                         <label>REGIONAL</label>
@@ -219,34 +210,34 @@
             </div>
         </section>
 
-        <!-- ===== TAB: LAINNYA ===== -->
-        <section id="viewLainnya" style="display:none">
-            <div class="lainnya-layout">
-                <div class="admin-lainnya-bar" id="adminLainnyaBar" style="display:none">
-                    <div class="admin-lainnya-group">
+        <!-- ===== TAB: LAMPIRAN ===== -->
+        <section id="viewLampiran" style="display:none">
+            <div class="lampiran-layout">
+                <div class="admin-lampiran-bar" id="adminLampiranBar" style="display:none">
+                    <div class="admin-lampiran-group">
                         <h4><i class="fas fa-link"></i> Tambah Link Eksternal</h4>
-                        <div class="lainnya-input-row">
-                            <input type="text" id="lainnyaLinkName" placeholder="Nama Tombol">
-                            <input type="text" id="lainnyaLinkUrl" placeholder="URL Link">
-                            <button class="btn btn-primary" onclick="addLainnyaLink()"><i class="fas fa-plus"></i></button>
+                        <div class="lampiran-input-row">
+                            <input type="text" id="lampiranLinkName" placeholder="Nama Tombol">
+                            <input type="text" id="lampiranLinkUrl" placeholder="URL Link">
+                            <button class="btn btn-primary" onclick="addLampiranLink()"><i class="fas fa-plus"></i></button>
                         </div>
                     </div>
-                    <div class="admin-lainnya-group">
+                    <div class="admin-lampiran-group">
                         <h4><i class="fas fa-image"></i> Tambah Gambar/Foto</h4>
-                        <div class="lainnya-input-row">
-                            <input type="text" id="lainnyaImgUrl" placeholder="URL Gambar">
-                            <input type="text" id="lainnyaImgCaption" placeholder="Keterangan">
-                            <button class="btn btn-primary" onclick="addLainnyaImage()"><i class="fas fa-upload"></i></button>
+                        <div class="lampiran-input-row">
+                            <input type="text" id="lampiranImgUrl" placeholder="URL Gambar">
+                            <input type="text" id="lampiranImgCaption" placeholder="Keterangan">
+                            <button class="btn btn-primary" onclick="addLampiranImage()"><i class="fas fa-upload"></i></button>
                         </div>
                     </div>
                 </div>
-                <div class="lainnya-section">
-                    <h3><i class="fas fa-external-link-alt"></i> Link Cepat</h3>
-                    <div class="lainnya-links-grid" id="lainnyaLinksGrid"></div>
+                <div class="lampiran-section">
+                    <h3><i class="fas fa-external-link-alt"></i> Link Eksternal</h3>
+                    <div class="lampiran-links-grid" id="lampiranLinksGrid"></div>
                 </div>
-                <div class="lainnya-section">
+                <div class="lampiran-section">
                     <h3><i class="fas fa-images"></i> Galeri Foto</h3>
-                    <div class="lainnya-gallery" id="lainnyaGallery"></div>
+                    <div class="lampiran-gallery" id="lampiranGallery"></div>
                 </div>
             </div>
         </section>
@@ -254,7 +245,6 @@
         <!-- ===== TAB: KRITIK & SARAN ===== -->
         <section id="viewKritik" style="display:none">
             <div class="kritik-layout">
-                <!-- Submit form (users + guests) -->
                 <div class="kritik-form-card" id="kritikFormCard">
                     <h3><i class="fas fa-comment-alt"></i> Kirim Kritik &amp; Saran</h3>
                     <div class="form-group">
@@ -269,7 +259,6 @@
                         <i class="fas fa-paper-plane"></i> Kirim
                     </button>
                 </div>
-                <!-- Threads -->
                 <div class="kritik-threads" id="kritikThreads"></div>
             </div>
         </section>
@@ -297,7 +286,7 @@
     </button>
 </div>
 
-<!-- ===== LOGIN MODAL ===== -->
+<!-- ===== MODALS ===== -->
 <div class="modal" id="loginModal">
     <div class="modal-content modal-small">
         <div class="modal-header">
@@ -322,7 +311,6 @@
     </div>
 </div>
 
-<!-- ===== CONTENT FORM MODAL ===== -->
 <div class="modal" id="contentModal">
     <div class="modal-content modal-large">
         <div class="modal-header">
@@ -388,7 +376,7 @@
                 <div id="externalLinks">
                     <div class="external-link-item">
                         <input type="text" placeholder="Nama file" class="link-name">
-                        <input type="text" placeholder="URL (Drive, PPT, Excel, dll)" class="link-url">
+                        <input type="text" placeholder="URL" class="link-url">
                         <button type="button" class="btn-remove" onclick="removeLinkField(this)"><i class="fas fa-times"></i></button>
                     </div>
                 </div>
@@ -404,7 +392,6 @@
     </div>
 </div>
 
-<!-- Admin Konten List Modal -->
 <div class="modal" id="adminKontenModal">
     <div class="modal-content modal-large">
         <div class="modal-header">
@@ -417,23 +404,11 @@
     </div>
 </div>
 
-<!-- Manage Header Links Modal -->
-<div class="modal" id="headerLinksModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Kelola Link Header</h3>
-            <button class="modal-close" onclick="closeModal('headerLinksModal')"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body">
-            <div id="manageHeaderLinksList"></div>
-            <button class="btn btn-sm btn-outline" onclick="addHeaderLinkField()" style="margin-top:1rem">
-                <i class="fas fa-plus"></i> Tambah Link Baru
-            </button>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('headerLinksModal')">Batal</button>
-            <button class="btn btn-primary" onclick="saveHeaderLinks()">Simpan Perubahan</button>
-        </div>
+<div class="modal" id="lightboxModal" onclick="closeModal('lightboxModal')">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+        <img id="lightboxImg" src="" alt="Preview">
+        <div id="lightboxCaption" class="lightbox-caption"></div>
+        <button class="modal-close lightbox-close" onclick="closeModal('lightboxModal')"><i class="fas fa-times"></i></button>
     </div>
 </div>
 
@@ -446,10 +421,8 @@
 </div>
 
 <!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-<!-- SheetJS for Excel upload -->
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-<script src="app.js?v=1.1.6"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js" defer></script>
+<script src="app.js?v=1.2.0" defer></script>
 </body>
 </html>
