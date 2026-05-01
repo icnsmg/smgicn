@@ -44,6 +44,27 @@
             --border: #475569;
         }
 
+        .dark-mode .content-card {
+            background: var(--background-alt);
+            border-color: var(--border);
+        }
+
+        .dark-mode .content-title {
+            color: var(--text-primary);
+        }
+
+        .dark-mode .content-subject {
+            color: var(--text-secondary);
+        }
+
+        .dark-mode .content-text {
+            color: var(--text-primary);
+        }
+
+        .dark-mode .content-date {
+            color: var(--text-muted);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -572,10 +593,11 @@
         }
 
         .content-card {
-            background: var(--background);
-            border-radius: var(--radius-md);
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 1rem;
             box-shadow: var(--shadow-sm);
-            padding: 16px;
+            padding: 1.25rem;
             transition: var(--transition);
             width: 100%;
         }
@@ -588,7 +610,7 @@
 
         .content-card:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-lg);
         }
 
         .content-card.search-active {
@@ -606,9 +628,9 @@
         }
 
         .content-title {
-            font-size: 14px;
+            font-size: 1.25rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: #000000;
         }
 
         .content-meta {
@@ -619,31 +641,31 @@
         }
 
         .content-date {
-            font-size: 11px;
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
 
         .content-classification {
             padding: 2px 10px;
             border-radius: var(--radius-pill);
-            font-size: 11px;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            background: var(--primary-light);
-            color: var(--primary);
+            background: #e0edff;
+            color: #2563eb;
         }
 
         .content-status {
             padding: 2px 10px;
             border-radius: var(--radius-pill);
-            font-size: 11px;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
         }
 
         .content-subject {
-            font-size: 11px;
-            color: var(--text-secondary);
+            font-size: 1rem;
+            color: #444444;
             margin-bottom: 12px;
         }
 
@@ -699,6 +721,15 @@
             background: #DC2626;
         }
 
+        #openPasteModalBtn {
+            background: #A1F4FF !important;
+            color: #000000 !important;
+        }
+
+        #openPasteModalBtn:hover {
+            background: #89dbff !important;
+        }
+
         .content-details {
             max-height: 0;
             overflow: hidden;
@@ -714,7 +745,8 @@
 
         .content-text {
             line-height: 1.8;
-            color: var(--text-primary);
+            font-size: 0.875rem;
+            color: #000000;
         }
 
         .content-text[align="center"] {
@@ -2372,7 +2404,7 @@
                              <div class="content-meta">
                                  <span class="content-date">${formatDate(content.date)}</span>
                                  <span class="content-classification">${content.classification}</span>
-                                 ${content.status ? `<span class="content-status" style="background: ${content.status === 'berlaku' ? 'var(--success)' : 'var(--error)'}; color: white; padding: 2px 10px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 600; text-transform: uppercase;">${content.status === 'berlaku' ? 'Berlaku' : 'Tidak Berlaku'}</span>` : ''}
+                                  ${content.status ? `<span class="content-status" style="background: ${content.status === 'berlaku' ? '#22c55e' : '#555'}; color: white; padding: 2px 10px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; text-transform: uppercase;">${content.status === 'berlaku' ? 'Berlaku' : 'Tidak Berlaku'}</span>` : ''}
                              </div>
                          </div>
                         <div class="content-subject">${highlightedSubject}</div>
@@ -3135,8 +3167,8 @@
                             <div class="content-title">${lamp.judul}</div>
                             <div class="content-meta">
                                 <span class="content-date">${date}</span>
-                                <span class="content-classification" style="background: var(--primary-light); color: var(--primary);">${lamp.kategori}</span>
-                                ${lamp.status ? `<span class="content-status" style="background: ${lamp.status === 'berlaku' ? 'var(--success)' : 'var(--error)'}; color: white; padding:2px 10px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 600; text-transform: uppercase;">${lamp.status === 'berlaku' ? 'Berlaku' : 'Tidak Berlaku'}</span>` : ''}
+                                 <span class="content-classification">${lamp.kategori}</span>
+                                 ${lamp.status ? `<span class="content-status" style="background: ${lamp.status === 'berlaku' ? '#22c55e' : '#555'}; color: white; padding:2px 10px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; text-transform: uppercase;">${lamp.status === 'berlaku' ? 'Berlaku' : 'Tidak Berlaku'}</span>` : ''}
                             </div>
                         </div>
                         ${lamp.deskripsi ? `<div class="content-subject">${lamp.deskripsi}</div>` : ''}
