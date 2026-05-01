@@ -1207,6 +1207,30 @@
             }
         }
     </style>
+    
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script>
+      // TODO: Ganti dengan konfigurasi Firebase Web App Anda
+      // Dapatkan dari: Firebase Console > Project Settings > Your apps > Web app > Config
+      // Project ID: kabinnet (dari service account)
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "kabinnet.firebaseapp.com",
+        databaseURL: "https://kabinnet.firebaseio.com",
+        projectId: "kabinnet",
+        storageBucket: "kabinnet.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+      };
+      // Inisialisasi Firebase
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      // Make db globally accessible
+      window.db = firebase.database();
+    </script>
 </head>
 
 <body>
@@ -1878,22 +1902,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const CENTRAL_API_HOST = window.centralApiHost || window.CENTRAL_API_HOST || urlParams.get('api_host') || window.location.origin;
         const CONFIG = {
-            API_URL: CENTRAL_API_HOST + '/api',
             MAX_LOGIN_ATTEMPTS: 5,
-            ITEMS_PER_PAGE: 7,
-            AUTO_SYNC_INTERVAL: 3000,
-            STORAGE_KEYS: {
-                contents: 'KB1_contents',
-                hargaLayanan: 'KB1_harga',
-                feedbacks: 'KB1_feedbacks',
-                classifications: 'KB1_classifications',
-                quickLinks: 'KB1_quickLinks',
-                darkmode: 'KB1_darkmode',
-                activeSection: 'KB1_activeSection',
-                session: 'KABINET_session',
-                loginAttempts: 'KB1_loginAttempts',
-                lampiran: 'KB1_lampiran'
-            }
+            ITEMS_PER_PAGE: 7
         };
 
         // Login passwords
@@ -1904,28 +1914,7 @@
             user: 'Contact1234'
         };
 
-        // Sample data
-        const SAMPLE_DATA = {
-            contents: [
-                { id: '1', title: 'Promo Spesial Bulan Ini', date: '2026-04-01', classification: 'PROMO', subject: 'Dapatkan diskon 50% untuk semua layanan internet rumah!', content: '<p style="text-align: center;"><strong>DISKON 50%</strong></p><p>Segera daftarkan diri Anda dan nikmati kecepatan internet tinggi dengan harga terjangkau.</p><ul><li>Kecepatan up to 100 Mbps</li><li>Gratis installasi</li><li>Gratis router WiFi</li></ul>', externalLinks: [{ name: 'Syarat & Ketentuan', url: 'https://docs.google.com' }] },
-                { id: '2', title: 'Cara Memperkuat Sinyal WiFi', date: '2026-03-28', classification: 'INFO', subject: 'Tips dan trick untuk memperkuat signal WiFi di rumah Anda.', content: '<p>Berikut beberapa tips untuk memperkuat sinyal WiFi:</p><ol><li>Letakkan router di tengah rumah</li><li>Hindari dinding tebal dan perangkat elektronik</li><li>Gunakan WiFi extender</li><li>Update firmware router secara berkala</li></ol>', externalLinks: [] },
-                { id: '3', title: 'Kategori Layanan Internet', date: '2026-03-25', classification: 'KATEGORI', subject: 'Kategori layanan internet yang tersedia untuk Anda.', content: '<p><strong>Layanan yang tersedia:</strong></p><ul><li><strong>Internet Rumah</strong> - untuk kebutuhan rumah tangga</li><li><strong>Internet Bisnis</strong> - untuk kebutuhan usaha</li><li><strong>Internet WiFi Hotspot</strong> - untuk area publik</li></ul>', externalLinks: [{ name: 'Daftar Harga', url: '#harga' }] }
-            ],
-            hargaLayanan: [
-                { id: '1', bulan: 'Januari', regional: 'Jawa & Bali', jenisPelanggan: 'Baru', paket: 'Reguler', layanan: 'Internet 20 Mbps', biayaPasang: 300000, hargaPaket: 250000 },
-                { id: '2', bulan: 'Januari', regional: 'Jawa & Bali', jenisPelanggan: 'Baru', paket: 'HEBAT 12', layanan: 'Internet 50 Mbps', biayaPasang: 300000, hargaPaket: 350000 },
-                { id: '3', bulan: 'Februari', regional: 'Jawa & Bali', jenisPelanggan: 'Existing', paket: 'HEBAT 6', layanan: 'Internet 100 Mbps', biayaPasang: 0, hargaPaket: 400000 },
-                { id: '4', bulan: 'Maret', regional: 'Sumatera & Kalimantan', jenisPelanggan: 'Baru', paket: 'Reguler', layanan: 'Internet 20 Mbps', biayaPasang: 350000, hargaPaket: 275000 },
-                { id: '5', bulan: 'April', regional: 'Sumatera & Kalimantan', jenisPelanggan: 'Baru', paket: 'HEBAT 24', layanan: 'Internet 100 Mbps', biayaPasang: 350000, hargaPaket: 450000 },
-                { id: '6', bulan: 'Mei', regional: 'Jawa & Bali', jenisPelanggan: 'Existing', paket: 'HEBAT 12', layanan: 'Internet 50 Mbps', biayaPasang: 0, hargaPaket: 325000 },
-                { id: '7', bulan: 'Juni', regional: 'Jawa & Bali', jenisPelanggan: 'Baru', paket: 'HEBAT 3', layanan: 'Internet 30 Mbps', biayaPasang: 250000, hargaPaket: 300000 },
-                { id: '8', bulan: 'Juli', regional: 'Sumatera & Kalimantan', jenisPelanggan: 'Baru', paket: 'Reguler', layanan: 'Internet 10 Mbps', biayaPasang: 300000, hargaPaket: 200000 }
-            ],
-            feedbacks: [],
-            classifications: ['INFO', 'KATEGORI', 'PROMO'],
-            quickLinks: [],
-            lampiran: []
-        };
+
 
         // ========================================
         // MODULE: State Management
@@ -1969,156 +1958,58 @@
         }
 
         // ========================================
-        // MODULE: Storage Functions
+        // MODULE: Firebase Realtime Database
         // ========================================
-        function saveToStorage(key, data) {
-            try {
-                localStorage.setItem(key, JSON.stringify(data));
-                localStorage.setItem(key + '_timestamp', Date.now().toString());
-            } catch (e) {
-                console.error('Error saving to localStorage:', e);
-            }
-        }
-
-        function loadFromStorage(key, defaultValue) {
-            try {
-                const data = localStorage.getItem(key);
-                return data ? JSON.parse(data) : defaultValue;
-            } catch (e) {
-                console.error('Error loading from localStorage:', e);
-                return defaultValue;
-            }
-        }
-
-        function saveAllData() {
-            saveToStorage(CONFIG.STORAGE_KEYS.contents, state.contents);
-            saveToStorage(CONFIG.STORAGE_KEYS.hargaLayanan, state.hargaLayanan);
-            saveToStorage(CONFIG.STORAGE_KEYS.feedbacks, state.feedbacks);
-            saveToStorage(CONFIG.STORAGE_KEYS.classifications, state.classifications);
-            saveToStorage(CONFIG.STORAGE_KEYS.quickLinks, state.quickLinks);
-            saveToStorage(CONFIG.STORAGE_KEYS.lampiran, state.lampiran);
-            state.updatedAt = Date.now();
-        }
-
-        async function loadAllData() {
-            // Try to fetch from server first (database bersama)
-            const serverDataFetched = await fetchFromServer();
-            if (serverDataFetched) {
-                // Data loaded from server, already saved to state
-                console.log('Data loaded from central database');
-            } else {
-                // Fallback to localStorage cache
-                state.contents = loadFromStorage(CONFIG.STORAGE_KEYS.contents, SAMPLE_DATA.contents);
-                state.hargaLayanan = loadFromStorage(CONFIG.STORAGE_KEYS.hargaLayanan, SAMPLE_DATA.hargaLayanan);
-                state.feedbacks = loadFromStorage(CONFIG.STORAGE_KEYS.feedbacks, []);
-                state.classifications = loadFromStorage(CONFIG.STORAGE_KEYS.classifications, SAMPLE_DATA.classifications);
-                state.quickLinks = loadFromStorage(CONFIG.STORAGE_KEYS.quickLinks, []);
-                state.lampiran = loadFromStorage(CONFIG.STORAGE_KEYS.lampiran, []);
-                console.log('Data loaded from local cache (offline mode)');
-            }
-
-            state.loginAttempts = parseInt(localStorage.getItem(CONFIG.STORAGE_KEYS.loginAttempts) || '0');
-            if (state.loginAttempts >= CONFIG.MAX_LOGIN_ATTEMPTS) {
-                state.loginAttempts = 0;
-                localStorage.setItem(CONFIG.STORAGE_KEYS.loginAttempts, '0');
-                const loginBtn = document.getElementById('loginBtn');
-                if (loginBtn) loginBtn.disabled = false;
-                const loginAttemptsEl = document.getElementById('loginAttempts');
-                if (loginAttemptsEl) loginAttemptsEl.style.display = 'none';
-            }
-
-            // Load active section
-            const savedSection = localStorage.getItem(CONFIG.STORAGE_KEYS.activeSection);
-            if (savedSection) {
-                showSection(savedSection, false);
-            }
-        }
-
-        // ========================================
-        // MODULE: Server Communication
-        // ========================================
-        async function sendServerRequest(endpoint, method = 'GET', body = null) {
-            try {
-                const response = await fetch(CONFIG.API_URL + endpoint, {
-                    method,
-                    headers: body ? { 'Content-Type': 'application/json' } : {},
-                    body: body ? JSON.stringify(body) : null
-                });
-                return response.ok ? await response.json() : null;
-            } catch (e) {
-                console.warn('Server request failed:', endpoint, method, e);
-                return null;
-            }
-        }
-
-        async function syncToServer() {
-            const data = {
-                contents: state.contents,
-                hargaLayanan: state.hargaLayanan,
-                feedbacks: state.feedbacks,
-                classifications: state.classifications,
-                quickLinks: state.quickLinks,
-                lampiran: state.lampiran,
-                updatedAt: state.updatedAt
-            };
-            await sendServerRequest('/data', 'POST', data);
-        }
-
-        async function fetchFromServer() {
-            const serverData = await sendServerRequest('/data');
-            if (serverData) {
-                state.contents = serverData.contents || [];
-                state.hargaLayanan = serverData.hargaLayanan || [];
-                state.feedbacks = serverData.feedbacks || [];
-                state.classifications = serverData.classifications || SAMPLE_DATA.classifications;
-                state.quickLinks = serverData.quickLinks || [];
-                state.lampiran = serverData.lampiran || [];
-                saveAllData();
-                return true;
-            }
-            return false;
-        }
-
-        // ========================================
-        // MODULE: Cross-Tab Synchronization
-        // ========================================
-        window.addEventListener('storage', async (event) => {
-            if (event.key && event.key.startsWith('KB1_') && !event.key.endsWith('_timestamp')) {
-                console.log('Storage changed, reloading data from:', event.key);
-                await loadAllData();
+        function setupFirebaseListeners() {
+            // Listen to each data node under 'data' parent
+            db.ref('data/contents').on('value', (snapshot) => {
+                const data = snapshot.val();
+                state.contents = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
                 if (document.getElementById('mainPage').classList.contains('active')) {
                     renderAllUI();
                 }
-            }
-        });
+            });
 
-        // Auto-refresh on focus
-        window.addEventListener('focus', async () => {
-            if (document.getElementById('mainPage').classList.contains('active')) {
-                await loadAllData();
-                renderAllUI();
-                showToast('Data diperbarui', 'success');
-            }
-        });
+            db.ref('data/pricing').on('value', (snapshot) => {
+                const data = snapshot.val();
+                state.hargaLayanan = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+                if (document.getElementById('mainPage').classList.contains('active')) {
+                    renderAllUI();
+                }
+            });
 
-        // Online/Offline status
-        window.addEventListener('online', () => {
-            state.isOnline = true;
-            showToast('Koneksi online', 'success');
-            fetchFromServer();
-        });
+            db.ref('data/feedback').on('value', (snapshot) => {
+                const data = snapshot.val();
+                state.feedbacks = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+                if (document.getElementById('mainPage').classList.contains('active')) {
+                    renderAllUI();
+                }
+            });
 
-        window.addEventListener('offline', () => {
-            state.isOnline = false;
-            showToast('Mode offline - data disimpan lokal', 'warning');
-        });
+            db.ref('data/classifications').on('value', (snapshot) => {
+                const data = snapshot.val();
+                state.classifications = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+                if (document.getElementById('mainPage').classList.contains('active')) {
+                    renderAllUI();
+                }
+            });
 
-        // Auto sync interval
-        setInterval(() => {
-            if (state.isOnline && document.getElementById('mainPage').classList.contains('active')) {
-                fetchFromServer();
-            }
-        }, CONFIG.AUTO_SYNC_INTERVAL);
+            db.ref('data/quickLinks').on('value', (snapshot) => {
+                const data = snapshot.val();
+                state.quickLinks = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+                if (document.getElementById('mainPage').classList.contains('active')) {
+                    renderAllUI();
+                }
+            });
+
+            db.ref('data/lampiran').on('value', (snapshot) => {
+                const data = snapshot.val();
+                state.lampiran = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+                if (document.getElementById('mainPage').classList.contains('active')) {
+                    renderAllUI();
+                }
+            });
+        }
 
         // ========================================
         // MODULE: Toast Notifications
@@ -2144,7 +2035,6 @@
         async function login() {
             const password = document.getElementById('passwordInput').value;
             const role = state.selectedRole;
-            const rememberMe = document.getElementById('rememberMe').checked;
             const isCorrectPassword = password === PASSWORDS[role];
 
             if (state.loginAttempts >= CONFIG.MAX_LOGIN_ATTEMPTS && !isCorrectPassword) {
@@ -2155,20 +2045,10 @@
             if (isCorrectPassword) {
                 state.role = role;
                 state.loginAttempts = 0;
-                localStorage.setItem(CONFIG.STORAGE_KEYS.loginAttempts, '0');
-
-                if (rememberMe) {
-                    localStorage.setItem(CONFIG.STORAGE_KEYS.session, JSON.stringify({ role: role }));
-                } else {
-                    sessionStorage.setItem(CONFIG.STORAGE_KEYS.session, JSON.stringify({ role: role }));
-                }
-
                 showMainPage();
                 showToast('Login berhasil!', 'success');
             } else {
                 state.loginAttempts++;
-                localStorage.setItem(CONFIG.STORAGE_KEYS.loginAttempts, state.loginAttempts.toString());
-
                 const attemptsLeft = CONFIG.MAX_LOGIN_ATTEMPTS - state.loginAttempts;
                 document.getElementById('loginError').classList.add('show');
                 document.getElementById('loginAttempts').style.display = 'block';
@@ -2188,8 +2068,6 @@
 
         function logout() {
             state.role = null;
-            localStorage.removeItem(CONFIG.STORAGE_KEYS.session);
-            sessionStorage.removeItem(CONFIG.STORAGE_KEYS.session);
             document.getElementById('loginPage').style.display = 'flex';
             document.getElementById('mainPage').classList.remove('active');
             document.getElementById('passwordInput').value = '';
@@ -2199,38 +2077,31 @@
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainPage').classList.add('active');
 
-            loadAllData().then(() => {
-                if (!state.hargaLayanan || state.hargaLayanan.length === 0) {
-                    state.hargaLayanan = SAMPLE_DATA.hargaLayanan;
-                    saveToStorage(CONFIG.STORAGE_KEYS.hargaLayanan, state.hargaLayanan);
-                }
+            // Role-based UI
+            if (state.role === 'admin') {
+                document.getElementById('adminControls').classList.remove('hidden');
+                document.getElementById('hargaAdminControls').style.display = 'flex';
+                document.getElementById('kritikAdminControls').classList.remove('hidden');
+                document.getElementById('hargaActionHeader').classList.remove('hidden');
+                document.getElementById('feedbackFab').classList.add('hidden');
+                document.getElementById('userFilters').classList.add('hidden');
+                document.getElementById('userFilters').style.display = 'none';
+                document.getElementById('quickLinksAdminControls').classList.remove('hidden');
+                // Lampiran admin controls will be shown in renderLampiranList
+            } else {
+                document.getElementById('adminControls').classList.add('hidden');
+                document.getElementById('hargaAdminControls').style.display = 'none';
+                document.getElementById('kritikAdminControls').classList.add('hidden');
+                document.getElementById('hargaActionHeader').classList.add('hidden');
+                document.getElementById('feedbackFab').classList.remove('hidden');
+                document.getElementById('userFilters').classList.remove('hidden');
+                document.getElementById('userFilters').style.display = 'flex';
+                document.getElementById('quickLinksAdminControls').classList.add('hidden');
+            }
 
-                // Role-based UI
-                if (state.role === 'admin') {
-                    document.getElementById('adminControls').classList.remove('hidden');
-                    document.getElementById('hargaAdminControls').style.display = 'flex';
-                    document.getElementById('kritikAdminControls').classList.remove('hidden');
-                    document.getElementById('hargaActionHeader').classList.remove('hidden');
-                    document.getElementById('feedbackFab').classList.add('hidden');
-                    document.getElementById('userFilters').classList.add('hidden');
-                    document.getElementById('userFilters').style.display = 'none';
-                    document.getElementById('quickLinksAdminControls').classList.remove('hidden');
-                    // Lampiran admin controls will be shown in renderLampiranList
-                } else {
-                    document.getElementById('adminControls').classList.add('hidden');
-                    document.getElementById('hargaAdminControls').style.display = 'none';
-                    document.getElementById('kritikAdminControls').classList.add('hidden');
-                    document.getElementById('hargaActionHeader').classList.add('hidden');
-                    document.getElementById('feedbackFab').classList.remove('hidden');
-                    document.getElementById('userFilters').classList.remove('hidden');
-                    document.getElementById('userFilters').style.display = 'flex';
-                    document.getElementById('quickLinksAdminControls').classList.add('hidden');
-                }
-
-                renderAllUI();
-                const initialSection = getSectionFromHash() || localStorage.getItem(CONFIG.STORAGE_KEYS.activeSection) || 'konten';
-                navigateToSection(initialSection);
-            });
+            renderAllUI();
+            const initialSection = getSectionFromHash() || 'konten';
+            navigateToSection(initialSection);
         }
 
         function renderAllUI() {
@@ -2261,7 +2132,6 @@
             if (updateMenu) {
                 document.querySelectorAll('.navbar-menu button').forEach(b => b.classList.remove('active'));
                 document.querySelector(`.navbar-menu button[data-section="${selectedSection}"]`).classList.add('active');
-                localStorage.setItem(CONFIG.STORAGE_KEYS.activeSection, selectedSection);
             }
 
             if (selectedSection === 'harga') {
@@ -2382,7 +2252,7 @@
             const container = document.getElementById('contentList');
 
             if (paginated.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">Tidak ada konten</div>';
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">Data belum tersedia</div>';
             } else {
                 container.innerHTML = paginated.map(content => {
                     const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -2524,8 +2394,7 @@
                 state.contents.unshift(content);
             }
 
-            saveAllData();
-            await syncToServer();
+            await db.ref('data/contents').set(state.contents);
 
             document.getElementById('contentModal').classList.remove('active');
             renderContentList();
@@ -2535,8 +2404,7 @@
         async function deleteContent(id) {
             if (confirm('Apakah Anda yakin ingin menghapus konten ini?')) {
                 state.contents = state.contents.filter(c => c.id !== id);
-                saveAllData();
-                await syncToServer();
+                await db.ref('data/contents').set(state.contents);
                 renderContentList();
                 showToast('Konten berhasil dihapus!', 'success');
             }
@@ -2585,7 +2453,7 @@
             const tbody = document.getElementById('pricingTableBody');
 
             if (paginated.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">Tidak ada data</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">Data belum tersedia</td></tr>';
             } else {
                 tbody.innerHTML = paginated.map(harga => {
                     const ppn = Math.round((harga.biayaPasang + harga.hargaPaket) * 0.11);
@@ -2668,8 +2536,7 @@
                 state.hargaLayanan.push(harga);
             }
 
-            saveAllData();
-            await syncToServer();
+            await db.ref('data/pricing').set(state.hargaLayanan);
 
             document.getElementById('hargaModal').classList.remove('active');
             renderPricingTable();
@@ -2679,8 +2546,7 @@
         async function deleteHarga(id) {
             if (confirm('Hapus data harga ini?')) {
                 state.hargaLayanan = state.hargaLayanan.filter(h => h.id !== id);
-                saveAllData();
-                await syncToServer();
+                await db.ref('data/pricing').set(state.hargaLayanan);
                 renderPricingTable();
                 showToast('Harga dihapus!', 'success');
             }
@@ -2699,7 +2565,7 @@
             const container = document.getElementById('feedbackList');
 
             if (paginated.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">Belum ada kritik dan saran</div>';
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">Data belum tersedia</div>';
             } else {
                 container.innerHTML = paginated.map(feedback => {
                     const hasReplies = feedback.replies && feedback.replies.length > 0;
@@ -2760,8 +2626,7 @@
             };
 
             state.feedbacks.unshift(feedback);
-            saveAllData();
-            await syncToServer();
+            await db.ref('data/feedback').set(state.feedbacks);
 
             document.getElementById('feedbackModal').classList.remove('active');
             document.getElementById('feedbackForm').reset();
@@ -2825,8 +2690,7 @@
             feedback.replies.push(reply);
             feedback.read = true;
 
-            saveAllData();
-            await syncToServer();
+            await db.ref('data/feedback').set(state.feedbacks);
 
             document.getElementById('replyFeedbackModal').classList.remove('active');
             document.getElementById('replyForm').reset();
@@ -2839,8 +2703,7 @@
                 const feedback = state.feedbacks.find(f => f.id === feedbackId);
                 if (feedback && feedback.replies) {
                     feedback.replies = feedback.replies.filter(r => r.id !== replyId);
-                    saveAllData();
-                    await syncToServer();
+                    await db.ref('data/feedback').set(state.feedbacks);
                     openReplyFeedbackModal(feedbackId);
                     showToast('Respon dihapus!', 'success');
                 }
@@ -2851,8 +2714,7 @@
             const feedback = state.feedbacks.find(f => f.id === id);
             if (feedback) {
                 feedback.read = true;
-                saveAllData();
-                await syncToServer();
+                await db.ref('data/feedback').set(state.feedbacks);
                 renderFeedbackList();
             }
         }
@@ -2860,8 +2722,7 @@
         async function deleteFeedback(id) {
             if (confirm('Hapus pesan ini?')) {
                 state.feedbacks = state.feedbacks.filter(f => f.id !== id);
-                saveAllData();
-                await syncToServer();
+                await db.ref('data/feedback').set(state.feedbacks);
                 renderFeedbackList();
                 showToast('Pesan dihapus!', 'success');
             }
@@ -2886,8 +2747,7 @@
 
             if (newCls && !state.classifications.includes(newCls)) {
                 state.classifications.push(newCls);
-                saveAllData();
-                await syncToServer();
+                await db.ref('data/classifications').set(state.classifications);
                 input.value = '';
                 renderClassificationList();
                 updateClassificationSelect();
@@ -2901,8 +2761,7 @@
         async function removeClassification(index) {
             if (confirm('Hapus klasifikasi ini?')) {
                 state.classifications.splice(index, 1);
-                saveAllData();
-                await syncToServer();
+                await db.ref('data/classifications').set(state.classifications);
                 renderClassificationList();
                 updateClassificationSelect();
                 updateFilterPills();
@@ -2937,8 +2796,7 @@
             if (name && url) {
                 const link = { id: Date.now().toString(), name, url };
                 state.quickLinks.push(link);
-                saveAllData();
-                await syncToServer();
+                await db.ref('data/quickLinks').set(state.quickLinks);
 
                 document.getElementById('quickLinkName').value = '';
                 document.getElementById('quickLinkUrl').value = '';
@@ -2953,8 +2811,7 @@
         async function removeQuickLink(id) {
             if (confirm('Hapus link ini?')) {
                 state.quickLinks = state.quickLinks.filter(link => link.id !== id);
-                saveAllData();
-                await syncToServer();
+                await db.ref('data/quickLinks').set(state.quickLinks);
                 renderQuickLinksList();
                 renderQuickLinks();
                 showToast('Link dihapus!', 'success');
@@ -3130,8 +2987,7 @@
                 state.hargaLayanan.push(data);
             });
 
-            saveAllData();
-            await syncToServer();
+            await db.ref('data/pricing').set(state.hargaLayanan);
 
             document.getElementById('pasteModal').classList.remove('active');
             document.getElementById('pasteDataInput').value = '';
@@ -3157,7 +3013,7 @@
             }
 
             if (state.lampiran.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">Belum ada lampiran</div>';
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">Data belum tersedia</div>';
             } else {
                 container.innerHTML = state.lampiran.map(lamp => {
                     const date = new Date(lamp.tanggal || lamp.createdAt).toLocaleDateString('id-ID');
@@ -3242,8 +3098,7 @@
                 state.lampiran.unshift(lampiran);
             }
 
-            saveAllData();
-            await syncToServer();
+            await db.ref('data/lampiran').set(state.lampiran);
 
             document.getElementById('lampiranModal').classList.remove('active');
             renderLampiranList();
@@ -3253,8 +3108,7 @@
         async function deleteLampiran(id) {
             if (confirm('Hapus lampiran ini?')) {
                 state.lampiran = state.lampiran.filter(l => l.id !== id);
-                saveAllData();
-                await syncToServer();
+                await db.ref('data/lampiran').set(state.lampiran);
                 renderLampiranList();
                 showToast('Lampiran dihapus!', 'success');
             }
@@ -3291,7 +3145,6 @@
             // Dark mode
             document.getElementById('darkModeToggle').addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
-                saveToStorage(CONFIG.STORAGE_KEYS.darkmode, document.body.classList.contains('dark-mode'));
             });
 
             // Mobile menu
@@ -3464,38 +3317,18 @@
         // ========================================
         // MODULE: Initialization
         // ========================================
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
             // Attach all event handlers
             attachEventHandlers();
 
-            // Check session
-            let session = localStorage.getItem(CONFIG.STORAGE_KEYS.session);
-            if (!session) {
-                session = sessionStorage.getItem(CONFIG.STORAGE_KEYS.session);
-            }
+            // Setup Firebase real-time listeners
+            setupFirebaseListeners();
 
-            if (session) {
-                const data = JSON.parse(session);
-                state.role = data.role;
-                showMainPage();
-                return;
-            }
-
-            // Load data from central database or local cache
-            await loadAllData();
-
-            // Dark mode
-            const darkMode = localStorage.getItem(CONFIG.STORAGE_KEYS.darkmode);
-            if (darkMode === 'true') {
-                document.body.classList.add('dark-mode');
-            }
-
+            // No session persistence; user must login
+            // No dark mode persistence; default light mode
             // Initialize classification select and filters
             updateClassificationSelect();
             updateFilterPills();
-
-            // Try to fetch from server (already done in loadAllData, but ensure)
-            await fetchFromServer();
         });
     </script>
 </body>
