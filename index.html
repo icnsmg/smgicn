@@ -1,150 +1,1336 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kabinet - Knowledge Base</title>
+    <title>KABINET - Kamus Besar ICONNET</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-dark: #1D4ED8;
+            --primary-light: #DBEAFE;
+            --accent: #1F2937;
+            --background: #FFFFFF;
+            --background-soft: #F8FAFC;
+            --background-alt: #F1F5F9;
+            --border: #E2E8F0;
+            --text-primary: #1F2937;
+            --text-secondary: #64748B;
+            --text-muted: #94A3B8;
+            --success: #10B981;
+            --error: #EF4444;
+            --warning: #F59E0B;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-pill: 30px;
+            --transition: 0.3s ease;
+        }
+
+        .dark-mode {
+            --background: #0F172A;
+            --background-soft: #1E293B;
+            --background-alt: #334155;
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --border: #475569;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-soft);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        /* Login Page */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--background) 100%);
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--background);
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo h1 {
+            color: var(--primary);
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .login-logo p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .role-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--background);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .role-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .role-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .password-input {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .password-input input {
+            width: 100%;
+            padding: 14px 45px 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 16px;
+            background: var(--background);
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .password-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .password-input .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .login-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .login-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 14px;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.3s ease;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .remember-me input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Main Page */
+        .main-page {
+            display: none;
+        }
+
+        .main-page.active {
+            display: block;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--background);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .navbar-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .sticky-header-wrapper {
+            position: sticky;
+            top: 64px;
+            left: 0;
+            right: 0;
+            z-index: 998;
+            background: var(--background);
+        }
+
+        .fixed-header-section {
+            padding: 0 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .fixed-search-bar {
+            position: sticky;
+            top: 64px;
+            background: var(--background);
+            padding: 12px 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            z-index: 999;
+        }
+
+        .fixed-search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-result-count {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 64px;
+            padding-bottom: 80px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .navbar-menu button {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .navbar-menu button:hover,
+        .navbar-menu button.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dark-mode-toggle {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--background-soft);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .dark-mode-toggle:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .logout-btn {
+            padding: 8px 20px;
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background: #DC2626;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin: 4px 0 0 0;
+        }
+
+        /* Quick Links */
+        .quick-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .fixed-header-section .quick-links {
+            gap: 8px;
+        }
+
+        .quick-link {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-pill);
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .fixed-header-section .quick-link {
+            padding: 6px 14px;
+            font-size: 13px;
+            gap: 6px;
+        }
+
+        .quick-link:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .quick-link-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 24px;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 14px 20px 14px 52px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-pill);
+            background: var(--background);
+            font-family: inherit;
+            font-size: 16px;
+            color: var(--text-primary);
+            transition: var(--transition);
+            line-height: 1.5;
+        }
+
+        .search-bar::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .search-highlight {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .search-current {
+            background: #2563EB;
+            color: white;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .search-nav-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .search-nav-hint kbd {
+            background: var(--background-soft);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 11px;
+            border: 1px solid var(--border);
+        }
+
+        /* Filter Pills */
+        .filter-container {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+
+        .filter-pill {
+            padding: 8px 20px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-pill);
+            background: var(--background);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-pill:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .filter-pill.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Content Cards */
+        .content-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-card {
+            background: var(--background);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 16px;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .content-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .content-card.search-active {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .content-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .content-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .content-date {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .content-classification {
+            padding: 2px 10px;
+            border-radius: var(--radius-pill);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .content-status {
+            padding: 2px 10px;
+            border-radius: var(--radius-pill);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .content-subject {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .content-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .content-actions .btn {
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--background-soft);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        .content-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+        }
+
+        .content-details.expanded {
+            max-height: none;
+            padding-top: 16px;
+            margin-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .content-text {
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .content-text[align="center"] {
+            text-align: center;
+        }
+
+        .content-text[align="right"] {
+            text-align: right;
+        }
+
+        /* Admin Controls */
+        .admin-controls {
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--background);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--background-soft);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--background);
+            font-family: inherit;
+            font-size: 16px;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        /* Pricing Table */
+        .pricing-container {
+            overflow-x: auto;
+        }
+
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--background);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .pricing-table th,
+        .pricing-table td {
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .pricing-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .pricing-table tr:hover {
+            background: var(--background-soft);
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sortable:hover {
+            background: var(--primary-dark);
+        }
+
+        .sort-icon {
+            margin-left: 4px;
+            font-size: 12px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 32px;
+        }
+
+        .pagination-btn {
+            min-width: 40px;
+            height: 40px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--background);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Kritik Saran FAB */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            z-index: 900;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Feedback Messages */
+        .feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .feedback-card {
+            background: var(--background);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .feedback-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .feedback-card.unread {
+            border-left: 4px solid var(--primary);
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .feedback-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .feedback-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .feedback-message {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feedback-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 3000;
+        }
+
+        .toast {
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            background: var(--background);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 280px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast-error {
+            border-left: 4px solid var(--error);
+        }
+
+        .toast-warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .toast-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, var(--border) 25%, var(--background-soft) 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-card {
+            height: 200px;
+            border-radius: var(--radius-md);
+        }
+
+        .skeleton-title {
+            height: 24px;
+            width: 60%;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-text {
+            height: 16px;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .navbar-menu {
+                position: fixed;
+                top: 64px;
+                left: 0;
+                right: 0;
+                background: var(--background);
+                flex-direction: column;
+                padding: 16px;
+                box-shadow: var(--shadow-md);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: var(--transition);
+            }
+
+            .navbar-menu.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .login-card {
+                padding: 24px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            .content-card {
+                padding: 16px;
+            }
+
+            .content-header {
+                flex-direction: column;
+            }
+
+            .fab {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="main-header">
-            <div class="header-content">
-                <div class="logo" id="companyLogo">
-                    <i class="fas fa-cube"></i>
-                    <span>Kabinet</span>
-                </div>
-                <div class="header-actions" id="headerActions">
-                    <button class="btn btn-outline" onclick="showLoginModal('admin')">
-                        <i class="fas fa-user-shield"></i> Login Admin
-                    </button>
-                    <button class="btn btn-primary" onclick="showLoginModal('user')">
-                        <i class="fas fa-user"></i> Login User
-                    </button>
-                </div>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-page">
+        <div class="login-card">
+            <div class="login-logo">
+                <h1>KABINET</h1>
+                <p>Kamus Besar ICONNET</p>
             </div>
-        </header>
+
+            <div class="role-buttons" id="roleButtons">
+                <button type="button" class="role-btn active" data-role="user">User</button>
+                <button type="button" class="role-btn" data-role="admin">Admin</button>
+            </div>
+
+            <div class="password-input">
+                <input type="password" id="passwordInput" placeholder="Masukkan password" autocomplete="off">
+                <button type="button" class="toggle-password" id="togglePassword">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
+
+            <label class="remember-me">
+                <input type="checkbox" id="rememberMe">
+                <span>Ingat kata sandi</span>
+            </label>
+
+            <button type="button" class="login-btn" id="loginBtn">Masuk</button>
+
+            <p id="loginError" class="error-message">Password salah, silakan coba lagi</p>
+            <p id="loginAttempts" class="error-message" style="color: var(--warning);">Percobaan tersisa: <span
+                    id="attemptsCount">5</span></p>
+        </div>
+    </div>
+
+    <!-- Main Page -->
+    <div id="mainPage" class="main-page">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <div class="navbar-logo">KABINET</div>
+            <div class="navbar-menu" id="navbarMenu">
+                <button class="active" data-section="konten">Konten</button>
+                <button data-section="harga">Harga Layanan</button>
+                <button data-section="lampiran">Lampiran</button>
+                <button data-section="kritik">Kritik & Saran</button>
+            </div>
+            <div class="navbar-actions">
+                <button class="dark-mode-toggle" id="darkModeToggle" title="Dark Mode">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+                <button class="logout-btn" id="logoutBtn">Keluar</button>
+            </div>
+        </nav>
 
         <!-- Main Content -->
-        <main class="main-content" id="mainContent">
-            <!-- Landing Page (Before Login) -->
-            <section class="landing-page" id="landingPage">
-                <div class="landing-content">
-                    <div class="landing-logo">
-                        <i class="fas fa-cube"></i>
-                        <h1>Kabinet</h1>
+        <main class="main-content">
+            <!-- Fixed Header with Quick Links and Search -->
+            <div class="sticky-header-wrapper">
+                <div class="fixed-header-section">
+                    <div class="container">
+                        <div id="quickLinksContainer" class="quick-links"></div>
                     </div>
-                    <p class="landing-tagline">Kamus Besar ICONNET</p>
-                    <div class="landing-login">
-                        <button class="btn btn-lg btn-outline" onclick="showLoginModal('admin')">
-                            <i class="fas fa-user-shield"></i> Login Admin
-                        </button>
-                        <button class="btn btn-lg btn-primary" onclick="showLoginModal('user')">
-                            <i class="fas fa-user"></i> Login User
+                </div>
+
+                <!-- Fixed Search Bar -->
+                <div class="fixed-search-bar">
+                    <div class="fixed-search-container">
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" class="search-bar" id="contentSearch" placeholder="Cari...">
+                        <span id="searchResultCount" class="search-result-count"></span>
+                    </div>
+                    <div id="searchNavHint" class="search-nav-hint" style="display: none;">
+                        Tekan <kbd>Enter</kbd> untuk ke hasil berikutnya
+                    </div>
+                </div>
+            </div>
+
+            <!-- Konten Section -->
+            <section id="kontenSection">
+                <div class="section-container">
+                    <!-- Admin Controls for Content -->
+                    <div id="adminControls" class="admin-controls hidden" style="margin-bottom: 24px;">
+                        <button class="btn btn-primary" id="openContentModalBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Tambah Konten
                         </button>
                     </div>
+
+                    <!-- Filters -->
+                    <div class="filter-container" id="filterContainer">
+                        <button class="filter-pill active" data-filter="all">Semua</button>
+                    </div>
+
+                    <!-- Content List -->
+                    <div id="contentList" class="content-list"></div>
+
+                    <!-- Pagination -->
+                    <div id="contentPagination" class="pagination"></div>
                 </div>
             </section>
 
-            <!-- Search Section (After Login) -->
-            <section class="search-section" id="searchSection" style="display: none;">
-                <div class="search-container">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="KABINET SEARCH" oninput="handleSearch()">
-                        <button class="search-clear" onclick="clearSearch()" id="searchClear">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="filter-pills" id="filterPills">
-                    <button class="pill active" data-filter="all" onclick="filterByCategory('all')">Semua</button>
-                    <button class="pill" data-filter="INFO" onclick="filterByCategory('INFO')">INFO</button>
-                    <button class="pill" data-filter="KATEGORI" onclick="filterByCategory('KATEGORI')">KATEGORI</button>
-                    <button class="pill" data-filter="PROMO" onclick="filterByCategory('PROMO')">PROMO</button>
-                </div>
-            </section>
+            <!-- Harga Section -->
+            <section id="hargaSection" class="hidden">
+                <div class="section-container">
+                    <h2 class="section-title">Harga Layanan</h2>
 
-            <!-- Content Cards -->
-            <section class="cards-section" id="cardsSection" style="display: none;">
-                <div class="cards-container" id="cardsContainer"></div>
-                <div class="pagination" id="pagination"></div>
-            </section>
-
-            <!-- Admin Panel -->
-            <section class="admin-panel" id="adminPanel" style="display: none;">
-                <div class="admin-tabs">
-                    <button class="tab-btn active" data-tab="konten" onclick="switchAdminTab('konten')">Konten</button>
-                    <button class="tab-btn" data-tab="harga" onclick="switchAdminTab('harga')">Harga Layanan</button>
-                    <button class="tab-btn" data-tab="kritik" onclick="switchAdminTab('kritik')">Kritik & Saran</button>
-                    <button class="tab-btn" data-tab="settings" onclick="switchAdminTab('settings')">Pengaturan</button>
-                </div>
-                
-                <!-- Konten Tab -->
-                <div class="tab-content" id="tab-konten">
-                    <div class="admin-header">
-                        <h2>Kelola Konten</h2>
-                        <button class="btn btn-primary" onclick="showContentForm()">
-                            <i class="fas fa-plus"></i> Tambah Konten
-                        </button>
-                    </div>
-                    <div class="klasifikasi-manager">
-                        <h3>Klasifikasi</h3>
-                        <div class="klasifikasi-list" id="klasifikasiList"></div>
-                        <div class="klasifikasi-add">
-                            <input type="text" id="newKlasifikasi" placeholder="Nama klasifikasi baru">
-                            <button class="btn btn-sm" onclick="addKlasifikasi()">Tambah</button>
-                        </div>
-                    </div>
-                    <div class="content-list" id="contentList"></div>
-                </div>
-
-                <!-- Harga Tab -->
-                <div class="tab-content" id="tab-harga" style="display: none;">
-                    <div class="admin-header">
-                        <h2>Harga Layanan</h2>
-                        <div class="harga-actions">
-                            <button class="btn btn-outline" onclick="downloadTemplate()">
-                                <i class="fas fa-download"></i> Download Template
-                            </button>
-                            <label class="btn btn-outline">
-                                <i class="fas fa-upload"></i> Upload Excel
-                                <input type="file" accept=".xlsx,.xls" onchange="uploadExcel(event)" hidden>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="harga-filters">
-                        <select id="hargaBulan" onchange="filterHarga()">
+                    <!-- User Filter Dropdowns -->
+                    <div id="userFilters" class="hidden"
+                        style="margin-bottom: 24px; gap: 12px; flex-wrap: wrap; justify-content: center; display: flex;">
+                        <select class="form-select" id="filterBulan" style="width: auto; min-width: 140px;">
                             <option value="">Semua Bulan</option>
-                            <option value="JAN">JAN</option>
-                            <option value="FEB">FEB</option>
-                            <option value="MAR">MAR</option>
-                            <option value="APR">APR</option>
-                            <option value="MEI">MEI</option>
-                            <option value="JUN">JUN</option>
-                            <option value="JUL">JUL</option>
-                            <option value="AGS">AGS</option>
-                            <option value="SEP">SEP</option>
-                            <option value="OKT">OKT</option>
-                            <option value="NOV">NOV</option>
-                            <option value="DES">DES</option>
+                            <option value="Januari">Januari</option>
+                            <option value="Februari">Februari</option>
+                            <option value="Maret">Maret</option>
+                            <option value="April">April</option>
+                            <option value="Mei">Mei</option>
+                            <option value="Juni">Juni</option>
+                            <option value="Juli">Juli</option>
+                            <option value="Agustus">Agustus</option>
+                            <option value="September">September</option>
+                            <option value="Oktober">Oktober</option>
+                            <option value="November">November</option>
+                            <option value="Desember">Desember</option>
                         </select>
-                        <select id="hargaRegional" onchange="filterHarga()">
+                        <select class="form-select" id="filterRegional" style="width: auto; min-width: 180px;">
                             <option value="">Semua Regional</option>
                             <option value="Jawa & Bali">Jawa & Bali</option>
                             <option value="Sumatera & Kalimantan">Sumatera & Kalimantan</option>
                         </select>
-                        <select id="hargaJenis" onchange="filterHarga()">
+                        <select class="form-select" id="filterJenis" style="width: auto; min-width: 140px;">
                             <option value="">Semua Jenis</option>
                             <option value="Baru">Baru</option>
                             <option value="Existing">Existing</option>
                         </select>
-                        <select id="hargaPaket" onchange="filterHarga()">
+                        <select class="form-select" id="filterPaket" style="width: auto; min-width: 140px;">
                             <option value="">Semua Paket</option>
                             <option value="Reguler">Reguler</option>
                             <option value="HEBAT 3">HEBAT 3</option>
@@ -153,268 +1339,2133 @@
                             <option value="HEBAT 24">HEBAT 24</option>
                         </select>
                     </div>
-                    <div class="harga-form" id="hargaForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Bulan</label>
-                                <select id="hargaBulanInput">
-                                    <option value="JAN">JAN</option>
-                                    <option value="FEB">FEB</option>
-                                    <option value="MAR">MAR</option>
-                                    <option value="APR">APR</option>
-                                    <option value="MEI">MEI</option>
-                                    <option value="JUN">JUN</option>
-                                    <option value="JUL">JUL</option>
-                                    <option value="AGS">AGS</option>
-                                    <option value="SEP">SEP</option>
-                                    <option value="OKT">OKT</option>
-                                    <option value="NOV">NOV</option>
-                                    <option value="DES">DES</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Regional</label>
-                                <select id="hargaRegionalInput">
-                                    <option value="Jawa & Bali">Jawa & Bali</option>
-                                    <option value="Sumatera & Kalimantan">Sumatera & Kalimantan</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Jenis Pelanggan</label>
-                                <select id="hargaJenisInput">
-                                    <option value="Baru">Baru</option>
-                                    <option value="Existing">Existing</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Paket</label>
-                                <select id="hargaPaketInput">
-                                    <option value="Reguler">Reguler</option>
-                                    <option value="HEBAT 3">HEBAT 3</option>
-                                    <option value="HEBAT 6">HEBAT 6</option>
-                                    <option value="HEBAT 12">HEBAT 12</option>
-                                    <option value="HEBAT 24">HEBAT 24</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Biaya Pasang</label>
-                                <input type="number" id="hargaBiayaPasang" placeholder="Rp">
-                            </div>
-                            <div class="form-group">
-                                <label>Harga Paket</label>
-                                <input type="number" id="hargaPaket" placeholder="Rp">
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" onclick="saveHarga()">Simpan</button>
-                    </div>
-                    <div class="harga-table" id="hargaTable"></div>
-                </div>
 
-                <!-- Kritik Tab -->
-                <div class="tab-content" id="tab-kritik" style="display: none;">
-                    <div class="admin-header">
-                        <h2>Kritik & Saran</h2>
+                    <div id="hargaAdminControls" class="admin-controls" style="display: none;">
+                        <button class="btn btn-primary" id="openHargaModalBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Tambah Harga
+                        </button>
+                        <button class="btn btn-secondary" id="openPasteModalBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                </path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            </svg>
+                            Paste dari Excel
+                        </button>
                     </div>
-                    <div class="kritik-list" id="kritikList"></div>
-                </div>
 
-                <!-- Settings Tab -->
-                <div class="tab-content" id="tab-settings" style="display: none;">
-                    <div class="admin-header">
-                        <h2>Pengaturan</h2>
+                    <div class="pricing-container">
+                        <table class="pricing-table" id="pricingTable">
+                            <thead id="pricingTableHead">
+                                <tr>
+                                    <th class="sortable" data-sort="regional">Regional <span class="sort-icon">↕</span>
+                                    </th>
+                                    <th class="sortable" data-sort="paket">Paket <span class="sort-icon">↕</span></th>
+                                    <th>Layanan</th>
+                                    <th class="sortable" data-sort="biayaPasang">Biaya Pemasangan <span
+                                            class="sort-icon">↕</span></th>
+                                    <th class="sortable" data-sort="hargaPaket">Harga Paket <span
+                                            class="sort-icon">↕</span></th>
+                                    <th>PPN 11%</th>
+                                    <th>Total</th>
+                                    <th id="hargaActionHeader" class="hidden">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pricingTableBody"></tbody>
+                        </table>
                     </div>
-                    <div class="settings-form">
-                        <div class="form-group">
-                            <label>Nama Perusahaan</label>
-                            <input type="text" id="companyName" placeholder="Nama Perusahaan" onchange="updateSettings()">
-                        </div>
-                        <div class="form-group">
-                            <label>Logo URL</label>
-                            <input type="text" id="companyLogoUrl" placeholder="URL Logo" onchange="updateSettings()">
-                        </div>
-                    </div>
+
+                    <div id="hargaPagination" class="pagination"></div>
                 </div>
             </section>
 
-            <!-- User Panel -->
-            <section class="user-panel" id="userPanel" style="display: none;">
-                <div class="user-tabs">
-                    <button class="tab-btn active" data-tab="konten" onclick="switchUserTab('konten')">Konten</button>
-                    <button class="tab-btn" data-tab="kritik" onclick="switchUserTab('kritik')">Kritik & Saran</button>
-                </div>
-                <div class="tab-content" id="user-konten">
-                    <div class="content-list" id="userContentList"></div>
-                </div>
-                <div class="tab-content" id="user-kritik" style="display: none;">
-                    <div class="kritik-form">
-                        <h3>Kirim Kritik & Saran</h3>
-                        <div class="form-group">
-                            <label>Nama (Opsional)</label>
-                            <input type="text" id="kritikNama" placeholder="Nama Anda">
-                        </div>
-                        <div class="form-group">
-                            <label>Kritik/Saran *</label>
-                            <textarea id="kritikIsi" rows="5" placeholder="Tulis kritik atau saran Anda..." required></textarea>
-                        </div>
-                        <button class="btn btn-primary" onclick="submitKritik()">
-                            <i class="fas fa-paper-plane"></i> Kirim
+            <!-- Lampiran Section -->
+            <section id="lampiranSection" class="hidden">
+                <div class="section-container">
+                    <h2 class="section-title">Lampiran</h2>
+
+                    <!-- Admin Controls for Lampiran -->
+                    <div id="lampiranAdminControls" class="admin-controls hidden" style="margin-bottom: 24px;">
+                        <button class="btn btn-primary" id="openLampiranModalBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Tambah Lampiran
                         </button>
                     </div>
+
+                    <div id="lampiranList" class="content-list"></div>
+                </div>
+            </section>
+
+            <!-- Kritik Saran Section -->
+            <section id="kritikSection" class="hidden">
+                <div class="section-container">
+                    <h2 class="section-title">Kritik & Saran</h2>
+
+                    <div id="kritikAdminControls" class="hidden">
+                        <p style="color: var(--text-secondary); margin-bottom: 20px;">Kelola pesan dari pengguna</p>
+                    </div>
+
+                    <div id="feedbackList" class="feedback-list"></div>
+
+                    <div id="kritikPagination" class="pagination"></div>
                 </div>
             </section>
         </main>
 
-        <!-- Floating Kritik Button -->
-        <button class="floating-btn" id="floatingBtn" onclick="showKritikModal()" title="Kritik & Saran">
-            <i class="fas fa-comment-dots"></i>
+        <!-- Kritik Saran FAB -->
+        <button id="feedbackFab" class="fab" title="Kritik & Saran">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
         </button>
     </div>
 
-    <!-- Login Modal -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content modal-small">
+    <!-- Content Modal -->
+    <div id="contentModal" class="modal-overlay">
+        <div class="modal">
             <div class="modal-header">
-                <h3 id="loginTitle">Login</h3>
-                <button class="modal-close" onclick="closeModal('loginModal')">
-                    <i class="fas fa-times"></i>
+                <h2 id="contentModalTitle">Tambah Konten</h2>
+                <button class="modal-close" id="closeContentModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label>Password</label>
-                    <div class="password-input">
-                        <input type="password" id="loginPassword" placeholder="Masukkan password">
-                        <button class="toggle-password" onclick="togglePassword('loginPassword')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                <p class="error-message" id="loginError" style="display: none;">Password salah!</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeModal('loginModal')">Batal</button>
-                <button class="btn btn-primary" onclick="handleLogin()">Login</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Kritik Modal -->
-    <div class="modal" id="kritikModal">
-        <div class="modal-content modal-small">
-            <div class="modal-header">
-                <h3>Kritik & Saran</h3>
-                <button class="modal-close" onclick="closeModal('kritikModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Nama (Opsional)</label>
-                    <input type="text" id="kritikNamaModal" placeholder="Nama Anda">
-                </div>
-                <div class="form-group">
-                    <label>Kritik/Saran *</label>
-                    <textarea id="kritikIsiModal" rows="5" placeholder="Tulis kritik atau saran Anda..." required></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeModal('kritikModal')">Batal</button>
-                <button class="btn btn-primary" onclick="submitKritikModal()">Kirim</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Content Form Modal -->
-    <div class="modal" id="contentModal">
-        <div class="modal-content modal-large">
-            <div class="modal-header">
-                <h3 id="contentModalTitle">Tambah Konten</h3>
-                <button class="modal-close" onclick="closeModal('contentModal')">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Judul *</label>
-                    <input type="text" id="contentJudul" placeholder="Judul konten" required>
-                </div>
-                <div class="form-row">
+                <form id="contentForm">
+                    <input type="hidden" id="contentId">
                     <div class="form-group">
-                        <label>Tanggal</label>
-                        <input type="date" id="contentTanggal">
+                        <label class="form-label">Judul</label>
+                        <input type="text" class="form-input" id="contentTitleInput" required>
                     </div>
                     <div class="form-group">
-                        <label>Klasifikasi *</label>
-                        <select id="contentKlasifikasi"></select>
+                        <label class="form-label">Tanggal</label>
+                        <input type="date" class="form-input" id="contentDateInput" required>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Subject *</label>
-                    <div class="subject-toolbar">
-                        <button type="button" onclick="formatSubject('bold')" title="Bold"><i class="fas fa-bold"></i></button>
-                        <button type="button" onclick="formatSubject('italic')" title="Italic"><i class="fas fa-italic"></i></button>
-                        <button type="button" onclick="formatSubject('underline')" title="Underline"><i class="fas fa-underline"></i></button>
-                    </div>
-                    <div class="rich-text-editor subject-editor" id="contentSubjectEditor" contenteditable="true" placeholder="Deskripsi singkat (max 200 kata)" oninput="updateSubjectCount()"></div>
-                    <small class="char-count"><span id="subjectCount">0</span>/200 kata</small>
-                </div>
-                <div class="form-group">
-                    <label>Content (Rich Text)</label>
-                    <div class="rich-text-toolbar">
-                        <button type="button" onclick="formatDoc('justifyLeft')" title="Rata Kiri"><i class="fas fa-align-left"></i></button>
-                        <button type="button" onclick="formatDoc('justifyCenter')" title="Rata Tengah"><i class="fas fa-align-center"></i></button>
-                        <button type="button" onclick="formatDoc('justifyRight')" title="Rata Kanan"><i class="fas fa-align-right"></i></button>
-                        <button type="button" onclick="formatDoc('justifyFull')" title="Rata Kiri-Kanan"><i class="fas fa-align-justify"></i></button>
-                        <span class="toolbar-separator"></span>
-                        <button type="button" onclick="formatDoc('bold')" title="Bold"><i class="fas fa-bold"></i></button>
-                        <button type="button" onclick="formatDoc('italic')" title="Italic"><i class="fas fa-italic"></i></button>
-                        <button type="button" onclick="formatDoc('underline')" title="Underline"><i class="fas fa-underline"></i></button>
-                        <span class="toolbar-separator"></span>
-                        <button type="button" onclick="formatDoc('insertUnorderedList')" title="Bullet"><i class="fas fa-list-ul"></i></button>
-                        <button type="button" onclick="formatDoc('insertOrderedList')" title="Numbering"><i class="fas fa-list-ol"></i></button>
-                        <span class="toolbar-separator"></span>
-                        <button type="button" onclick="showColorPicker()" title="Warna Teks"><i class="fas fa-font"></i></button>
-                        <input type="color" id="textColorPicker" style="display: none;" onchange="setTextColor(this.value)">
-                        <button type="button" onclick="insertHyperlink()" title="Hyperlink"><i class="fas fa-link"></i></button>
-                    </div>
-                    <div class="rich-text-editor" id="contentEditor" contenteditable="true" placeholder="Tulis konten..."></div>
-                </div>
-                <div class="form-group">
-                    <label>Link Eksternal</label>
-                    <div id="externalLinks">
-                        <div class="external-link-item">
-                            <input type="text" placeholder="Nama file" class="link-name">
-                            <input type="text" placeholder="URL (Drive, PPT, Excel, dll)" class="link-url">
-                            <button type="button" class="btn-remove" onclick="removeLinkField(this)"><i class="fas fa-times"></i></button>
+                    <div class="form-group">
+                        <label class="form-label">Klasifikasi</label>
+                        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                            <select class="form-select" id="contentClassificationInput" style="flex: 1;"></select>
+                            <button type="button" class="btn btn-secondary" id="openClassificationModalBtn"
+                                title="Kelola Klasifikasi">⚙</button>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline" onclick="addLinkField()">
-                        <i class="fas fa-plus"></i> Tambah Link
-                    </button>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <div style="display: flex; gap: 12px;">
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="contentStatus" value="berlaku" checked>
+                                <span style="color: var(--success); font-weight: 500;">✓ Berlaku</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <input type="radio" name="contentStatus" value="tidak_berlaku">
+                                <span style="color: var(--error); font-weight: 500;">✗ Tidak Berlaku</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subject (max 10000 karakter)</label>
+                        <div style="margin-bottom: 8px;">
+                            <button type="button" class="btn btn-secondary"
+                                data-format="bold"><strong>B</strong></button>
+                            <button type="button" class="btn btn-secondary" data-format="italic"><em>I</em></button>
+                            <button type="button" class="btn btn-secondary" data-format="underline"><u>U</u></button>
+                        </div>
+                        <div contenteditable="true" class="form-textarea" id="contentSubjectInput"
+                            style="min-height: 80px; max-height: 200px; overflow: auto;" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Konten (Rich Text)</label>
+                        <div style="margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-secondary" data-rtf="bold"><strong>B</strong></button>
+                            <button type="button" class="btn btn-secondary" data-rtf="italic"><em>I</em></button>
+                            <button type="button" class="btn btn-secondary" data-rtf="underline"><u>U</u></button>
+                            <button type="button" class="btn btn-secondary" data-rtf="justifyLeft">↤</button>
+                            <button type="button" class="btn btn-secondary" data-rtf="justifyCenter">↥</button>
+                            <button type="button" class="btn btn-secondary" data-rtf="justifyRight">↦</button>
+                            <button type="button" class="btn btn-secondary" data-rtf="insertUnorderedList">•</button>
+                            <button type="button" class="btn btn-secondary" data-rtf="insertOrderedList">1.</button>
+                        </div>
+                        <div contenteditable="true" class="form-textarea" id="contentTextInput"
+                            style="min-height: 200px; overflow: auto;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Link Eksternal</label>
+                        <div id="linksContainer">
+                            <div class="link-item" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" class="form-input link-name"
+                                    placeholder="Nama File (misal: PDF, Excel)" style="flex: 1;">
+                                <input type="url" class="form-input link-url" placeholder="https://..."
+                                    style="flex: 2;">
+                                <button type="button" class="btn btn-danger remove-link">×</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary" id="addLinkBtn" style="margin-top: 8px;">+
+                            Tambah Link</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelContentBtn">Batal</button>
+                <button class="btn btn-primary" id="saveContentBtn">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Harga Modal -->
+    <div id="hargaModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="hargaModalTitle">Tambah Harga</h2>
+                <button class="modal-close" id="closeHargaModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="hargaForm">
+                    <input type="hidden" id="hargaId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Bulan</label>
+                            <select class="form-select" id="hargaBulanInput" required>
+                                <option value="Januari">Januari</option>
+                                <option value="Februari">Februari</option>
+                                <option value="Maret">Maret</option>
+                                <option value="April">April</option>
+                                <option value="Mei">Mei</option>
+                                <option value="Juni">Juni</option>
+                                <option value="Juli">Juli</option>
+                                <option value="Agustus">Agustus</option>
+                                <option value="September">September</option>
+                                <option value="Oktober">Oktober</option>
+                                <option value="November">November</option>
+                                <option value="Desember">Desember</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Regional</label>
+                            <select class="form-select" id="hargaRegionalInput" required>
+                                <option value="Jawa & Bali">Jawa & Bali</option>
+                                <option value="Sumatera & Kalimantan">Sumatera & Kalimantan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Jenis Pelanggan</label>
+                            <select class="form-select" id="hargaJenisInput" required>
+                                <option value="Baru">Baru</option>
+                                <option value="Existing">Existing</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Paket</label>
+                            <select class="form-select" id="hargaPaketInput" required>
+                                <option value="Reguler">Reguler</option>
+                                <option value="HEBAT 3">HEBAT 3</option>
+                                <option value="HEBAT 6">HEBAT 6</option>
+                                <option value="HEBAT 12">HEBAT 12</option>
+                                <option value="HEBAT 24">HEBAT 24</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Layanan</label>
+                        <input type="text" class="form-input" id="hargaLayananInput" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Biaya Pasang</label>
+                            <input type="number" class="form-input" id="hargaBiayaInput" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Harga Paket</label>
+                            <input type="number" class="form-input" id="hargaPaketPriceInput" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelHargaBtn">Batal</button>
+                <button class="btn btn-primary" id="saveHargaBtn">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Classification Modal -->
+    <div id="classificationModal" class="modal-overlay">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Kelola Klasifikasi</h2>
+                <button class="modal-close" id="closeClassificationModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Tambah Klasifikasi Baru</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" class="form-input" id="newClassificationInput"
+                            placeholder="Nama klasifikasi">
+                        <button type="button" class="btn btn-primary" id="addClassificationBtn">Tambah</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Daftar Klasifikasi</label>
+                    <div id="classificationList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reply Feedback Modal (Admin Only) -->
+    <div id="replyFeedbackModal" class="modal-overlay">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Respon Kritik & Saran</h2>
+                <button class="modal-close" id="closeReplyFeedbackModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div
+                    style="margin-bottom: 16px; padding: 12px; background: var(--background-soft); border-radius: var(--radius-md); font-size: 14px;">
+                    <p style="margin: 0 0 8px 0; color: var(--text-secondary);"><strong>Pesan dari:</strong> <span
+                            id="replyFeedbackName"></span></p>
+                    <p style="margin: 0; color: var(--text);"><span id="replyFeedbackMessage"></span></p>
+                </div>
+                <form id="replyForm">
+                    <input type="hidden" id="replyFeedbackId">
+                    <div class="form-group">
+                        <label class="form-label">Respon Admin</label>
+                        <textarea class="form-textarea" id="replyMessageInput" placeholder="Tulis respon Anda..."
+                            required></textarea>
+                    </div>
+                </form>
+                <div id="repliesList" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeModal('contentModal')">Batal</button>
-                <button class="btn btn-primary" onclick="saveContent()">Simpan</button>
+                <button class="btn btn-secondary" id="cancelReplyBtn">Batal</button>
+                <button class="btn btn-primary" id="saveReplyBtn">Kirim Respon</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Kritik & Saran</h2>
+                <button class="modal-close" id="closeFeedbackModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label class="form-label">Nama (opsional)</label>
+                        <input type="text" class="form-input" id="feedbackNameInput" placeholder="Nama Anda">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pesan</label>
+                        <textarea class="form-textarea" id="feedbackMessageInput"
+                            placeholder="Tulis kritik atau saran Anda..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelFeedbackBtn">Batal</button>
+                <button class="btn btn-primary" id="saveFeedbackBtn">Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links Modal -->
+    <div id="quickLinksModal" class="modal-overlay">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Kelola Link Eksternal</h2>
+                <button class="modal-close" id="closeQuickLinksModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Tambah Link Baru</label>
+                    <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                        <input type="text" class="form-input" id="quickLinkName" placeholder="Nama Link"
+                            style="flex: 1;">
+                        <input type="url" class="form-input" id="quickLinkUrl" placeholder="https://..."
+                            style="flex: 2;">
+                        <button type="button" class="btn btn-primary" id="addQuickLinkBtn">Tambah</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Daftar Link</label>
+                    <div id="quickLinksList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paste Data Modal -->
+    <div id="pasteModal" class="modal-overlay">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Paste Data dari Excel/Word</h2>
+                <button class="modal-close" id="closePasteModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Paste data di bawah (dari Excel/Word/Tabel):</label>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+                        Format: Bulan | Regional | Jenis | Paket | Speed | Biaya Pasang | Harga Paket
+                    </p>
+                    <textarea class="form-textarea" id="pasteDataInput"
+                        style="height: 200px; font-family: monospace; font-size: 12px;"
+                        placeholder="Contoh:&#10;Januari|Jawa & Bali|Baru|Reguler|20 Mbps|300000|250000&#10;Februari|Sumatera & Kalimantan|Existing|HEBAT 6|100 Mbps|0|400000"></textarea>
+                </div>
+                <div id="parsedDataPreview" style="margin-top: 16px; display: none;">
+                    <label class="form-label">Preview Data (ditemukan <span id="parsedCount">0</span> baris):</label>
+                    <div
+                        style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-md);">
+                        <table class="pricing-table" style="font-size: 12px;">
+                            <thead>
+                                <tr>
+                                    <th>Regional</th>
+                                    <th>Paket</th>
+                                    <th>Speed</th>
+                                    <th>Biaya</th>
+                                    <th>Harga</th>
+                                    <th>PPN 11%</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="parsedTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelPasteBtn">Batal</button>
+                <button class="btn btn-secondary" id="previewParsedBtn">Preview</button>
+                <button class="btn btn-primary" id="importParsedBtn">Import Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lampiran Modal -->
+    <div id="lampiranModal" class="modal-overlay">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="lampiranModalTitle">Tambah Lampiran</h2>
+                <button class="modal-close" id="closeLampiranModal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="lampiranForm">
+                    <input type="hidden" id="lampiranId">
+                    <div class="form-group">
+                        <label class="form-label">Judul File</label>
+                        <input type="text" class="form-input" id="lampiranJudulInput"
+                            placeholder="Contoh: Panduan Penanganan" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deskripsi (opsional)</label>
+                        <textarea class="form-textarea" id="lampiranDeskripsiInput" placeholder="Deskripsi singkat..."
+                            style="min-height: 80px;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">URL File (link download atau view)</label>
+                        <input type="url" class="form-input" id="lampiranUrlInput" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kategori</label>
+                        <select class="form-select" id="lampiranKategoriInput">
+                            <option value="Panduan">Panduan</option>
+                            <option value="Formulir">Formulir</option>
+                            <option value="Prosedur">Prosedur</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelLampiranBtn">Batal</button>
+                <button class="btn btn-primary" id="saveLampiranBtn">Simpan</button>
             </div>
         </div>
     </div>
 
     <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+    <div id="toastContainer" class="toast-container"></div>
 
-    <!-- Loading Skeleton -->
-    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
-        <div class="loading-spinner"></div>
-    </div>
+    <script>
+        // ========================================
+        // MODULE: Configuration & Constants
+        // ========================================
+        // Central API host can be overridden so all frontend instances use the same backend.
+        // Example: set window.centralApiHost = 'https://central.example.com' before the script,
+        // or open the page with ?api_host=https://central.example.com
+        const urlParams = new URLSearchParams(window.location.search);
+        const CENTRAL_API_HOST = window.centralApiHost || window.CENTRAL_API_HOST || urlParams.get('api_host') || window.location.origin;
+        const CONFIG = {
+            API_URL: CENTRAL_API_HOST + '/api',
+            MAX_LOGIN_ATTEMPTS: 5,
+            ITEMS_PER_PAGE: 7,
+            AUTO_SYNC_INTERVAL: 3000,
+            STORAGE_KEYS: {
+                contents: 'KB1_contents',
+                hargaLayanan: 'KB1_harga',
+                feedbacks: 'KB1_feedbacks',
+                classifications: 'KB1_classifications',
+                quickLinks: 'KB1_quickLinks',
+                darkmode: 'KB1_darkmode',
+                activeSection: 'KB1_activeSection',
+                session: 'KABINET_session',
+                loginAttempts: 'KB1_loginAttempts',
+                lampiran: 'KB1_lampiran'
+            }
+        };
 
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <!-- Firebase Realtime Database -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+        // Login passwords
+        // admin: Smg1234
+        // user: Contact1234
+        const PASSWORDS = {
+            admin: 'Smg1234',
+            user: 'Contact1234'
+        };
 
-    <script src="app.js"></script>
+        // Sample data
+        const SAMPLE_DATA = {
+            contents: [
+                { id: '1', title: 'Promo Spesial Bulan Ini', date: '2026-04-01', classification: 'PROMO', subject: 'Dapatkan diskon 50% untuk semua layanan internet rumah!', content: '<p style="text-align: center;"><strong>DISKON 50%</strong></p><p>Segera daftarkan diri Anda dan nikmati kecepatan internet tinggi dengan harga terjangkau.</p><ul><li>Kecepatan up to 100 Mbps</li><li>Gratis installasi</li><li>Gratis router WiFi</li></ul>', externalLinks: [{ name: 'Syarat & Ketentuan', url: 'https://docs.google.com' }] },
+                { id: '2', title: 'Cara Memperkuat Sinyal WiFi', date: '2026-03-28', classification: 'INFO', subject: 'Tips dan trick untuk memperkuat signal WiFi di rumah Anda.', content: '<p>Berikut beberapa tips untuk memperkuat sinyal WiFi:</p><ol><li>Letakkan router di tengah rumah</li><li>Hindari dinding tebal dan perangkat elektronik</li><li>Gunakan WiFi extender</li><li>Update firmware router secara berkala</li></ol>', externalLinks: [] },
+                { id: '3', title: 'Kategori Layanan Internet', date: '2026-03-25', classification: 'KATEGORI', subject: 'Kategori layanan internet yang tersedia untuk Anda.', content: '<p><strong>Layanan yang tersedia:</strong></p><ul><li><strong>Internet Rumah</strong> - untuk kebutuhan rumah tangga</li><li><strong>Internet Bisnis</strong> - untuk kebutuhan usaha</li><li><strong>Internet WiFi Hotspot</strong> - untuk area publik</li></ul>', externalLinks: [{ name: 'Daftar Harga', url: '#harga' }] }
+            ],
+            hargaLayanan: [
+                { id: '1', bulan: 'Januari', regional: 'Jawa & Bali', jenisPelanggan: 'Baru', paket: 'Reguler', layanan: 'Internet 20 Mbps', biayaPasang: 300000, hargaPaket: 250000 },
+                { id: '2', bulan: 'Januari', regional: 'Jawa & Bali', jenisPelanggan: 'Baru', paket: 'HEBAT 12', layanan: 'Internet 50 Mbps', biayaPasang: 300000, hargaPaket: 350000 },
+                { id: '3', bulan: 'Februari', regional: 'Jawa & Bali', jenisPelanggan: 'Existing', paket: 'HEBAT 6', layanan: 'Internet 100 Mbps', biayaPasang: 0, hargaPaket: 400000 },
+                { id: '4', bulan: 'Maret', regional: 'Sumatera & Kalimantan', jenisPelanggan: 'Baru', paket: 'Reguler', layanan: 'Internet 20 Mbps', biayaPasang: 350000, hargaPaket: 275000 },
+                { id: '5', bulan: 'April', regional: 'Sumatera & Kalimantan', jenisPelanggan: 'Baru', paket: 'HEBAT 24', layanan: 'Internet 100 Mbps', biayaPasang: 350000, hargaPaket: 450000 },
+                { id: '6', bulan: 'Mei', regional: 'Jawa & Bali', jenisPelanggan: 'Existing', paket: 'HEBAT 12', layanan: 'Internet 50 Mbps', biayaPasang: 0, hargaPaket: 325000 },
+                { id: '7', bulan: 'Juni', regional: 'Jawa & Bali', jenisPelanggan: 'Baru', paket: 'HEBAT 3', layanan: 'Internet 30 Mbps', biayaPasang: 250000, hargaPaket: 300000 },
+                { id: '8', bulan: 'Juli', regional: 'Sumatera & Kalimantan', jenisPelanggan: 'Baru', paket: 'Reguler', layanan: 'Internet 10 Mbps', biayaPasang: 300000, hargaPaket: 200000 }
+            ],
+            feedbacks: [],
+            classifications: ['INFO', 'KATEGORI', 'PROMO'],
+            quickLinks: [],
+            lampiran: []
+        };
+
+        // ========================================
+        // MODULE: State Management
+        // ========================================
+        const state = {
+            role: null,
+            selectedRole: 'user',
+            contents: [],
+            hargaLayanan: [],
+            feedbacks: [],
+            classifications: [],
+            quickLinks: [],
+            lampiran: [],
+            updatedAt: null,
+            pagination: { content: 1, harga: 1, feedback: 1 },
+            filter: { active: 'all', bulan: '', regional: '', jenis: '', paket: '' },
+            sorting: { column: null, asc: true },
+            search: { term: '', currentMatch: -1 },
+            loginAttempts: 0,
+            isOnline: navigator.onLine
+        };
+
+        // ========================================
+        // MODULE: Utility Functions
+        // ========================================
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('id-ID', options);
+        }
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
+        }
+
+        // ========================================
+        // MODULE: Storage Functions
+        // ========================================
+        function saveToStorage(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+                localStorage.setItem(key + '_timestamp', Date.now().toString());
+            } catch (e) {
+                console.error('Error saving to localStorage:', e);
+            }
+        }
+
+        function loadFromStorage(key, defaultValue) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (e) {
+                console.error('Error loading from localStorage:', e);
+                return defaultValue;
+            }
+        }
+
+        function saveAllData() {
+            saveToStorage(CONFIG.STORAGE_KEYS.contents, state.contents);
+            saveToStorage(CONFIG.STORAGE_KEYS.hargaLayanan, state.hargaLayanan);
+            saveToStorage(CONFIG.STORAGE_KEYS.feedbacks, state.feedbacks);
+            saveToStorage(CONFIG.STORAGE_KEYS.classifications, state.classifications);
+            saveToStorage(CONFIG.STORAGE_KEYS.quickLinks, state.quickLinks);
+            saveToStorage(CONFIG.STORAGE_KEYS.lampiran, state.lampiran);
+            state.updatedAt = Date.now();
+        }
+
+        async function loadAllData() {
+            // Try to fetch from server first (database bersama)
+            const serverDataFetched = await fetchFromServer();
+            if (serverDataFetched) {
+                // Data loaded from server, already saved to state
+                console.log('Data loaded from central database');
+            } else {
+                // Fallback to localStorage cache
+                state.contents = loadFromStorage(CONFIG.STORAGE_KEYS.contents, SAMPLE_DATA.contents);
+                state.hargaLayanan = loadFromStorage(CONFIG.STORAGE_KEYS.hargaLayanan, SAMPLE_DATA.hargaLayanan);
+                state.feedbacks = loadFromStorage(CONFIG.STORAGE_KEYS.feedbacks, []);
+                state.classifications = loadFromStorage(CONFIG.STORAGE_KEYS.classifications, SAMPLE_DATA.classifications);
+                state.quickLinks = loadFromStorage(CONFIG.STORAGE_KEYS.quickLinks, []);
+                state.lampiran = loadFromStorage(CONFIG.STORAGE_KEYS.lampiran, []);
+                console.log('Data loaded from local cache (offline mode)');
+            }
+
+            state.loginAttempts = parseInt(localStorage.getItem(CONFIG.STORAGE_KEYS.loginAttempts) || '0');
+            if (state.loginAttempts >= CONFIG.MAX_LOGIN_ATTEMPTS) {
+                state.loginAttempts = 0;
+                localStorage.setItem(CONFIG.STORAGE_KEYS.loginAttempts, '0');
+                const loginBtn = document.getElementById('loginBtn');
+                if (loginBtn) loginBtn.disabled = false;
+                const loginAttemptsEl = document.getElementById('loginAttempts');
+                if (loginAttemptsEl) loginAttemptsEl.style.display = 'none';
+            }
+
+            // Load active section
+            const savedSection = localStorage.getItem(CONFIG.STORAGE_KEYS.activeSection);
+            if (savedSection) {
+                showSection(savedSection, false);
+            }
+        }
+
+        // ========================================
+        // MODULE: Server Communication
+        // ========================================
+        async function sendServerRequest(endpoint, method = 'GET', body = null) {
+            try {
+                const response = await fetch(CONFIG.API_URL + endpoint, {
+                    method,
+                    headers: body ? { 'Content-Type': 'application/json' } : {},
+                    body: body ? JSON.stringify(body) : null
+                });
+                return response.ok ? await response.json() : null;
+            } catch (e) {
+                console.warn('Server request failed:', endpoint, method, e);
+                return null;
+            }
+        }
+
+        async function syncToServer() {
+            const data = {
+                contents: state.contents,
+                hargaLayanan: state.hargaLayanan,
+                feedbacks: state.feedbacks,
+                classifications: state.classifications,
+                quickLinks: state.quickLinks,
+                lampiran: state.lampiran,
+                updatedAt: state.updatedAt
+            };
+            await sendServerRequest('/data', 'POST', data);
+        }
+
+        async function fetchFromServer() {
+            const serverData = await sendServerRequest('/data');
+            if (serverData) {
+                state.contents = serverData.contents || [];
+                state.hargaLayanan = serverData.hargaLayanan || [];
+                state.feedbacks = serverData.feedbacks || [];
+                state.classifications = serverData.classifications || SAMPLE_DATA.classifications;
+                state.quickLinks = serverData.quickLinks || [];
+                state.lampiran = serverData.lampiran || [];
+                saveAllData();
+                return true;
+            }
+            return false;
+        }
+
+        // ========================================
+        // MODULE: Cross-Tab Synchronization
+        // ========================================
+        window.addEventListener('storage', async (event) => {
+            if (event.key && event.key.startsWith('KB1_') && !event.key.endsWith('_timestamp')) {
+                console.log('Storage changed, reloading data from:', event.key);
+                await loadAllData();
+                if (document.getElementById('mainPage').classList.contains('active')) {
+                    renderAllUI();
+                }
+            }
+        });
+
+        // Auto-refresh on focus
+        window.addEventListener('focus', async () => {
+            if (document.getElementById('mainPage').classList.contains('active')) {
+                await loadAllData();
+                renderAllUI();
+                showToast('Data diperbarui', 'success');
+            }
+        });
+
+        // Online/Offline status
+        window.addEventListener('online', () => {
+            state.isOnline = true;
+            showToast('Koneksi online', 'success');
+            fetchFromServer();
+        });
+
+        window.addEventListener('offline', () => {
+            state.isOnline = false;
+            showToast('Mode offline - data disimpan lokal', 'warning');
+        });
+
+        // Auto sync interval
+        setInterval(() => {
+            if (state.isOnline && document.getElementById('mainPage').classList.contains('active')) {
+                fetchFromServer();
+            }
+        }, CONFIG.AUTO_SYNC_INTERVAL);
+
+        // ========================================
+        // MODULE: Toast Notifications
+        // ========================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+            <span>${message}</span>
+            <button class="toast-close">×</button>
+        `;
+
+            toast.querySelector('.toast-close').addEventListener('click', () => toast.remove());
+            container.appendChild(toast);
+
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        // ========================================
+        // MODULE: Login System
+        // ========================================
+        async function login() {
+            const password = document.getElementById('passwordInput').value;
+            const role = state.selectedRole;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const isCorrectPassword = password === PASSWORDS[role];
+
+            if (state.loginAttempts >= CONFIG.MAX_LOGIN_ATTEMPTS && !isCorrectPassword) {
+                showToast('Percobaan login habis. Silakan refresh halaman.', 'error');
+                return;
+            }
+
+            if (isCorrectPassword) {
+                state.role = role;
+                state.loginAttempts = 0;
+                localStorage.setItem(CONFIG.STORAGE_KEYS.loginAttempts, '0');
+
+                if (rememberMe) {
+                    localStorage.setItem(CONFIG.STORAGE_KEYS.session, JSON.stringify({ role: role }));
+                } else {
+                    sessionStorage.setItem(CONFIG.STORAGE_KEYS.session, JSON.stringify({ role: role }));
+                }
+
+                showMainPage();
+                showToast('Login berhasil!', 'success');
+            } else {
+                state.loginAttempts++;
+                localStorage.setItem(CONFIG.STORAGE_KEYS.loginAttempts, state.loginAttempts.toString());
+
+                const attemptsLeft = CONFIG.MAX_LOGIN_ATTEMPTS - state.loginAttempts;
+                document.getElementById('loginError').classList.add('show');
+                document.getElementById('loginAttempts').style.display = 'block';
+                document.getElementById('attemptsCount').textContent = attemptsLeft;
+
+                document.getElementById('passwordInput').value = '';
+
+                if (attemptsLeft <= 0) {
+                    showToast('Percobaan login habis. Silakan refresh halaman.', 'error');
+                }
+
+                setTimeout(() => {
+                    document.getElementById('loginError').classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function logout() {
+            state.role = null;
+            localStorage.removeItem(CONFIG.STORAGE_KEYS.session);
+            sessionStorage.removeItem(CONFIG.STORAGE_KEYS.session);
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('mainPage').classList.remove('active');
+            document.getElementById('passwordInput').value = '';
+        }
+
+        function showMainPage() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainPage').classList.add('active');
+
+            loadAllData().then(() => {
+                if (!state.hargaLayanan || state.hargaLayanan.length === 0) {
+                    state.hargaLayanan = SAMPLE_DATA.hargaLayanan;
+                    saveToStorage(CONFIG.STORAGE_KEYS.hargaLayanan, state.hargaLayanan);
+                }
+
+                // Role-based UI
+                if (state.role === 'admin') {
+                    document.getElementById('adminControls').classList.remove('hidden');
+                    document.getElementById('hargaAdminControls').style.display = 'flex';
+                    document.getElementById('kritikAdminControls').classList.remove('hidden');
+                    document.getElementById('hargaActionHeader').classList.remove('hidden');
+                    document.getElementById('feedbackFab').classList.add('hidden');
+                    document.getElementById('userFilters').classList.add('hidden');
+                    document.getElementById('userFilters').style.display = 'none';
+                    document.getElementById('quickLinksAdminControls').classList.remove('hidden');
+                    // Lampiran admin controls will be shown in renderLampiranList
+                } else {
+                    document.getElementById('adminControls').classList.add('hidden');
+                    document.getElementById('hargaAdminControls').style.display = 'none';
+                    document.getElementById('kritikAdminControls').classList.add('hidden');
+                    document.getElementById('hargaActionHeader').classList.add('hidden');
+                    document.getElementById('feedbackFab').classList.remove('hidden');
+                    document.getElementById('userFilters').classList.remove('hidden');
+                    document.getElementById('userFilters').style.display = 'flex';
+                    document.getElementById('quickLinksAdminControls').classList.add('hidden');
+                }
+
+                renderAllUI();
+                const initialSection = getSectionFromHash() || localStorage.getItem(CONFIG.STORAGE_KEYS.activeSection) || 'konten';
+                navigateToSection(initialSection);
+            });
+        }
+
+        function renderAllUI() {
+            updateClassificationSelect();
+            updateFilterPills();
+            renderQuickLinks();
+            renderContentList();
+            renderPricingTable();
+            renderLampiranList();
+            renderFeedbackList();
+            updateSearchResultCount();
+        }
+
+        // ========================================
+        // MODULE: Navigation
+        // ========================================
+        function showSection(section, updateMenu = true) {
+            const validSections = ['konten', 'harga', 'lampiran', 'kritik'];
+            const selectedSection = validSections.includes(section) ? section : 'konten';
+
+            document.getElementById('kontenSection').classList.add('hidden');
+            document.getElementById('hargaSection').classList.add('hidden');
+            document.getElementById('lampiranSection').classList.add('hidden');
+            document.getElementById('kritikSection').classList.add('hidden');
+
+            document.getElementById(`${selectedSection}Section`).classList.remove('hidden');
+
+            if (updateMenu) {
+                document.querySelectorAll('.navbar-menu button').forEach(b => b.classList.remove('active'));
+                document.querySelector(`.navbar-menu button[data-section="${selectedSection}"]`).classList.add('active');
+                localStorage.setItem(CONFIG.STORAGE_KEYS.activeSection, selectedSection);
+            }
+
+            if (selectedSection === 'harga') {
+                if (state.role === 'admin') {
+                    document.getElementById('hargaAdminControls').style.display = 'flex';
+                } else {
+                    document.getElementById('hargaAdminControls').style.display = 'none';
+                }
+                renderPricingTable();
+            } else if (selectedSection === 'lampiran') {
+                renderLampiranList();
+            }
+        }
+
+        function getSectionFromHash() {
+            const hash = window.location.hash.replace('#', '');
+            return ['konten', 'harga', 'lampiran', 'kritik'].includes(hash) ? hash : null;
+        }
+
+        function navigateToSection(section) {
+            showSection(section);
+            const hash = `#${section}`;
+            if (window.location.hash !== hash) {
+                history.pushState({ section }, '', hash);
+            }
+        }
+
+        window.addEventListener('hashchange', () => {
+            const section = getSectionFromHash();
+            if (section) {
+                showSection(section, false);
+            }
+        });
+
+        window.addEventListener('popstate', () => {
+            const section = getSectionFromHash();
+            if (section) {
+                showSection(section, false);
+            }
+        });
+
+        // ========================================
+        // MODULE: Classification Management
+        // ========================================
+        function updateClassificationSelect() {
+            const select = document.getElementById('contentClassificationInput');
+            if (select) {
+                const currentValue = select.value;
+                select.innerHTML = state.classifications.map(cls => `<option value="${cls}">${cls}</option>`).join('');
+                if (currentValue && state.classifications.includes(currentValue)) {
+                    select.value = currentValue;
+                }
+            }
+        }
+
+        function updateFilterPills() {
+            const container = document.getElementById('filterContainer');
+            if (container) {
+                container.innerHTML = `
+                <button class="filter-pill active" data-filter="all">Semua</button>
+                ${state.classifications.map(cls => `<button class="filter-pill" data-filter="${cls}">${cls}</button>`).join('')}
+            `;
+
+                container.querySelectorAll('.filter-pill').forEach(pill => {
+                    pill.addEventListener('click', () => {
+                        container.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                        pill.classList.add('active');
+                        state.filter.active = pill.dataset.filter;
+                        state.pagination.content = 1;
+                        renderContentList();
+                    });
+                });
+            }
+        }
+
+        // ========================================
+        // MODULE: Quick Links
+        // ========================================
+        function renderQuickLinks() {
+            const container = document.getElementById('quickLinksContainer');
+            if (container && state.quickLinks.length > 0) {
+                container.innerHTML = state.quickLinks.map(link => `
+                <a href="${link.url}" target="_blank" class="quick-link">
+                    <svg class="quick-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    ${link.name}
+                </a>
+            `).join('');
+            } else if (container) {
+                container.innerHTML = '';
+            }
+        }
+
+        // ========================================
+        // MODULE: Content Management
+        // ========================================
+        function renderContentList() {
+            const searchTerm = document.getElementById('contentSearch').value.trim();
+            let filtered = state.contents.filter(c => {
+                const matchesFilter = state.filter.active === 'all' || c.classification === state.filter.active;
+                const matchesSearch = !searchTerm ||
+                    c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (c.subject && c.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    (c.content && c.content.toLowerCase().includes(searchTerm.toLowerCase()));
+                return matchesFilter && matchesSearch;
+            });
+
+            // Sort by date (newest first)
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const totalPages = Math.ceil(filtered.length / CONFIG.ITEMS_PER_PAGE);
+            const start = (state.pagination.content - 1) * CONFIG.ITEMS_PER_PAGE;
+            const paginated = filtered.slice(start, start + CONFIG.ITEMS_PER_PAGE);
+
+            const container = document.getElementById('contentList');
+
+            if (paginated.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">Tidak ada konten</div>';
+            } else {
+                container.innerHTML = paginated.map(content => {
+                    const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const searchRegex = searchTerm ? new RegExp(`(${escapeRegExp(searchTerm)})`, 'gi') : null;
+
+                    const highlightText = (text) => {
+                        if (!text || !searchRegex) return text || '';
+                        return text.replace(searchRegex, '<span class="search-highlight">$1</span>');
+                    };
+
+                    const highlightedTitle = highlightText(content.title);
+                    const highlightedSubject = highlightText(content.subject);
+                    const highlightedContent = highlightText(content.content);
+
+                    return `
+                    <div class="content-card" data-id="${content.id}">
+                         <div class="content-header">
+                             <div class="content-title">${highlightedTitle}</div>
+                             <div class="content-meta">
+                                 <span class="content-date">${formatDate(content.date)}</span>
+                                 <span class="content-classification">${content.classification}</span>
+                                 ${content.status ? `<span class="content-status" style="background: ${content.status === 'berlaku' ? 'var(--success)' : 'var(--error)'}; color: white; padding: 2px 10px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 600; text-transform: uppercase;">${content.status === 'berlaku' ? 'Berlaku' : 'Tidak Berlaku'}</span>` : ''}
+                             </div>
+                         </div>
+                        <div class="content-subject">${highlightedSubject}</div>
+                        <div class="content-actions">
+                            ${content.content && content.content.trim() ? `<button class="btn btn-primary" data-toggle-details="${content.id}">Selengkapnya</button>` : ''}
+                            ${content.externalLinks && content.externalLinks.length > 0 ? content.externalLinks.map(link =>
+                        `<a href="${link.url}" target="_blank" class="btn btn-secondary">${link.name}</a>`
+                    ).join('') : ''}
+                            ${state.role === 'admin' ? `
+                                <button class="btn btn-secondary" data-edit-content="${content.id}">Edit</button>
+                                <button class="btn btn-danger" data-delete-content="${content.id}">Hapus</button>
+                            ` : ''}
+                        </div>
+                        ${content.content && content.content.trim() ? `
+                        <div class="content-details" id="contentDetails${content.id}">
+                            <div class="content-text">${highlightedContent}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                }).join('');
+            }
+
+            renderPagination('contentPagination', totalPages, state.pagination.content, (page) => {
+                state.pagination.content = page;
+                renderContentList();
+            });
+        }
+
+        // Content CRUD
+        function openContentModal(id = null) {
+            const linksContainer = document.getElementById('linksContainer');
+            linksContainer.innerHTML = '';
+
+            if (id) {
+                const content = state.contents.find(c => c.id === id);
+                document.getElementById('contentModalTitle').innerText = 'Edit Konten';
+                document.getElementById('contentId').value = content.id;
+                document.getElementById('contentTitleInput').value = content.title;
+                document.getElementById('contentDateInput').value = content.date;
+                document.getElementById('contentClassificationInput').value = content.classification;
+
+                // Set status radio button
+                const status = content.status || 'berlaku';
+                document.querySelector(`input[name="contentStatus"][value="${status}"]`).checked = true;
+
+                document.getElementById('contentSubjectInput').innerHTML = content.subject || '';
+                document.getElementById('contentTextInput').innerHTML = content.content || '';
+
+                if (content.externalLinks && content.externalLinks.length > 0) {
+                    content.externalLinks.forEach(link => addLinkField(link.name, link.url));
+                } else {
+                    addLinkField();
+                }
+            } else {
+                document.getElementById('contentModalTitle').innerText = 'Tambah Konten';
+                document.getElementById('contentForm').reset();
+                document.getElementById('contentId').value = '';
+                document.getElementById('contentTextInput').innerHTML = '';
+                // Reset status to default
+                document.querySelector('input[name="contentStatus"][value="berlaku"]').checked = true;
+                addLinkField();
+            }
+            document.getElementById('contentModal').classList.add('active');
+        }
+
+        function addLinkField(name = '', url = '') {
+            const linksContainer = document.getElementById('linksContainer');
+            const div = document.createElement('div');
+            div.className = 'link-item';
+            div.style = 'display: flex; gap: 8px; margin-bottom: 8px;';
+            div.innerHTML = `
+            <input type="text" class="form-input link-name" placeholder="Nama File (misal: PDF, Excel)" style="flex: 1;" value="${name}">
+            <input type="url" class="form-input link-url" placeholder="https://..." style="flex: 2;" value="${url}">
+            <button type="button" class="btn btn-danger remove-link">×</button>
+        `;
+            div.querySelector('.remove-link').addEventListener('click', () => {
+                if (linksContainer.children.length > 1) {
+                    div.remove();
+                } else {
+                    div.querySelector('.link-name').value = '';
+                    div.querySelector('.link-url').value = '';
+                }
+            });
+            linksContainer.appendChild(div);
+        }
+
+        async function saveContent() {
+            const id = document.getElementById('contentId').value || Date.now().toString();
+
+            let externalLinks = [];
+            document.querySelectorAll('.link-item').forEach(item => {
+                const name = item.querySelector('.link-name').value.trim();
+                const url = item.querySelector('.link-url').value.trim();
+                if (name && url) {
+                    externalLinks.push({ name, url });
+                }
+            });
+
+            const status = document.querySelector('input[name="contentStatus"]:checked').value;
+
+            const content = {
+                id,
+                title: document.getElementById('contentTitleInput').value,
+                date: document.getElementById('contentDateInput').value,
+                classification: document.getElementById('contentClassificationInput').value,
+                status,
+                subject: document.getElementById('contentSubjectInput').innerHTML,
+                content: document.getElementById('contentTextInput').innerHTML,
+                externalLinks
+            };
+
+            const existingIndex = state.contents.findIndex(c => c.id === id);
+            if (existingIndex >= 0) {
+                state.contents[existingIndex] = content;
+            } else {
+                state.contents.unshift(content);
+            }
+
+            saveAllData();
+            await syncToServer();
+
+            document.getElementById('contentModal').classList.remove('active');
+            renderContentList();
+            showToast('Konten berhasil disimpan!', 'success');
+        }
+
+        async function deleteContent(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus konten ini?')) {
+                state.contents = state.contents.filter(c => c.id !== id);
+                saveAllData();
+                await syncToServer();
+                renderContentList();
+                showToast('Konten berhasil dihapus!', 'success');
+            }
+        }
+
+        // ========================================
+        // MODULE: Pricing Management
+        // ========================================
+        function renderPricingTable() {
+            let filtered = [...state.hargaLayanan];
+
+            // Apply filters for user
+            if (state.role !== 'admin') {
+                const bulan = document.getElementById('filterBulan')?.value;
+                const regional = document.getElementById('filterRegional')?.value;
+                const jenis = document.getElementById('filterJenis')?.value;
+                const paket = document.getElementById('filterPaket')?.value;
+
+                if (bulan) filtered = filtered.filter(h => h.bulan === bulan);
+                if (regional) filtered = filtered.filter(h => h.regional === regional);
+                if (jenis) filtered = filtered.filter(h => h.jenisPelanggan === jenis);
+                if (paket) filtered = filtered.filter(h => h.paket === paket);
+            }
+
+            // Apply sorting
+            if (state.sorting.column) {
+                filtered.sort((a, b) => {
+                    let valA = a[state.sorting.column];
+                    let valB = b[state.sorting.column];
+
+                    if (typeof valA === 'string') {
+                        valA = valA.toLowerCase();
+                        valB = valB.toLowerCase();
+                    }
+
+                    if (valA < valB) return state.sorting.asc ? -1 : 1;
+                    if (valA > valB) return state.sorting.asc ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            const totalPages = Math.ceil(filtered.length / CONFIG.ITEMS_PER_PAGE);
+            const start = (state.pagination.harga - 1) * CONFIG.ITEMS_PER_PAGE;
+            const paginated = filtered.slice(start, start + CONFIG.ITEMS_PER_PAGE);
+
+            const tbody = document.getElementById('pricingTableBody');
+
+            if (paginated.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">Tidak ada data</td></tr>';
+            } else {
+                tbody.innerHTML = paginated.map(harga => {
+                    const ppn = Math.round((harga.biayaPasang + harga.hargaPaket) * 0.11);
+                    const total = harga.biayaPasang + harga.hargaPaket + ppn;
+
+                    return `
+                    <tr>
+                        <td>${harga.regional}</td>
+                        <td>${harga.paket}</td>
+                        <td>${harga.layanan}</td>
+                        <td>${formatCurrency(harga.biayaPasang)}</td>
+                        <td>${formatCurrency(harga.hargaPaket)}</td>
+                        <td>${formatCurrency(ppn)}</td>
+                        <td>${formatCurrency(total)}</td>
+                        ${state.role === 'admin' ? `
+                            <td>
+                                <button class="btn btn-secondary" data-edit-harga="${harga.id}" style="padding: 6px 12px; font-size: 12px;">Edit</button>
+                                <button class="btn btn-danger" data-delete-harga="${harga.id}" style="padding: 6px 12px; font-size: 12px;">Hapus</button>
+                            </td>
+                        ` : ''}
+                    </tr>
+                `;
+                }).join('');
+            }
+
+            renderPagination('hargaPagination', totalPages, state.pagination.harga, (page) => {
+                state.pagination.harga = page;
+                renderPricingTable();
+            });
+        }
+
+        function sortPricing(column) {
+            if (state.sorting.column === column) {
+                state.sorting.asc = !state.sorting.asc;
+            } else {
+                state.sorting.column = column;
+                state.sorting.asc = true;
+            }
+            renderPricingTable();
+        }
+
+        function openHargaModal(id = null) {
+            if (id) {
+                const harga = state.hargaLayanan.find(h => h.id === id);
+                document.getElementById('hargaModalTitle').innerText = 'Edit Harga';
+                document.getElementById('hargaId').value = harga.id;
+                document.getElementById('hargaBulanInput').value = harga.bulan;
+                document.getElementById('hargaRegionalInput').value = harga.regional;
+                document.getElementById('hargaJenisInput').value = harga.jenisPelanggan;
+                document.getElementById('hargaPaketInput').value = harga.paket;
+                document.getElementById('hargaLayananInput').value = harga.layanan;
+                document.getElementById('hargaBiayaInput').value = harga.biayaPasang;
+                document.getElementById('hargaPaketPriceInput').value = harga.hargaPaket;
+            } else {
+                document.getElementById('hargaModalTitle').innerText = 'Tambah Harga';
+                document.getElementById('hargaForm').reset();
+                document.getElementById('hargaId').value = '';
+            }
+            document.getElementById('hargaModal').classList.add('active');
+        }
+
+        async function saveHarga() {
+            const id = document.getElementById('hargaId').value || Date.now().toString();
+
+            const harga = {
+                id,
+                bulan: document.getElementById('hargaBulanInput').value,
+                regional: document.getElementById('hargaRegionalInput').value,
+                jenisPelanggan: document.getElementById('hargaJenisInput').value,
+                paket: document.getElementById('hargaPaketInput').value,
+                layanan: document.getElementById('hargaLayananInput').value,
+                biayaPasang: parseInt(document.getElementById('hargaBiayaInput').value) || 0,
+                hargaPaket: parseInt(document.getElementById('hargaPaketPriceInput').value) || 0
+            };
+
+            const existingIndex = state.hargaLayanan.findIndex(h => h.id === id);
+            if (existingIndex >= 0) {
+                state.hargaLayanan[existingIndex] = harga;
+            } else {
+                state.hargaLayanan.push(harga);
+            }
+
+            saveAllData();
+            await syncToServer();
+
+            document.getElementById('hargaModal').classList.remove('active');
+            renderPricingTable();
+            showToast('Harga berhasil disimpan!', 'success');
+        }
+
+        async function deleteHarga(id) {
+            if (confirm('Hapus data harga ini?')) {
+                state.hargaLayanan = state.hargaLayanan.filter(h => h.id !== id);
+                saveAllData();
+                await syncToServer();
+                renderPricingTable();
+                showToast('Harga dihapus!', 'success');
+            }
+        }
+
+        // ========================================
+        // MODULE: Feedback Management
+        // ========================================
+        function renderFeedbackList() {
+            let filtered = [...state.feedbacks];
+
+            const totalPages = Math.ceil(filtered.length / CONFIG.ITEMS_PER_PAGE);
+            const start = (state.pagination.feedback - 1) * CONFIG.ITEMS_PER_PAGE;
+            const paginated = filtered.slice(start, start + CONFIG.ITEMS_PER_PAGE);
+
+            const container = document.getElementById('feedbackList');
+
+            if (paginated.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">Belum ada kritik dan saran</div>';
+            } else {
+                container.innerHTML = paginated.map(feedback => {
+                    const hasReplies = feedback.replies && feedback.replies.length > 0;
+                    const repliesHTML = hasReplies ? `
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;"><strong>${feedback.replies.length} Respon Admin</strong></p>
+                        ${feedback.replies.map(reply => `
+                            <div style="padding: 12px; background: var(--background-soft); border-radius: var(--radius-sm); margin-bottom: 8px;">
+                                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;">${formatDate(reply.date)}</div>
+                                <div style="color: var(--text);">Admin: ${reply.message}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : '';
+
+                    return `
+                    <div class="feedback-card ${!feedback.read ? 'unread' : ''}" data-id="${feedback.id}">
+                        <div class="feedback-header">
+                            <span class="feedback-name">${feedback.name || 'Anonim'}</span>
+                            <span class="feedback-date">${formatDate(feedback.date)}</span>
+                        </div>
+                        <div class="feedback-message">${feedback.message}</div>
+                        ${repliesHTML}
+                        ${state.role === 'admin' ? `
+                            <div class="feedback-actions">
+                                <button class="btn btn-primary" data-reply-feedback="${feedback.id}">Respon</button>
+                                ${!feedback.read ? `<button class="btn btn-secondary" data-mark-read="${feedback.id}">Tandai Dibaca</button>` : ''}
+                                <button class="btn btn-danger" data-delete-feedback="${feedback.id}">Hapus</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                }).join('');
+            }
+
+            renderPagination('kritikPagination', totalPages, state.pagination.feedback, (page) => {
+                state.pagination.feedback = page;
+                renderFeedbackList();
+            });
+        }
+
+        async function saveFeedback() {
+            const name = document.getElementById('feedbackNameInput').value.trim();
+            const message = document.getElementById('feedbackMessageInput').value.trim();
+
+            if (!message) {
+                showToast('Pesan wajib diisi!', 'warning');
+                return;
+            }
+
+            const feedback = {
+                id: Date.now().toString(),
+                name: name || 'Anonim',
+                message,
+                date: new Date().toISOString().split('T')[0],
+                read: false,
+                replies: []
+            };
+
+            state.feedbacks.unshift(feedback);
+            saveAllData();
+            await syncToServer();
+
+            document.getElementById('feedbackModal').classList.remove('active');
+            document.getElementById('feedbackForm').reset();
+            renderFeedbackList();
+            showToast('Kritik & saran terkirim!', 'success');
+        }
+
+        function openReplyFeedbackModal(feedbackId) {
+            const feedback = state.feedbacks.find(f => f.id === feedbackId);
+            if (!feedback) return;
+
+            document.getElementById('replyFeedbackId').value = feedbackId;
+            document.getElementById('replyFeedbackName').textContent = feedback.name || 'Anonim';
+            document.getElementById('replyFeedbackMessage').textContent = feedback.message;
+            document.getElementById('replyMessageInput').value = '';
+
+            // Render existing replies
+            const repliesList = document.getElementById('repliesList');
+            if (feedback.replies && feedback.replies.length > 0) {
+                repliesList.innerHTML = `
+                <h3 style="font-size: 14px; margin-top: 0; margin-bottom: 12px; color: var(--text-secondary);">Respon yang Sudah Diberikan</h3>
+                ${feedback.replies.map(reply => `
+                    <div style="padding: 12px; background: var(--background-soft); border-radius: var(--radius-sm); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;">${formatDate(reply.date)}</div>
+                            <div style="color: var(--text);">Admin: ${reply.message}</div>
+                        </div>
+                        <button type="button" class="btn btn-danger" data-delete-reply="${feedbackId}|${reply.id}" style="margin-left: 8px; padding: 4px 10px; font-size: 12px;">Hapus</button>
+                    </div>
+                `).join('')}
+            `;
+            } else {
+                repliesList.innerHTML = '<p style="color: var(--text-secondary); font-size: 13px;">Belum ada respon</p>';
+            }
+
+            document.getElementById('replyFeedbackModal').classList.add('active');
+        }
+
+        async function saveReply() {
+            const feedbackId = document.getElementById('replyFeedbackId').value;
+            const message = document.getElementById('replyMessageInput').value.trim();
+
+            if (!message) {
+                showToast('Respon wajib diisi!', 'warning');
+                return;
+            }
+
+            const feedback = state.feedbacks.find(f => f.id === feedbackId);
+            if (!feedback) return;
+
+            if (!feedback.replies) {
+                feedback.replies = [];
+            }
+
+            const reply = {
+                id: Date.now().toString(),
+                message,
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            feedback.replies.push(reply);
+            feedback.read = true;
+
+            saveAllData();
+            await syncToServer();
+
+            document.getElementById('replyFeedbackModal').classList.remove('active');
+            document.getElementById('replyForm').reset();
+            renderFeedbackList();
+            showToast('Respon terkirim!', 'success');
+        }
+
+        async function deleteReply(feedbackId, replyId) {
+            if (confirm('Hapus respon ini?')) {
+                const feedback = state.feedbacks.find(f => f.id === feedbackId);
+                if (feedback && feedback.replies) {
+                    feedback.replies = feedback.replies.filter(r => r.id !== replyId);
+                    saveAllData();
+                    await syncToServer();
+                    openReplyFeedbackModal(feedbackId);
+                    showToast('Respon dihapus!', 'success');
+                }
+            }
+        }
+
+        async function markFeedbackRead(id) {
+            const feedback = state.feedbacks.find(f => f.id === id);
+            if (feedback) {
+                feedback.read = true;
+                saveAllData();
+                await syncToServer();
+                renderFeedbackList();
+            }
+        }
+
+        async function deleteFeedback(id) {
+            if (confirm('Hapus pesan ini?')) {
+                state.feedbacks = state.feedbacks.filter(f => f.id !== id);
+                saveAllData();
+                await syncToServer();
+                renderFeedbackList();
+                showToast('Pesan dihapus!', 'success');
+            }
+        }
+
+        // ========================================
+        // MODULE: Classification CRUD
+        // ========================================
+        function renderClassificationList() {
+            const container = document.getElementById('classificationList');
+            container.innerHTML = state.classifications.map((cls, index) => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--background-soft); border-radius: var(--radius-sm);">
+                <span>${cls}</span>
+                <button type="button" class="btn btn-danger" data-remove-classification="${index}" style="padding: 4px 10px; font-size: 12px;">Hapus</button>
+            </div>
+        `).join('');
+        }
+
+        async function addClassification() {
+            const input = document.getElementById('newClassificationInput');
+            const newCls = input.value.trim().toUpperCase();
+
+            if (newCls && !state.classifications.includes(newCls)) {
+                state.classifications.push(newCls);
+                saveAllData();
+                await syncToServer();
+                input.value = '';
+                renderClassificationList();
+                updateClassificationSelect();
+                updateFilterPills();
+                showToast('Klasifikasi ditambahkan!', 'success');
+            } else if (state.classifications.includes(newCls)) {
+                showToast('Klasifikasi sudah ada!', 'warning');
+            }
+        }
+
+        async function removeClassification(index) {
+            if (confirm('Hapus klasifikasi ini?')) {
+                state.classifications.splice(index, 1);
+                saveAllData();
+                await syncToServer();
+                renderClassificationList();
+                updateClassificationSelect();
+                updateFilterPills();
+                showToast('Klasifikasi dihapus!', 'success');
+            }
+        }
+
+        // ========================================
+        // MODULE: Quick Links CRUD
+        // ========================================
+        function renderQuickLinksList() {
+            const container = document.getElementById('quickLinksList');
+            if (state.quickLinks.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Belum ada link</p>';
+            } else {
+                container.innerHTML = state.quickLinks.map(link => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--background-soft); border-radius: var(--radius-sm);">
+                    <div>
+                        <strong>${link.name}</strong>
+                        <br><small style="color: var(--text-muted);">${link.url}</small>
+                    </div>
+                    <button class="btn btn-danger" data-remove-quicklink="${link.id}" style="padding: 6px 12px; font-size: 12px;">Hapus</button>
+                </div>
+            `).join('');
+            }
+        }
+
+        async function addQuickLink() {
+            const name = document.getElementById('quickLinkName').value.trim();
+            const url = document.getElementById('quickLinkUrl').value.trim();
+
+            if (name && url) {
+                const link = { id: Date.now().toString(), name, url };
+                state.quickLinks.push(link);
+                saveAllData();
+                await syncToServer();
+
+                document.getElementById('quickLinkName').value = '';
+                document.getElementById('quickLinkUrl').value = '';
+                renderQuickLinksList();
+                renderQuickLinks();
+                showToast('Link ditambahkan!', 'success');
+            } else {
+                showToast('Nama dan URL wajib diisi!', 'warning');
+            }
+        }
+
+        async function removeQuickLink(id) {
+            if (confirm('Hapus link ini?')) {
+                state.quickLinks = state.quickLinks.filter(link => link.id !== id);
+                saveAllData();
+                await syncToServer();
+                renderQuickLinksList();
+                renderQuickLinks();
+                showToast('Link dihapus!', 'success');
+            }
+        }
+
+        // ========================================
+        // MODULE: Pagination
+        // ========================================
+        function renderPagination(containerId, totalPages, currentPage, onPageChange) {
+            const container = document.getElementById(containerId);
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let pages = [];
+            pages.push({ type: 'prev', page: currentPage - 1, disabled: currentPage === 1 });
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    pages.push({ type: 'page', page: i, active: i === currentPage });
+                } else if (pages[pages.length - 1].type !== 'ellipsis') {
+                    pages.push({ type: 'ellipsis' });
+                }
+            }
+
+            pages.push({ type: 'next', page: currentPage + 1, disabled: currentPage === totalPages });
+
+            container.innerHTML = pages.map(p => {
+                if (p.type === 'ellipsis') {
+                    return '<span class="pagination-btn" style="border: none;">...</span>';
+                }
+                return `<button class="pagination-btn ${p.active ? 'active' : ''}" data-page="${p.page}" ${p.disabled ? 'disabled' : ''}>${p.type === 'prev' ? '‹' : p.type === 'next' ? '›' : p.page}</button>`;
+            }).join('');
+
+            container.querySelectorAll('.pagination-btn:not([disabled])').forEach(btn => {
+                btn.addEventListener('click', () => onPageChange(parseInt(btn.dataset.page)));
+            });
+        }
+
+        // ========================================
+        // MODULE: Search
+        // ========================================
+        function searchContent() {
+            state.pagination.content = 1;
+            state.search.term = document.getElementById('contentSearch').value.trim();
+            state.search.currentMatch = -1;
+
+            const hint = document.getElementById('searchNavHint');
+            hint.style.display = state.search.term ? 'block' : 'none';
+
+            renderContentList();
+            updateSearchResultCount();
+        }
+
+        function updateSearchResultCount() {
+            const searchTerm = document.getElementById('contentSearch').value.trim();
+            const countEl = document.getElementById('searchResultCount');
+
+            if (!searchTerm) {
+                countEl.textContent = '';
+                return;
+            }
+
+            const filtered = state.contents.filter(c => {
+                const matchesFilter = state.filter.active === 'all' || c.classification === state.filter.active;
+                const matchesSearch =
+                    c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (c.subject && c.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    (c.content && c.content.toLowerCase().includes(searchTerm.toLowerCase()));
+                return matchesFilter && matchesSearch;
+            });
+
+            countEl.textContent = `${filtered.length} hasil`;
+        }
+
+        function navigateToNextMatch() {
+            const searchTerm = document.getElementById('contentSearch').value.trim();
+            if (!searchTerm) return;
+
+            const filtered = state.contents.filter(c => {
+                const matchesFilter = state.filter.active === 'all' || c.classification === state.filter.active;
+                const matchesSearch =
+                    c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (c.subject && c.subject.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    (c.content && c.content.toLowerCase().includes(searchTerm.toLowerCase()));
+                return matchesFilter && matchesSearch;
+            });
+
+            if (filtered.length === 0) return;
+
+            state.search.currentMatch++;
+            if (state.search.currentMatch >= filtered.length) {
+                state.search.currentMatch = 0;
+            }
+
+            const targetContent = filtered[state.search.currentMatch];
+            const targetPage = Math.ceil((filtered.indexOf(targetContent) + 1) / CONFIG.ITEMS_PER_PAGE);
+
+            if (targetPage !== state.pagination.content) {
+                state.pagination.content = targetPage;
+            }
+
+            renderContentList();
+            updateSearchResultCount();
+
+            setTimeout(() => {
+                const targetCard = document.querySelector(`.content-card[data-id="${targetContent.id}"]`);
+                if (targetCard) {
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        }
+
+        // ========================================
+        // MODULE: Paste Data
+        // ========================================
+        let parsedData = [];
+
+        function previewParsedData() {
+            const text = document.getElementById('pasteDataInput').value.trim();
+            if (!text) {
+                showToast('Tidak ada data untuk di-preview', 'warning');
+                return;
+            }
+
+            const lines = text.split('\n').filter(line => line.trim());
+            parsedData = [];
+
+            lines.forEach(line => {
+                const parts = line.split('|').map(p => p.trim());
+                if (parts.length >= 7) {
+                    parsedData.push({
+                        bulan: parts[0],
+                        regional: parts[1],
+                        jenisPelanggan: parts[2],
+                        paket: parts[3],
+                        layanan: parts[4], // Speed value
+                        biayaPasang: parseInt(parts[5]) || 0,
+                        hargaPaket: parseInt(parts[6]) || 0
+                    });
+                }
+            });
+
+            document.getElementById('parsedCount').textContent = parsedData.length;
+
+            const tbody = document.getElementById('parsedTableBody');
+            tbody.innerHTML = parsedData.slice(0, 10).map(d => `
+            <tr>
+                <td>${d.regional}</td>
+                <td>${d.paket}</td>
+                <td>${d.layanan}</td>
+                <td>${formatCurrency(d.biayaPasang)}</td>
+                <td>${formatCurrency(d.hargaPaket)}</td>
+                <td>${formatCurrency(Math.round((d.biayaPasang + d.hargaPaket) * 0.11))}</td>
+                <td>${formatCurrency(d.biayaPasang + d.hargaPaket + Math.round((d.biayaPasang + d.hargaPaket) * 0.11))}</td>
+            </tr>
+        `).join('');
+
+            document.getElementById('parsedDataPreview').style.display = 'block';
+        }
+
+        async function importParsedData() {
+            if (parsedData.length === 0) {
+                showToast('Tidak ada data untuk di-import', 'warning');
+                return;
+            }
+
+            parsedData.forEach(data => {
+                data.id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                state.hargaLayanan.push(data);
+            });
+
+            saveAllData();
+            await syncToServer();
+
+            document.getElementById('pasteModal').classList.remove('active');
+            document.getElementById('pasteDataInput').value = '';
+            document.getElementById('parsedDataPreview').style.display = 'none';
+            parsedData = [];
+
+            renderPricingTable();
+            showToast(`${parsedData.length} data berhasil di-import!`, 'success');
+        }
+
+        // ========================================
+        // MODULE: Lampiran Management
+        // ========================================
+        function renderLampiranList() {
+            const container = document.getElementById('lampiranList');
+
+            // Show/hide admin controls based on role
+            const adminControls = document.getElementById('lampiranAdminControls');
+            if (state.role === 'admin') {
+                adminControls.classList.remove('hidden');
+            } else {
+                adminControls.classList.add('hidden');
+            }
+
+            if (state.lampiran.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">Belum ada lampiran</div>';
+            } else {
+                container.innerHTML = state.lampiran.map(lamp => {
+                    const date = new Date(lamp.tanggal || lamp.createdAt).toLocaleDateString('id-ID');
+                    return `
+                    <div class="content-card" data-id="${lamp.id}">
+                        <div class="content-header">
+                            <div class="content-title">${lamp.judul}</div>
+                            <div class="content-meta">
+                                <span class="content-date">${date}</span>
+                                <span class="content-classification" style="background: var(--primary-light); color: var(--primary);">${lamp.kategori}</span>
+                                ${lamp.status ? `<span class="content-status" style="background: ${lamp.status === 'berlaku' ? 'var(--success)' : 'var(--error)'}; color: white; padding:2px 10px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 600; text-transform: uppercase;">${lamp.status === 'berlaku' ? 'Berlaku' : 'Tidak Berlaku'}</span>` : ''}
+                            </div>
+                        </div>
+                        ${lamp.deskripsi ? `<div class="content-subject">${lamp.deskripsi}</div>` : ''}
+                        <div class="content-actions">
+                            <a href="${lamp.url}" target="_blank" class="btn btn-secondary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                                Buka Lampiran
+                            </a>
+                            ${state.role === 'admin' ? `
+                                <button class="btn btn-secondary" data-edit-lampiran="${lamp.id}">Edit</button>
+                                <button class="btn btn-danger" data-delete-lampiran="${lamp.id}">Hapus</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                }).join('');
+            }
+        }
+
+        function openLampiranModal(id = null) {
+            if (id) {
+                const lampiran = state.lampiran.find(l => l.id === id);
+                if (!lampiran) return; // Not found
+                document.getElementById('lampiranModalTitle').innerText = 'Edit Lampiran';
+                document.getElementById('lampiranId').value = lampiran.id;
+                document.getElementById('lampiranJudulInput').value = lampiran.judul;
+                document.getElementById('lampiranDeskripsiInput').value = lampiran.deskripsi || '';
+                document.getElementById('lampiranUrlInput').value = lampiran.url;
+                document.getElementById('lampiranKategoriInput').value = lampiran.kategori || 'Lainnya';
+            } else {
+                document.getElementById('lampiranModalTitle').innerText = 'Tambah Lampiran';
+                document.getElementById('lampiranForm').reset();
+                document.getElementById('lampiranId').value = '';
+            }
+            document.getElementById('lampiranModal').classList.add('active');
+        }
+
+        async function saveLampiran() {
+            const id = document.getElementById('lampiranId').value || Date.now().toString();
+            const judul = document.getElementById('lampiranJudulInput').value.trim();
+            const deskripsi = document.getElementById('lampiranDeskripsiInput').value.trim();
+            const url = document.getElementById('lampiranUrlInput').value.trim();
+            const kategori = document.getElementById('lampiranKategoriInput').value;
+
+            if (!judul || !url) {
+                showToast('Judul dan URL wajib diisi!', 'warning');
+                return;
+            }
+
+            // Get existing item to preserve createdAt if editing
+            const existing = state.lampiran.find(l => l.id === id);
+
+            const lampiran = {
+                id,
+                judul,
+                deskripsi,
+                url,
+                kategori,
+                tanggal: new Date().toISOString().split('T')[0],
+                createdAt: existing ? existing.createdAt : new Date().toISOString()
+            };
+
+            const existingIndex = state.lampiran.findIndex(l => l.id === id);
+            if (existingIndex >= 0) {
+                state.lampiran[existingIndex] = lampiran;
+            } else {
+                state.lampiran.unshift(lampiran);
+            }
+
+            saveAllData();
+            await syncToServer();
+
+            document.getElementById('lampiranModal').classList.remove('active');
+            renderLampiranList();
+            showToast('Lampiran berhasil disimpan!', 'success');
+        }
+
+        async function deleteLampiran(id) {
+            if (confirm('Hapus lampiran ini?')) {
+                state.lampiran = state.lampiran.filter(l => l.id !== id);
+                saveAllData();
+                await syncToServer();
+                renderLampiranList();
+                showToast('Lampiran dihapus!', 'success');
+            }
+        }
+
+        // ========================================
+        // MODULE: Event Handlers (Centralized)
+        // ========================================
+        function attachEventHandlers() {
+            // Role buttons
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.selectedRole = btn.dataset.role;
+                });
+            });
+
+            // Login
+            document.getElementById('loginBtn').addEventListener('click', login);
+            document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') login();
+            });
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // Toggle password
+            document.getElementById('togglePassword').addEventListener('click', () => {
+                const input = document.getElementById('passwordInput');
+                input.type = input.type === 'password' ? 'text' : 'password';
+            });
+
+            // Dark mode
+            document.getElementById('darkModeToggle').addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                saveToStorage(CONFIG.STORAGE_KEYS.darkmode, document.body.classList.contains('dark-mode'));
+            });
+
+            // Mobile menu
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                document.getElementById('navbarMenu').classList.toggle('active');
+            });
+
+            // Navbar menu
+            document.querySelectorAll('.navbar-menu button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.navbar-menu button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    navigateToSection(btn.dataset.section);
+                });
+            });
+
+            // Search
+            document.getElementById('contentSearch').addEventListener('input', searchContent);
+            document.getElementById('contentSearch').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') navigateToNextMatch();
+            });
+
+            // Admin controls
+            document.getElementById('openContentModalBtn').addEventListener('click', () => openContentModal());
+            document.getElementById('openHargaModalBtn').addEventListener('click', () => openHargaModal());
+            document.getElementById('openClassificationModalBtn').addEventListener('click', () => {
+                renderClassificationList();
+                document.getElementById('classificationModal').classList.add('active');
+            });
+            document.getElementById('openPasteModalBtn').addEventListener('click', () => {
+                document.getElementById('pasteModal').classList.add('active');
+            });
+            document.getElementById('openLampiranModalBtn').addEventListener('click', () => {
+                renderLampiranList();
+                document.getElementById('lampiranModal').classList.add('active');
+            });
+
+            // Feedback FAB
+            document.getElementById('feedbackFab').addEventListener('click', () => {
+                document.getElementById('feedbackModal').classList.add('active');
+            });
+
+            // Modal close buttons
+            document.getElementById('closeContentModal').addEventListener('click', () => document.getElementById('contentModal').classList.remove('active'));
+            document.getElementById('closeHargaModal').addEventListener('click', () => document.getElementById('hargaModal').classList.remove('active'));
+            document.getElementById('closeClassificationModal').addEventListener('click', () => document.getElementById('classificationModal').classList.remove('active'));
+            document.getElementById('closeFeedbackModal').addEventListener('click', () => document.getElementById('feedbackModal').classList.remove('active'));
+            document.getElementById('closeQuickLinksModal').addEventListener('click', () => document.getElementById('quickLinksModal').classList.remove('active'));
+            document.getElementById('closePasteModal').addEventListener('click', () => document.getElementById('pasteModal').classList.remove('active'));
+            document.getElementById('closeLampiranModal').addEventListener('click', () => document.getElementById('lampiranModal').classList.remove('active'));
+            document.getElementById('closeReplyFeedbackModal').addEventListener('click', () => document.getElementById('replyFeedbackModal').classList.remove('active'));
+
+            // Modal cancel buttons
+            document.getElementById('cancelContentBtn').addEventListener('click', () => document.getElementById('contentModal').classList.remove('active'));
+            document.getElementById('cancelHargaBtn').addEventListener('click', () => document.getElementById('hargaModal').classList.remove('active'));
+            document.getElementById('cancelFeedbackBtn').addEventListener('click', () => document.getElementById('feedbackModal').classList.remove('active'));
+            document.getElementById('cancelLampiranBtn').addEventListener('click', () => document.getElementById('lampiranModal').classList.remove('active'));
+            document.getElementById('cancelReplyBtn').addEventListener('click', () => document.getElementById('replyFeedbackModal').classList.remove('active'));
+            document.getElementById('cancelPasteBtn').addEventListener('click', () => document.getElementById('pasteModal').classList.remove('active'));
+
+            // Modal save buttons
+            document.getElementById('saveContentBtn').addEventListener('click', saveContent);
+            document.getElementById('saveHargaBtn').addEventListener('click', saveHarga);
+            document.getElementById('saveFeedbackBtn').addEventListener('click', saveFeedback);
+            document.getElementById('saveLampiranBtn').addEventListener('click', saveLampiran);
+            document.getElementById('saveReplyBtn').addEventListener('click', saveReply);
+            document.getElementById('addClassificationBtn').addEventListener('click', addClassification);
+            document.getElementById('addQuickLinkBtn').addEventListener('click', addQuickLink);
+            document.getElementById('previewParsedBtn').addEventListener('click', previewParsedData);
+            document.getElementById('importParsedBtn').addEventListener('click', importParsedData);
+
+            // Add link button
+            document.getElementById('addLinkBtn').addEventListener('click', () => addLinkField());
+
+            // Rich text formatting
+            document.querySelectorAll('[data-format]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const command = btn.dataset.format;
+                    document.execCommand(command, false, null);
+                    document.getElementById('contentSubjectInput').focus();
+                });
+            });
+
+            document.querySelectorAll('[data-rtf]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const command = btn.dataset.rtf;
+                    if (command === 'createLink') {
+                        const url = prompt('Masukkan URL:');
+                        if (url) document.execCommand(command, false, url);
+                    } else {
+                        document.execCommand(command, false, null);
+                    }
+                    document.getElementById('contentTextInput').focus();
+                });
+            });
+
+            // Sorting
+            document.querySelectorAll('.sortable').forEach(th => {
+                th.addEventListener('click', () => sortPricing(th.dataset.sort));
+            });
+
+            // User filters
+            document.getElementById('filterBulan').addEventListener('change', renderPricingTable);
+            document.getElementById('filterRegional').addEventListener('change', renderPricingTable);
+            document.getElementById('filterJenis').addEventListener('change', renderPricingTable);
+            document.getElementById('filterPaket').addEventListener('change', renderPricingTable);
+
+            // Delegate events for dynamic content
+            document.addEventListener('click', (e) => {
+                // Content details toggle
+                const toggleBtn = e.target.closest('[data-toggle-details]');
+                if (toggleBtn) {
+                    const id = toggleBtn.dataset.toggleDetails;
+                    const details = document.getElementById(`contentDetails${id}`);
+                    if (details) details.classList.toggle('expanded');
+                }
+
+                // Edit content
+                const editBtn = e.target.closest('[data-edit-content]');
+                if (editBtn) openContentModal(editBtn.dataset.editContent);
+
+                // Delete content
+                const deleteContentBtn = e.target.closest('[data-delete-content]');
+                if (deleteContentBtn) deleteContent(deleteContentBtn.dataset.deleteContent);
+
+                // Edit harga
+                const editHargaBtn = e.target.closest('[data-edit-harga]');
+                if (editHargaBtn) openHargaModal(editHargaBtn.dataset.editHarga);
+
+                // Delete harga
+                const deleteHargaBtn = e.target.closest('[data-delete-harga]');
+                if (deleteHargaBtn) deleteHarga(deleteHargaBtn.dataset.deleteHarga);
+
+                // Mark feedback read
+                const markReadBtn = e.target.closest('[data-mark-read]');
+                if (markReadBtn) markFeedbackRead(markReadBtn.dataset.markRead);
+
+                // Delete feedback
+                const deleteFeedbackBtn = e.target.closest('[data-delete-feedback]');
+                if (deleteFeedbackBtn) deleteFeedback(deleteFeedbackBtn.dataset.deleteFeedback);
+
+                // Reply feedback
+                const replyFeedbackBtn = e.target.closest('[data-reply-feedback]');
+                if (replyFeedbackBtn) openReplyFeedbackModal(replyFeedbackBtn.dataset.replyFeedback);
+
+                // Delete reply
+                const deleteReplyBtn = e.target.closest('[data-delete-reply]');
+                if (deleteReplyBtn) {
+                    const [feedbackId, replyId] = deleteReplyBtn.dataset.deleteReply.split('|');
+                    deleteReply(feedbackId, replyId);
+                }
+
+                // Remove classification
+                const removeClassificationBtn = e.target.closest('[data-remove-classification]');
+                if (removeClassificationBtn) removeClassification(parseInt(removeClassificationBtn.dataset.removeClassification));
+
+                // Remove quick link
+                const removeQuickLinkBtn = e.target.closest('[data-remove-quicklink]');
+                if (removeQuickLinkBtn) removeQuickLink(removeQuickLinkBtn.dataset.removeQuicklink);
+
+                // Lampiran CRUD
+                const editLampiranBtn = e.target.closest('[data-edit-lampiran]');
+                if (editLampiranBtn) openLampiranModal(editLampiranBtn.dataset.editLampiran);
+
+                const deleteLampiranBtn = e.target.closest('[data-delete-lampiran]');
+                if (deleteLampiranBtn) deleteLampiran(deleteLampiranBtn.dataset.deleteLampiran);
+            });
+        }
+
+        // ========================================
+        // MODULE: Initialization
+        // ========================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Attach all event handlers
+            attachEventHandlers();
+
+            // Check session
+            let session = localStorage.getItem(CONFIG.STORAGE_KEYS.session);
+            if (!session) {
+                session = sessionStorage.getItem(CONFIG.STORAGE_KEYS.session);
+            }
+
+            if (session) {
+                const data = JSON.parse(session);
+                state.role = data.role;
+                showMainPage();
+                return;
+            }
+
+            // Load data from central database or local cache
+            await loadAllData();
+
+            // Dark mode
+            const darkMode = localStorage.getItem(CONFIG.STORAGE_KEYS.darkmode);
+            if (darkMode === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Initialize classification select and filters
+            updateClassificationSelect();
+            updateFilterPills();
+
+            // Try to fetch from server (already done in loadAllData, but ensure)
+            await fetchFromServer();
+        });
+    </script>
 </body>
+
 </html>
